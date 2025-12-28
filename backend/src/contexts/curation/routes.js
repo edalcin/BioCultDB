@@ -6,13 +6,14 @@
  * - GET /reference/edit/:id: Edit reference form
  * - PUT /reference/update/:id: Update reference content
  * - POST /reference/status/:id: Update reference status only
+ * - POST /reference/delete/:id: Delete reference
  * - POST /reference/:id/community/add: Add community fragment (HTMX)
  * - POST /reference/:id/plant/add/:communityIndex: Add plant fragment (HTMX)
  */
 
 const express = require('express');
 const router = express.Router();
-const { findReferences, findReferenceById, updateReferenceById, updateReferenceStatus } = require('../../services/database');
+const { findReferences, findReferenceById, updateReferenceById, updateReferenceStatus, deleteReferenceById } = require('../../services/database');
 const { validateReference } = require('../../services/validation');
 const { Status } = require('../../models/Reference');
 const logger = require('../../shared/logger');
@@ -272,6 +273,38 @@ router.post('/reference/status/:id', async (req, res) => {
 
     res.status(500).render('error', {
       message: 'Erro ao atualizar status: ' + error.message,
+      error: {}
+    });
+  }
+});
+
+/**
+ * POST /reference/delete/:id - Delete reference
+ */
+router.post('/reference/delete/:id', async (req, res) => {
+  try {
+    logger.curation(`Deleting reference: ${req.params.id}`);
+
+    const deleted = await deleteReferenceById(req.params.id);
+
+    if (!deleted) {
+      logger.error(`Reference ${req.params.id} not found for deletion`);
+      return res.status(404).render('error', {
+        message: 'Referência não encontrada',
+        error: {}
+      });
+    }
+
+    logger.curation(`Reference deleted successfully: ${req.params.id}`);
+
+    // Redirect to list with success message
+    res.redirect('/?success=true');
+
+  } catch (error) {
+    logger.error('Failed to delete reference:', error.message);
+
+    res.status(500).render('error', {
+      message: 'Erro ao deletar referência: ' + error.message,
       error: {}
     });
   }

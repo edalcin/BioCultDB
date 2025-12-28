@@ -8,6 +8,9 @@
   <link rel="stylesheet" href="/styles/curation/list.css">
   <script src="https://unpkg.com/htmx.org@1.9.10"></script>
   <script src="https://unpkg.com/alpinejs@3.13.3" defer></script>
+  <style>
+    [x-cloak] { display: none !important; }
+  </style>
 </head>
 <body class="min-h-screen bg-gray-50" x-data="{ communityCount: <%= reference.comunidades.length %>, plantCounts: <%= JSON.stringify(reference.comunidades.map(c => c.plantas.length)) %> }">
 
