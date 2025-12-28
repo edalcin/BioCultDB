@@ -10,7 +10,8 @@
       "Bash(git checkout:*)",
       "Bash(git merge 001-web-interface --no-ff -m \"$\\(cat <<''EOF''\nMerge: Adiciona README.md e especificações completas do projeto etnoDB\n\n- README.md com arquitetura, estrutura de dados e documentação\n- Especificações completas em specs/001-web-interface/\n- Plano de implementação com 110 tarefas organizadas\n- Contratos de API para os três contextos\n- Modelo de dados documentado\n- Quickstart para desenvolvedores\n\n🤖 Generated with [Claude Code]\\(https://claude.com/claude-code\\)\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
       "Bash(git branch:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(npm start)"
     ]
   }
 }

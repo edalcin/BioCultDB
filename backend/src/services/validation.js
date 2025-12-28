@@ -10,7 +10,8 @@ const logger = require('../shared/logger');
 
 /**
  * Valid community types
- * Conforme o Decreto nº 11.481, de 6 de abril de 2023
+ * Conforme o Decreto Nº 8.750, de 9 de maio 2016
+ * https://www.planalto.gov.br/ccivil_03/_Ato2015-2018/2016/Decreto/D8750.htm
  */
 const VALID_COMMUNITY_TYPES = [
   'Andirobeiros',

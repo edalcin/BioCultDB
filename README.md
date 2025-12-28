@@ -96,7 +96,7 @@ Referência (Publicação Científica)
 
 ### Tipos de Comunidades Tradicionais
 
-O sistema suporta a classificação de comunidades tradicionais em 29 categorias, conforme o **Decreto nº 11.481, de 6 de abril de 2023**, que regulamenta a Política Nacional de Desenvolvimento Sustentável dos Povos e Comunidades Tradicionais:
+O sistema suporta a classificação de comunidades tradicionais em 29 categorias, conforme o **[Decreto Nº 8.750, de 9 de maio 2016](https://www.planalto.gov.br/ccivil_03/_Ato2015-2018/2016/Decreto/D8750.htm)**, que regulamenta a Política Nacional de Desenvolvimento Sustentável dos Povos e Comunidades Tradicionais:
 
 - Andirobeiros
 - Apanhadores de flores sempre-vivas
@@ -128,7 +128,7 @@ O sistema suporta a classificação de comunidades tradicionais em 29 categorias
 - Vazanteiros
 - Veredeiros
 
-> **Referência Legal**: Decreto nº 11.481, de 6 de abril de 2023 - Regulamenta a Política Nacional de Desenvolvimento Sustentável dos Povos e Comunidades Tradicionais, instituída pelo Decreto nº 6.040, de 7 de fevereiro de 2007.
+> **Referência Legal**: [Decreto Nº 8.750, de 9 de maio 2016](https://www.planalto.gov.br/ccivil_03/_Ato2015-2018/2016/Decreto/D8750.htm) - Regulamenta a Política Nacional de Desenvolvimento Sustentável dos Povos e Comunidades Tradicionais, instituída pelo Decreto nº 6.040, de 7 de fevereiro de 2007.
 
 ### Exemplo de Registro
 
