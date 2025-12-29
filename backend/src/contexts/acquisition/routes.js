@@ -214,6 +214,7 @@ function parseFormData(formData) {
       ano: parseInt(formData.ano) || 0,
       resumo: formData.resumo?.trim() || '',
       DOI: formData.DOI?.trim() || '',
+      fonte: 'etnodb',
       comunidades: formData.comunidades.map(com => ({
         nome: com.nome?.trim() || '',
         tipo: com.tipo?.trim() || '',
@@ -248,6 +249,7 @@ function parseFormData(formData) {
     ano: parseInt(formData.ano) || 0,
     resumo: formData.resumo?.trim() || '',
     DOI: formData.DOI?.trim() || '',
+    fonte: 'etnodb',
     comunidades: []
   };
 
