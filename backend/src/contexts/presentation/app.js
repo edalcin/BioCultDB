@@ -61,6 +61,27 @@ app.use((req, res, next) => {
   next();
 });
 
+// Debug endpoint - shows current configuration
+app.get('/__debug/paths', (req, res) => {
+  res.json({
+    rootDir,
+    stylesDir,
+    presentationStylesDir,
+    scriptsDir,
+    imagesDir,
+    dirExists: {
+      styles: fs.existsSync(stylesDir),
+      presentationStyles: fs.existsSync(presentationStylesDir),
+      scripts: fs.existsSync(scriptsDir),
+      images: fs.existsSync(imagesDir)
+    },
+    files: {
+      presentationStyles: fs.existsSync(presentationStylesDir) ? fs.readdirSync(presentationStylesDir) : [],
+      scripts: fs.existsSync(scriptsDir) ? fs.readdirSync(scriptsDir) : []
+    }
+  });
+});
+
 // Import routes
 const routes = require('./routes');
 app.use('/', routes);
