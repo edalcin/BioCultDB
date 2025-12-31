@@ -22,6 +22,43 @@ const {
   getTopReferencesByPlants,
   getPublicationsByYear
 } = require('../../services/statistics');
+const database = require('../../shared/database');
+
+/**
+ * GET /health - Health check endpoint
+ * Returns database connection status and basic statistics
+ */
+router.get('/health', async (req, res) => {
+  try {
+    const collection = database.getCollection('etnodb');
+
+    const stats = {
+      status: 'ok',
+      timestamp: new Date().toISOString(),
+      database: {
+        connected: true,
+        name: 'etnodb',
+        collection: 'etnodb'
+      },
+      references: {
+        total: await collection.countDocuments(),
+        approved: await collection.countDocuments({ status: 'approved' }),
+        pending: await collection.countDocuments({ status: 'pending' }),
+        rejected: await collection.countDocuments({ status: 'rejected' })
+      }
+    };
+
+    res.json(stats);
+  } catch (error) {
+    logger.error('Health check failed:', error.message);
+    res.status(503).json({
+      status: 'error',
+      timestamp: new Date().toISOString(),
+      error: error.message,
+      message: 'Database connection failed'
+    });
+  }
+});
 
 /**
  * GET / - Main search page with filters
