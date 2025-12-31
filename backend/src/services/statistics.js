@@ -398,6 +398,61 @@ async function getPlantsByState(filters = {}) {
 }
 
 /**
+ * Get number of unique communities by state (for heat map)
+ * @param {Object} filters - Query filters
+ * @returns {Promise<Array>} Array of {state, count}
+ */
+async function getCommunitiesByState(filters = {}) {
+  try {
+    const collection = database.getCollection(config.database.collection);
+
+    const pipeline = [
+      { $match: { status: Status.APPROVED, ...filters } },
+      { $unwind: '$comunidades' },
+
+      ...(filters['comunidades.tipo']
+        ? [{ $match: { 'comunidades.tipo': filters['comunidades.tipo'] }}]
+        : []),
+
+      {
+        $group: {
+          _id: {
+            referenceId: '$_id',
+            estado: '$comunidades.estado',
+            comunidade: '$comunidades.nome'
+          }
+        }
+      },
+
+      {
+        $group: {
+          _id: '$_id.estado',
+          count: { $sum: 1 }
+        }
+      },
+
+      { $sort: { count: -1 } },
+
+      {
+        $project: {
+          _id: 0,
+          state: '$_id',
+          count: 1
+        }
+      }
+    ];
+
+    const result = await collection.aggregate(pipeline).toArray();
+    logger.database(`Communities by state returned ${result.length} states`);
+
+    return result;
+  } catch (error) {
+    logger.error('Communities by state failed:', error.message);
+    throw error;
+  }
+}
+
+/**
  * Get top communities by number of plants
  * @param {number} limit - Number of results
  * @param {Object} filters - Query filters
@@ -703,6 +758,7 @@ module.exports = {
   getTopAuthors,
   getReferencesByState,
   getPlantsByState,
+  getCommunitiesByState,
   getTopCommunitiesByPlants,
   getTopReferencesByCommunities,
   getTopReferencesByPlants,

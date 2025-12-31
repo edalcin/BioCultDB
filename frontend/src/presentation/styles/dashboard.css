@@ -4,20 +4,28 @@
 
 /* Dashboard Cards (Summary Stats) */
 .dashboard-card {
-  @apply rounded-lg shadow-lg p-6 relative overflow-hidden;
+  @apply rounded-lg shadow-lg p-6 flex flex-col relative overflow-hidden;
+}
+
+.dashboard-card-header {
+  @apply flex items-center gap-3 mb-4;
 }
 
 .dashboard-card-icon {
-  @apply absolute top-4 right-4 opacity-20;
+  @apply opacity-80 flex-shrink-0;
+}
+
+.dashboard-card-label {
+  @apply text-sm opacity-90 flex-1;
 }
 
 .dashboard-card-content {
-  @apply relative z-10;
+  @apply flex-1 flex items-center justify-center relative z-10;
 }
 
 /* Dashboard Tables */
 .dashboard-table {
-  @apply w-full text-sm;
+  @apply w-full text-sm border-collapse;
 }
 
 .dashboard-table thead {
@@ -25,11 +33,15 @@
 }
 
 .dashboard-table th {
-  @apply px-4 py-3 text-left font-semibold text-gray-700 uppercase text-xs tracking-wider;
+  @apply px-3 py-3 text-left font-semibold text-gray-700 uppercase text-xs tracking-wider;
 }
 
 .dashboard-table th.center {
   @apply text-center;
+}
+
+.dashboard-table th.right {
+  @apply text-right;
 }
 
 .dashboard-table tbody tr {
@@ -41,11 +53,17 @@
 }
 
 .dashboard-table td {
-  @apply px-4 py-3 text-gray-900;
+  @apply px-3 py-3 text-gray-900 text-sm;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .dashboard-table td.center {
   @apply text-center;
+}
+
+.dashboard-table td.right {
+  @apply text-right font-mono;
 }
 
 .dashboard-table td.left {

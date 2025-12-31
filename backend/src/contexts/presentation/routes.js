@@ -17,6 +17,7 @@ const {
   getTopAuthors,
   getReferencesByState,
   getPlantsByState,
+  getCommunitiesByState,
   getTopCommunitiesByPlants,
   getTopReferencesByCommunities,
   getTopReferencesByPlants,
@@ -418,6 +419,22 @@ router.get('/painel/api/stats/plants-by-state', async (req, res) => {
     res.json(result);
   } catch (error) {
     logger.error('Plants by state failed:', error.message);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * GET /painel/api/stats/communities-by-state
+ * Número de comunidades por estado (para mapa de calor)
+ */
+router.get('/painel/api/stats/communities-by-state', async (req, res) => {
+  try {
+    const { tipo, anoInicio, anoFim } = req.query;
+    const filters = buildFilters({ tipo, anoInicio, anoFim });
+    const result = await getCommunitiesByState(filters);
+    res.json(result);
+  } catch (error) {
+    logger.error('Communities by state failed:', error.message);
     res.status(500).json({ error: error.message });
   }
 });
