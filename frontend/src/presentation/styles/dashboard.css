@@ -1,0 +1,106 @@
+/**
+ * Dashboard Specific Styles
+ */
+
+/* Dashboard Cards (Summary Stats) */
+.dashboard-card {
+  @apply rounded-lg shadow-lg p-6 relative overflow-hidden;
+}
+
+.dashboard-card-icon {
+  @apply absolute top-4 right-4 opacity-20;
+}
+
+.dashboard-card-content {
+  @apply relative z-10;
+}
+
+/* Dashboard Tables */
+.dashboard-table {
+  @apply w-full text-sm;
+}
+
+.dashboard-table thead {
+  @apply bg-gray-50 border-b-2 border-gray-200;
+}
+
+.dashboard-table th {
+  @apply px-4 py-3 text-left font-semibold text-gray-700 uppercase text-xs tracking-wider;
+}
+
+.dashboard-table th.center {
+  @apply text-center;
+}
+
+.dashboard-table tbody tr {
+  @apply border-b border-gray-200 hover:bg-gray-50 transition-colors;
+}
+
+.dashboard-table tbody tr:last-child {
+  @apply border-b-0;
+}
+
+.dashboard-table td {
+  @apply px-4 py-3 text-gray-900;
+}
+
+.dashboard-table td.center {
+  @apply text-center;
+}
+
+.dashboard-table td.left {
+  @apply text-left;
+}
+
+/* Responsive tables */
+@media (max-width: 640px) {
+  .dashboard-table {
+    @apply text-xs;
+  }
+
+  .dashboard-table th,
+  .dashboard-table td {
+    @apply px-2 py-2;
+  }
+}
+
+/* Chart containers */
+#chart-publications,
+#chart-top-plants,
+#map-references,
+#map-plants {
+  @apply bg-white rounded;
+}
+
+/* HTMX Loading Indicator */
+.htmx-indicator {
+  @apply hidden;
+}
+
+.htmx-request .htmx-indicator {
+  @apply inline-flex;
+}
+
+/* Grid responsive adjustments */
+@media (max-width: 768px) {
+  .dashboard-card {
+    @apply p-4;
+  }
+
+  .dashboard-card-content .text-3xl {
+    @apply text-2xl;
+  }
+}
+
+/* Print styles */
+@media print {
+  .dashboard-card {
+    @apply break-inside-avoid;
+  }
+
+  nav,
+  #filter-form,
+  footer {
+    @apply hidden;
+  }
+}

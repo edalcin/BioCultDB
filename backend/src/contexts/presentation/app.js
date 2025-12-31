@@ -24,6 +24,7 @@ app.use(express.json());
 app.use('/styles', express.static(path.join(__dirname, '../../../../frontend/dist/styles')));
 app.use('/styles/presentation', express.static(path.join(__dirname, '../../../../frontend/src/presentation/styles')));
 app.use('/images', express.static(path.join(__dirname, '../../shared/public/images')));
+app.use('/scripts', express.static(path.join(__dirname, '../../../../frontend/src/presentation/scripts')));
 
 // Request logging
 app.use((req, res, next) => {

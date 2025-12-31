@@ -1,0 +1,206 @@
+<div x-data="{ expanded: false }">
+  <div class="flex items-center justify-between mb-4">
+    <h2 class="text-xl font-semibold text-gray-900">Filtros</h2>
+    <button
+      @click="expanded = !expanded"
+      class="text-sm text-forest-600 hover:text-forest-700 font-medium flex items-center gap-1"
+    >
+      <span x-text="expanded ? 'Ocultar' : 'Expandir'"></span>
+      <svg
+        class="w-4 h-4 transition-transform"
+        :class="{ 'rotate-180': expanded }"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+      </svg>
+    </button>
+  </div>
+
+  <div
+    x-show="expanded"
+    x-transition:enter="transition ease-out duration-200"
+    x-transition:enter-start="opacity-0 -translate-y-2"
+    x-transition:enter-end="opacity-100 translate-y-0"
+    x-transition:leave="transition ease-in duration-150"
+    x-transition:leave-start="opacity-100 translate-y-0"
+    x-transition:leave-end="opacity-0 -translate-y-2"
+  >
+    <form
+      id="filter-form"
+      class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"
+    >
+
+      <!-- Estado Filter -->
+      <div>
+        <label class="form-label" for="filter-estado">
+          Estado
+        </label>
+        <select
+          id="filter-estado"
+          name="estado"
+          class="form-input"
+        >
+          <option value="">Todos os estados</option>
+          <option value="Acre">Acre</option>
+          <option value="Alagoas">Alagoas</option>
+          <option value="Amapá">Amapá</option>
+          <option value="Amazonas">Amazonas</option>
+          <option value="Bahia">Bahia</option>
+          <option value="Ceará">Ceará</option>
+          <option value="Distrito Federal">Distrito Federal</option>
+          <option value="Espírito Santo">Espírito Santo</option>
+          <option value="Goiás">Goiás</option>
+          <option value="Maranhão">Maranhão</option>
+          <option value="Mato Grosso">Mato Grosso</option>
+          <option value="Mato Grosso do Sul">Mato Grosso do Sul</option>
+          <option value="Minas Gerais">Minas Gerais</option>
+          <option value="Pará">Pará</option>
+          <option value="Paraíba">Paraíba</option>
+          <option value="Paraná">Paraná</option>
+          <option value="Pernambuco">Pernambuco</option>
+          <option value="Piauí">Piauí</option>
+          <option value="Rio de Janeiro">Rio de Janeiro</option>
+          <option value="Rio Grande do Norte">Rio Grande do Norte</option>
+          <option value="Rio Grande do Sul">Rio Grande do Sul</option>
+          <option value="Rondônia">Rondônia</option>
+          <option value="Roraima">Roraima</option>
+          <option value="Santa Catarina">Santa Catarina</option>
+          <option value="São Paulo">São Paulo</option>
+          <option value="Sergipe">Sergipe</option>
+          <option value="Tocantins">Tocantins</option>
+        </select>
+      </div>
+
+      <!-- Tipo de Comunidade Filter -->
+      <div>
+        <label class="form-label" for="filter-tipo">
+          Tipo de Comunidade
+        </label>
+        <select
+          id="filter-tipo"
+          name="tipo"
+          class="form-input"
+        >
+          <option value="">Todos os tipos</option>
+          <option value="Andirobeiros">Andirobeiros</option>
+          <option value="Apanhadores de flores sempre-vivas">Apanhadores de flores sempre-vivas</option>
+          <option value="Benzedeiros">Benzedeiros</option>
+          <option value="Caatingueiros">Caatingueiros</option>
+          <option value="Caboclos">Caboclos</option>
+          <option value="Caiçaras">Caiçaras</option>
+          <option value="Catadores de mangaba">Catadores de mangaba</option>
+          <option value="Cipozeiros">Cipozeiros</option>
+          <option value="Comunidades de fundos e fechos de pasto">Comunidades de fundos e fechos de pasto</option>
+          <option value="Comunidades quilombolas">Comunidades quilombolas</option>
+          <option value="Extrativistas">Extrativistas</option>
+          <option value="Extrativistas costeiros e marinhos">Extrativistas costeiros e marinhos</option>
+          <option value="Faxinalenses">Faxinalenses</option>
+          <option value="Geraizeiros">Geraizeiros</option>
+          <option value="Ilhéus">Ilhéus</option>
+          <option value="Juventude de povos e comunidades tradicionais">Juventude de povos e comunidades tradicionais</option>
+          <option value="Morroquianos">Morroquianos</option>
+          <option value="Pantaneiros">Pantaneiros</option>
+          <option value="Pescadores artesanais">Pescadores artesanais</option>
+          <option value="Povo pomerano">Povo pomerano</option>
+          <option value="Povos ciganos">Povos ciganos</option>
+          <option value="Povos e comunidades de terreiro / matriz africana">Povos e comunidades de terreiro / matriz africana</option>
+          <option value="Povos indígenas">Povos indígenas</option>
+          <option value="Quebradeiras de coco babaçu">Quebradeiras de coco babaçu</option>
+          <option value="Raizeiros">Raizeiros</option>
+          <option value="Retireiros do Araguaia">Retireiros do Araguaia</option>
+          <option value="Ribeirinhos">Ribeirinhos</option>
+          <option value="Vazanteiros">Vazanteiros</option>
+          <option value="Veredeiros">Veredeiros</option>
+        </select>
+      </div>
+
+      <!-- Ano Início Filter -->
+      <div>
+        <label class="form-label" for="filter-ano-inicio">
+          Ano Início
+        </label>
+        <input
+          type="number"
+          id="filter-ano-inicio"
+          name="anoInicio"
+          class="form-input"
+          min="1500"
+          max="2100"
+          placeholder="Ex: 2000"
+        >
+      </div>
+
+      <!-- Ano Fim Filter -->
+      <div>
+        <label class="form-label" for="filter-ano-fim">
+          Ano Fim
+        </label>
+        <input
+          type="number"
+          id="filter-ano-fim"
+          name="anoFim"
+          class="form-input"
+          min="1500"
+          max="2100"
+          placeholder="Ex: 2024"
+        >
+      </div>
+
+    </form>
+
+    <!-- Filter Actions -->
+    <div class="flex gap-4 mt-4 pt-4 border-t border-gray-200">
+      <button
+        type="button"
+        @click="applyFilters()"
+        class="btn btn-primary"
+      >
+        Aplicar Filtros
+      </button>
+      <button
+        type="button"
+        @click="resetFilters()"
+        class="btn btn-secondary"
+      >
+        Limpar Filtros
+      </button>
+      <div id="loading-indicator" class="htmx-indicator flex items-center gap-2 text-forest-600">
+        <svg class="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <span class="text-sm font-medium">Carregando estatísticas...</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function dashboardFilters() {
+  return {
+    applyFilters() {
+      // Trigger dashboard data reload
+      if (typeof loadDashboardData === 'function') {
+        const indicator = document.getElementById('loading-indicator');
+        indicator.classList.add('htmx-request');
+        loadDashboardData().then(() => {
+          indicator.classList.remove('htmx-request');
+        });
+      }
+    },
+
+    resetFilters() {
+      // Reset form fields
+      document.getElementById('filter-estado').value = '';
+      document.getElementById('filter-tipo').value = '';
+      document.getElementById('filter-ano-inicio').value = '';
+      document.getElementById('filter-ano-fim').value = '';
+
+      // Reload data
+      this.applyFilters();
+    }
+  }
+}
+</script>

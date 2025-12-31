@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= pageTitle %> - etnoDB</title>
+  <link rel="stylesheet" href="/styles/main.css">
+  <link rel="stylesheet" href="/styles/presentation/cards.css">
+  <link rel="stylesheet" href="/styles/presentation/dashboard.css">
+
+  <!-- Google Charts -->
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+</head>
+<body class="min-h-screen bg-gray-50">
+
+  <!-- Header -->
+  <header class="bg-forest-700 text-white shadow-lg">
+    <div class="container mx-auto px-4 py-4">
+      <div class="flex items-center gap-4">
+        <img src="/images/logo.png" alt="etnoDB Logo" class="h-16 w-16">
+        <div>
+          <h1 class="text-2xl font-bold"><%= contextName %></h1>
+          <p class="text-forest-100 text-sm"><%= contextDescription %></p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Navigation Menu -->
+  <nav class="bg-forest-600 text-white border-b border-forest-800">
+    <div class="container mx-auto px-4">
+      <ul class="flex gap-0">
+        <li>
+          <a href="/" class="block px-6 py-3 hover:bg-forest-700 transition-colors border-b-2 border-transparent hover:border-forest-300">
+            Busca
+          </a>
+        </li>
+        <li>
+          <a href="/painel" class="block px-6 py-3 hover:bg-forest-700 transition-colors border-b-2 border-forest-400 font-medium">
+            Painel
+          </a>
+        </li>
+        <li>
+          <a href="/etnochat" class="block px-6 py-3 hover:bg-forest-700 transition-colors border-b-2 border-transparent hover:border-forest-300">
+            etnoChat
+          </a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="container mx-auto px-4 py-8">
+
+    <!-- Dashboard Filters -->
+    <section class="card mb-8" x-data="dashboardFilters()">
+      <%- include('partials/dashboard-filters') %>
+    </section>
+
+    <!-- Stats Grid -->
+    <div id="stats-container" class="space-y-8">
+      <%- include('partials/stats-grid') %>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-white py-6 mt-12">
+    <div class="container mx-auto px-4 text-center">
+      <p class="text-sm">etnoDB - Base de Dados Etnobotânica</p>
+      <p class="text-xs text-gray-400 mt-1">Eduardo Dalcin - 2025/2026</p>
+      <p class="text-xs text-gray-400">
+        <a href="https://github.com/edalcin/etnoDB" target="_blank" class="hover:text-forest-300">https://github.com/edalcin/etnoDB</a>
+      </p>
+    </div>
+  </footer>
+
+  <!-- Alpine.js -->
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.3/dist/cdn.min.js"></script>
+
+  <!-- HTMX -->
+  <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+
+  <!-- Dashboard JavaScript -->
+  <script src="/scripts/dashboard.js"></script>
+
+</body>
+</html>

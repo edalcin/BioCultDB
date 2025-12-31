@@ -10,6 +10,18 @@ const router = express.Router();
 const { searchReferences } = require('../../services/database');
 const { Status } = require('../../models/Reference');
 const logger = require('../../shared/logger');
+const {
+  getTopPlants,
+  getCommunityCount,
+  getReferenceCountByStatus,
+  getTopAuthors,
+  getReferencesByState,
+  getPlantsByState,
+  getTopCommunitiesByPlants,
+  getTopReferencesByCommunities,
+  getTopReferencesByPlants,
+  getPublicationsByYear
+} = require('../../services/statistics');
 
 /**
  * GET / - Main search page with filters
@@ -233,15 +245,208 @@ function sanitizeRegex(str) {
 }
 
 /**
- * GET /painel - Dashboard page (under construction)
+ * GET /painel - Dashboard page
  */
 router.get('/painel', (req, res) => {
-  res.render('under-construction', {
-    pageTitle: 'Painel',
-    contextName: 'Painel de Controle',
-    contextDescription: 'Visualize estatísticas e métricas dos dados etnobotânicos',
-    featureName: 'Painel'
-  });
+  try {
+    res.render('painel', {
+      pageTitle: 'Painel de Estatísticas',
+      contextName: 'Painel de Informações',
+      contextDescription: 'Visualize estatísticas e métricas dos dados etnobotânicos',
+      showNavigation: true
+    });
+  } catch (error) {
+    logger.error('Dashboard failed:', error.message);
+    res.render('error', {
+      message: 'Erro ao carregar painel',
+      error: error
+    });
+  }
+});
+
+/**
+ * Build filters object from query parameters
+ * @param {Object} params - Query parameters
+ * @returns {Object} MongoDB query filters
+ */
+function buildFilters({ estado, tipo, anoInicio, anoFim }) {
+  const filters = { status: Status.APPROVED };
+
+  if (estado) {
+    filters['comunidades.estado'] = estado;
+  }
+
+  if (tipo) {
+    filters['comunidades.tipo'] = tipo;
+  }
+
+  if (anoInicio || anoFim) {
+    filters.ano = {};
+    if (anoInicio) filters.ano.$gte = parseInt(anoInicio);
+    if (anoFim) filters.ano.$lte = parseInt(anoFim);
+  }
+
+  return filters;
+}
+
+/**
+ * GET /painel/api/stats/top-plants
+ * Top N plantas mais utilizadas
+ */
+router.get('/painel/api/stats/top-plants', async (req, res) => {
+  try {
+    const { limit = 10, estado, tipo, anoInicio, anoFim } = req.query;
+    const filters = buildFilters({ estado, tipo, anoInicio, anoFim });
+    const result = await getTopPlants(parseInt(limit), filters);
+    res.json(result);
+  } catch (error) {
+    logger.error('Top plants stats failed:', error.message);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * GET /painel/api/stats/community-count
+ * Total de comunidades cadastradas
+ */
+router.get('/painel/api/stats/community-count', async (req, res) => {
+  try {
+    const { estado, tipo, anoInicio, anoFim } = req.query;
+    const filters = buildFilters({ estado, tipo, anoInicio, anoFim });
+    const result = await getCommunityCount(filters);
+    res.json(result);
+  } catch (error) {
+    logger.error('Community count failed:', error.message);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * GET /painel/api/stats/reference-count
+ * Total de referências por status
+ */
+router.get('/painel/api/stats/reference-count', async (req, res) => {
+  try {
+    const { estado, tipo, anoInicio, anoFim } = req.query;
+    const filters = buildFilters({ estado, tipo, anoInicio, anoFim });
+    const result = await getReferenceCountByStatus(filters);
+    res.json(result);
+  } catch (error) {
+    logger.error('Reference count failed:', error.message);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * GET /painel/api/stats/top-authors
+ * Top autores com mais publicações
+ */
+router.get('/painel/api/stats/top-authors', async (req, res) => {
+  try {
+    const { limit = 10, estado, tipo, anoInicio, anoFim } = req.query;
+    const filters = buildFilters({ estado, tipo, anoInicio, anoFim });
+    const result = await getTopAuthors(parseInt(limit), filters);
+    res.json(result);
+  } catch (error) {
+    logger.error('Top authors failed:', error.message);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * GET /painel/api/stats/references-by-state
+ * Número de referências por estado (para mapa de calor)
+ */
+router.get('/painel/api/stats/references-by-state', async (req, res) => {
+  try {
+    const { tipo, anoInicio, anoFim } = req.query;
+    const filters = buildFilters({ tipo, anoInicio, anoFim });
+    const result = await getReferencesByState(filters);
+    res.json(result);
+  } catch (error) {
+    logger.error('References by state failed:', error.message);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * GET /painel/api/stats/plants-by-state
+ * Número de plantas por estado (para mapa de calor)
+ */
+router.get('/painel/api/stats/plants-by-state', async (req, res) => {
+  try {
+    const { tipo, anoInicio, anoFim } = req.query;
+    const filters = buildFilters({ tipo, anoInicio, anoFim });
+    const result = await getPlantsByState(filters);
+    res.json(result);
+  } catch (error) {
+    logger.error('Plants by state failed:', error.message);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * GET /painel/api/stats/top-communities
+ * Comunidades com maior uso de plantas
+ */
+router.get('/painel/api/stats/top-communities', async (req, res) => {
+  try {
+    const { limit = 10, estado, tipo, anoInicio, anoFim } = req.query;
+    const filters = buildFilters({ estado, tipo, anoInicio, anoFim });
+    const result = await getTopCommunitiesByPlants(parseInt(limit), filters);
+    res.json(result);
+  } catch (error) {
+    logger.error('Top communities failed:', error.message);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * GET /painel/api/stats/references-by-communities
+ * Referências com mais comunidades relatadas
+ */
+router.get('/painel/api/stats/references-by-communities', async (req, res) => {
+  try {
+    const { limit = 10, estado, tipo, anoInicio, anoFim } = req.query;
+    const filters = buildFilters({ estado, tipo, anoInicio, anoFim });
+    const result = await getTopReferencesByCommunities(parseInt(limit), filters);
+    res.json(result);
+  } catch (error) {
+    logger.error('References by communities failed:', error.message);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * GET /painel/api/stats/references-by-plants
+ * Referências com mais plantas relatadas
+ */
+router.get('/painel/api/stats/references-by-plants', async (req, res) => {
+  try {
+    const { limit = 10, estado, tipo, anoInicio, anoFim } = req.query;
+    const filters = buildFilters({ estado, tipo, anoInicio, anoFim });
+    const result = await getTopReferencesByPlants(parseInt(limit), filters);
+    res.json(result);
+  } catch (error) {
+    logger.error('References by plants failed:', error.message);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * GET /painel/api/stats/publications-by-year
+ * Número de publicações por ano (para gráfico temporal)
+ */
+router.get('/painel/api/stats/publications-by-year', async (req, res) => {
+  try {
+    const { estado, tipo, anoInicio, anoFim } = req.query;
+    const filters = buildFilters({ estado, tipo, anoInicio, anoFim });
+    const result = await getPublicationsByYear(filters);
+    res.json(result);
+  } catch (error) {
+    logger.error('Publications by year failed:', error.message);
+    res.status(500).json({ error: error.message });
+  }
 });
 
 /**
