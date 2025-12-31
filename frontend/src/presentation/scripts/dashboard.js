@@ -208,67 +208,84 @@ async function loadMaps(filters) {
  * Draw Google GeoChart for Brazil
  */
 function drawGeoChart(elementId, data, metric) {
-  // Convert state names to BR-XX format
-  const stateCodeMap = {
-    'Acre': 'BR-AC',
-    'Alagoas': 'BR-AL',
-    'Amapá': 'BR-AP',
-    'Amazonas': 'BR-AM',
-    'Bahia': 'BR-BA',
-    'Ceará': 'BR-CE',
-    'Distrito Federal': 'BR-DF',
-    'Espírito Santo': 'BR-ES',
-    'Goiás': 'BR-GO',
-    'Maranhão': 'BR-MA',
-    'Mato Grosso': 'BR-MT',
-    'Mato Grosso do Sul': 'BR-MS',
-    'Minas Gerais': 'BR-MG',
-    'Pará': 'BR-PA',
-    'Paraíba': 'BR-PB',
-    'Paraná': 'BR-PR',
-    'Pernambuco': 'BR-PE',
-    'Piauí': 'BR-PI',
-    'Rio de Janeiro': 'BR-RJ',
-    'Rio Grande do Norte': 'BR-RN',
-    'Rio Grande do Sul': 'BR-RS',
-    'Rondônia': 'BR-RO',
-    'Roraima': 'BR-RR',
-    'Santa Catarina': 'BR-SC',
-    'São Paulo': 'BR-SP',
-    'Sergipe': 'BR-SE',
-    'Tocantins': 'BR-TO'
-  };
+  const container = document.getElementById(elementId);
+  if (!container) {
+    console.error(`Container not found: ${elementId}`);
+    return;
+  }
 
-  // Prepare data for Google Charts
-  const chartData = [['Estado', metric]];
-  data.forEach(item => {
-    const stateCode = stateCodeMap[item.state];
-    if (stateCode) {
-      chartData.push([stateCode, item.count]);
-    }
-  });
+  // If no data, show placeholder
+  if (!data || data.length === 0) {
+    container.innerHTML = '<div class="text-center text-gray-400 py-12">Sem dados disponíveis</div>';
+    return;
+  }
 
-  const dataTable = google.visualization.arrayToDataTable(chartData);
+  try {
+    // Convert state names to BR-XX format
+    const stateCodeMap = {
+      'Acre': 'BR-AC',
+      'Alagoas': 'BR-AL',
+      'Amapá': 'BR-AP',
+      'Amazonas': 'BR-AM',
+      'Bahia': 'BR-BA',
+      'Ceará': 'BR-CE',
+      'Distrito Federal': 'BR-DF',
+      'Espírito Santo': 'BR-ES',
+      'Goiás': 'BR-GO',
+      'Maranhão': 'BR-MA',
+      'Mato Grosso': 'BR-MT',
+      'Mato Grosso do Sul': 'BR-MS',
+      'Minas Gerais': 'BR-MG',
+      'Pará': 'BR-PA',
+      'Paraíba': 'BR-PB',
+      'Paraná': 'BR-PR',
+      'Pernambuco': 'BR-PE',
+      'Piauí': 'BR-PI',
+      'Rio de Janeiro': 'BR-RJ',
+      'Rio Grande do Norte': 'BR-RN',
+      'Rio Grande do Sul': 'BR-RS',
+      'Rondônia': 'BR-RO',
+      'Roraima': 'BR-RR',
+      'Santa Catarina': 'BR-SC',
+      'São Paulo': 'BR-SP',
+      'Sergipe': 'BR-SE',
+      'Tocantins': 'BR-TO'
+    };
 
-  const options = {
-    region: 'BR',
-    resolution: 'provinces',
-    colorAxis: {
-      colors: ['#dcfce7', '#86efac', '#22c55e', '#15803d', '#14532d']
-    },
-    backgroundColor: '#f9fafb',
-    datalessRegionColor: '#e5e7eb',
-    defaultColor: '#e5e7eb',
-    tooltip: {
-      textStyle: {
-        fontName: 'system-ui',
-        fontSize: 13
+    // Prepare data for Google Charts
+    const chartData = [['Estado', metric]];
+    data.forEach(item => {
+      const stateCode = stateCodeMap[item.state];
+      if (stateCode) {
+        chartData.push([stateCode, item.count]);
       }
-    }
-  };
+    });
 
-  const chart = new google.visualization.GeoChart(document.getElementById(elementId));
-  chart.draw(dataTable, options);
+    const dataTable = google.visualization.arrayToDataTable(chartData);
+
+    const options = {
+      region: 'BR',
+      resolution: 'provinces',
+      colorAxis: {
+        colors: ['#dcfce7', '#86efac', '#22c55e', '#15803d', '#14532d']
+      },
+      backgroundColor: '#f9fafb',
+      datalessRegionColor: '#e5e7eb',
+      defaultColor: '#e5e7eb',
+      tooltip: {
+        textStyle: {
+          fontName: 'system-ui',
+          fontSize: 13
+        }
+      }
+    };
+
+    const chart = new google.visualization.GeoChart(container);
+    chart.draw(dataTable, options);
+  } catch (error) {
+    console.error(`Error drawing GeoChart for ${elementId}:`, error);
+    container.innerHTML = '<div class="text-center text-red-400 py-12">Erro ao renderizar mapa</div>';
+  }
 }
 
 /**
@@ -327,59 +344,102 @@ async function loadCharts(filters) {
  * Draw area chart for publications by year
  */
 function drawAreaChart(elementId, data) {
-  const chartData = [['Ano', 'Publicações']];
-  data.forEach(item => {
-    chartData.push([item.year.toString(), item.count]);
-  });
+  const container = document.getElementById(elementId);
+  if (!container) {
+    console.error(`Container not found: ${elementId}`);
+    return;
+  }
 
-  const dataTable = google.visualization.arrayToDataTable(chartData);
+  // If no data, show placeholder
+  if (!data || data.length === 0) {
+    container.innerHTML = '<div class="text-center text-gray-400 py-12">Sem dados disponíveis</div>';
+    return;
+  }
 
-  const options = {
-    title: '',
-    hAxis: { title: 'Ano', titleTextStyle: { fontSize: 12 } },
-    vAxis: { title: 'Número de Publicações', minValue: 0, titleTextStyle: { fontSize: 12 } },
-    legend: { position: 'none' },
-    colors: ['#16a34a'],
-    backgroundColor: 'transparent',
-    chartArea: { width: '85%', height: '70%' },
-    fontSize: 12,
-    fontName: 'system-ui'
-  };
+  try {
+    const chartData = [['Ano', 'Publicações']];
+    data.forEach(item => {
+      if (item && item.year !== undefined && item.count !== undefined) {
+        chartData.push([item.year.toString(), item.count]);
+      }
+    });
 
-  const chart = new google.visualization.AreaChart(document.getElementById(elementId));
-  chart.draw(dataTable, options);
+    const dataTable = google.visualization.arrayToDataTable(chartData);
+
+    const options = {
+      title: '',
+      hAxis: { title: 'Ano', titleTextStyle: { fontSize: 12 } },
+      vAxis: { title: 'Número de Publicações', minValue: 0, titleTextStyle: { fontSize: 12 } },
+      legend: { position: 'none' },
+      colors: ['#16a34a'],
+      backgroundColor: 'transparent',
+      chartArea: { width: '85%', height: '70%' },
+      fontSize: 12,
+      fontName: 'system-ui'
+    };
+
+    const chart = new google.visualization.AreaChart(container);
+    chart.draw(dataTable, options);
+  } catch (error) {
+    console.error(`Error drawing AreaChart for ${elementId}:`, error);
+    container.innerHTML = '<div class="text-center text-red-400 py-12">Erro ao renderizar gráfico</div>';
+  }
 }
 
 /**
  * Draw bar chart for top plants
  */
 function drawBarChart(elementId, data) {
-  const chartData = [['Planta', 'Citações']];
-  data.forEach(item => {
-    // Truncate long names
-    const name = item.nomeCientifico.length > 30
-      ? item.nomeCientifico.substring(0, 27) + '...'
-      : item.nomeCientifico;
-    chartData.push([name, item.count]);
-  });
+  const container = document.getElementById(elementId);
+  if (!container) {
+    console.error(`Container not found: ${elementId}`);
+    return;
+  }
 
-  const dataTable = google.visualization.arrayToDataTable(chartData);
+  // If no data, show placeholder
+  if (!data || data.length === 0) {
+    container.innerHTML = '<div class="text-center text-gray-400 py-12">Sem dados disponíveis</div>';
+    return;
+  }
 
-  const options = {
-    title: '',
-    hAxis: { title: 'Número de Citações', minValue: 0, titleTextStyle: { fontSize: 12 } },
-    vAxis: { title: '', titleTextStyle: { fontSize: 12 } },
-    legend: { position: 'none' },
-    colors: ['#f59e0b'],
-    backgroundColor: 'transparent',
-    chartArea: { width: '70%', height: '80%' },
-    fontSize: 11,
-    fontName: 'system-ui',
-    bars: 'horizontal'
-  };
+  try {
+    const chartData = [['Planta', 'Citações']];
+    data.forEach(item => {
+      if (item && item.nomeCientifico && item.count !== undefined) {
+        // Truncate long names
+        const name = item.nomeCientifico.length > 30
+          ? item.nomeCientifico.substring(0, 27) + '...'
+          : item.nomeCientifico;
+        chartData.push([name, item.count]);
+      }
+    });
 
-  const chart = new google.visualization.BarChart(document.getElementById(elementId));
-  chart.draw(dataTable, options);
+    if (chartData.length < 2) {
+      container.innerHTML = '<div class="text-center text-gray-400 py-12">Sem dados disponíveis</div>';
+      return;
+    }
+
+    const dataTable = google.visualization.arrayToDataTable(chartData);
+
+    const options = {
+      title: '',
+      hAxis: { title: 'Número de Citações', minValue: 0, titleTextStyle: { fontSize: 12 } },
+      vAxis: { title: '', titleTextStyle: { fontSize: 12 } },
+      legend: { position: 'none' },
+      colors: ['#f59e0b'],
+      backgroundColor: 'transparent',
+      chartArea: { width: '70%', height: '80%' },
+      fontSize: 11,
+      fontName: 'system-ui',
+      bars: 'horizontal'
+    };
+
+    const chart = new google.visualization.BarChart(container);
+    chart.draw(dataTable, options);
+  } catch (error) {
+    console.error(`Error drawing BarChart for ${elementId}:`, error);
+    container.innerHTML = '<div class="text-center text-red-400 py-12">Erro ao renderizar gráfico</div>';
+  }
 }
 
 /**
@@ -580,11 +640,21 @@ function drawTable(elementId, data, columns) {
 }
 
 /**
- * Show error message
+ * Show error message with UI feedback
  */
 function showError(message) {
-  console.error(message);
-  // TODO: Implement proper error UI
+  console.error('Dashboard Error:', message);
+
+  // Show error toast/notification if possible
+  const errorContainer = document.createElement('div');
+  errorContainer.className = 'fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 max-w-sm';
+  errorContainer.textContent = message;
+  document.body.appendChild(errorContainer);
+
+  // Auto-remove after 5 seconds
+  setTimeout(() => {
+    errorContainer.remove();
+  }, 5000);
 }
 
 /**
