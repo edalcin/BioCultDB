@@ -7,6 +7,7 @@
 
 const express = require('express');
 const path = require('path');
+const fs = require('fs');
 const config = require('../../shared/config');
 const logger = require('../../shared/logger');
 
@@ -20,11 +21,39 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// Static files
-app.use('/styles', express.static(path.join(__dirname, '../../../../frontend/dist/styles')));
-app.use('/styles/presentation', express.static(path.join(__dirname, '../../../../frontend/src/presentation/styles')));
-app.use('/images', express.static(path.join(__dirname, '../../shared/public/images')));
-app.use('/scripts', express.static(path.join(__dirname, '../../../../frontend/src/presentation/scripts')));
+// Resolve static file paths - works in both dev and production
+const rootDir = path.resolve(__dirname, '../../../..');
+const stylesDir = path.join(rootDir, 'frontend/dist/styles');
+const presentationStylesDir = path.join(rootDir, 'frontend/src/presentation/styles');
+const imagesDir = path.join(rootDir, 'backend/src/shared/public/images');
+const scriptsDir = path.join(rootDir, 'frontend/src/presentation/scripts');
+
+// Log paths for debugging
+logger.presentation(`Root directory: ${rootDir}`);
+logger.presentation(`Styles directory: ${stylesDir}`);
+logger.presentation(`Presentation styles directory: ${presentationStylesDir}`);
+logger.presentation(`Scripts directory: ${scriptsDir}`);
+
+// Static files with fallback logging
+app.use('/styles', (req, res, next) => {
+  logger.presentation(`Static request: /styles${req.path}`);
+  next();
+}, express.static(stylesDir));
+
+app.use('/styles/presentation', (req, res, next) => {
+  logger.presentation(`Static request: /styles/presentation${req.path}`);
+  next();
+}, express.static(presentationStylesDir));
+
+app.use('/images', (req, res, next) => {
+  logger.presentation(`Static request: /images${req.path}`);
+  next();
+}, express.static(imagesDir));
+
+app.use('/scripts', (req, res, next) => {
+  logger.presentation(`Static request: /scripts${req.path}`);
+  next();
+}, express.static(scriptsDir));
 
 // Request logging
 app.use((req, res, next) => {
