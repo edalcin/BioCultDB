@@ -13,13 +13,7 @@
 
 /* Result Card - Collapsible Line Style */
 .result-card {
-  @apply bg-white border-b border-gray-200 transition-all duration-200;
-  border-left: 4px solid transparent;
-}
-
-.result-card:hover {
-  border-left-color: #16a34a;
-  background-color: #f9fafb;
+  @apply bg-white border-b border-gray-200;
 }
 
 .result-card:last-child {
