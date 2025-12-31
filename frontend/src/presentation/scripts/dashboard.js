@@ -468,14 +468,14 @@ async function loadTables(filters) {
       const authors = await authorsRes.json();
       if (Array.isArray(authors)) {
         drawTable('table-authors', authors, [
-          { label: 'Autor', key: 'author' },
-          { label: 'Publicações', key: 'count', align: 'center' }
+          { label: 'Autor', key: 'author', type: 'text' },
+          { label: 'Publicações', key: 'count', type: 'number' }
         ]);
       } else {
         console.error('Invalid authors data:', authors);
         drawTable('table-authors', [], [
-          { label: 'Autor', key: 'author' },
-          { label: 'Publicações', key: 'count', align: 'center' }
+          { label: 'Autor', key: 'author', type: 'text' },
+          { label: 'Publicações', key: 'count', type: 'number' }
         ]);
       }
     } else {
@@ -483,8 +483,8 @@ async function loadTables(filters) {
       const errorData = await authorsRes.json();
       console.error('Error details:', errorData);
       drawTable('table-authors', [], [
-        { label: 'Autor', key: 'author' },
-        { label: 'Publicações', key: 'count', align: 'center' }
+        { label: 'Autor', key: 'author', type: 'text' },
+        { label: 'Publicações', key: 'count', type: 'number' }
       ]);
     }
 
@@ -496,16 +496,16 @@ async function loadTables(filters) {
       const communities = await communitiesRes.json();
       if (Array.isArray(communities)) {
         drawTable('table-communities', communities, [
-          { label: 'Comunidade', key: 'community' },
-          { label: 'Estado', key: 'estado', align: 'center' },
-          { label: 'Plantas', key: 'plantCount', align: 'center' }
+          { label: 'Comunidade', key: 'community', type: 'text' },
+          { label: 'Estado', key: 'estado', type: 'state' },
+          { label: 'Plantas', key: 'plantCount', type: 'number' }
         ]);
       } else {
         console.error('Invalid communities data:', communities);
         drawTable('table-communities', [], [
-          { label: 'Comunidade', key: 'community' },
-          { label: 'Estado', key: 'estado', align: 'center' },
-          { label: 'Plantas', key: 'plantCount', align: 'center' }
+          { label: 'Comunidade', key: 'community', type: 'text' },
+          { label: 'Estado', key: 'estado', type: 'state' },
+          { label: 'Plantas', key: 'plantCount', type: 'number' }
         ]);
       }
     } else {
@@ -513,9 +513,9 @@ async function loadTables(filters) {
       const errorData = await communitiesRes.json();
       console.error('Error details:', errorData);
       drawTable('table-communities', [], [
-        { label: 'Comunidade', key: 'community' },
-        { label: 'Estado', key: 'estado', align: 'center' },
-        { label: 'Plantas', key: 'plantCount', align: 'center' }
+        { label: 'Comunidade', key: 'community', type: 'text' },
+        { label: 'Estado', key: 'estado', type: 'state' },
+        { label: 'Plantas', key: 'plantCount', type: 'number' }
       ]);
     }
 
@@ -527,16 +527,16 @@ async function loadTables(filters) {
       const refCommunities = await refCommunitiesRes.json();
       if (Array.isArray(refCommunities)) {
         drawTable('table-ref-communities', refCommunities, [
-          { label: 'Título', key: 'titulo' },
-          { label: 'Ano', key: 'ano', align: 'center' },
-          { label: 'Comunidades', key: 'communityCount', align: 'center' }
+          { label: 'Título', key: 'titulo', type: 'text' },
+          { label: 'Ano', key: 'ano', type: 'year' },
+          { label: 'Comunidades', key: 'communityCount', type: 'number' }
         ]);
       } else {
         console.error('Invalid ref-communities data:', refCommunities);
         drawTable('table-ref-communities', [], [
-          { label: 'Título', key: 'titulo' },
-          { label: 'Ano', key: 'ano', align: 'center' },
-          { label: 'Comunidades', key: 'communityCount', align: 'center' }
+          { label: 'Título', key: 'titulo', type: 'text' },
+          { label: 'Ano', key: 'ano', type: 'year' },
+          { label: 'Comunidades', key: 'communityCount', type: 'number' }
         ]);
       }
     } else {
@@ -544,9 +544,9 @@ async function loadTables(filters) {
       const errorData = await refCommunitiesRes.json();
       console.error('Error details:', errorData);
       drawTable('table-ref-communities', [], [
-        { label: 'Título', key: 'titulo' },
-        { label: 'Ano', key: 'ano', align: 'center' },
-        { label: 'Comunidades', key: 'communityCount', align: 'center' }
+        { label: 'Título', key: 'titulo', type: 'text' },
+        { label: 'Ano', key: 'ano', type: 'year' },
+        { label: 'Comunidades', key: 'communityCount', type: 'number' }
       ]);
     }
 
@@ -558,16 +558,16 @@ async function loadTables(filters) {
       const refPlants = await refPlantsRes.json();
       if (Array.isArray(refPlants)) {
         drawTable('table-ref-plants', refPlants, [
-          { label: 'Título', key: 'titulo' },
-          { label: 'Ano', key: 'ano', align: 'center' },
-          { label: 'Plantas', key: 'plantCount', align: 'center' }
+          { label: 'Título', key: 'titulo', type: 'text' },
+          { label: 'Ano', key: 'ano', type: 'year' },
+          { label: 'Plantas', key: 'plantCount', type: 'number' }
         ]);
       } else {
         console.error('Invalid ref-plants data:', refPlants);
         drawTable('table-ref-plants', [], [
-          { label: 'Título', key: 'titulo' },
-          { label: 'Ano', key: 'ano', align: 'center' },
-          { label: 'Plantas', key: 'plantCount', align: 'center' }
+          { label: 'Título', key: 'titulo', type: 'text' },
+          { label: 'Ano', key: 'ano', type: 'year' },
+          { label: 'Plantas', key: 'plantCount', type: 'number' }
         ]);
       }
     } else {
@@ -575,38 +575,39 @@ async function loadTables(filters) {
       const errorData = await refPlantsRes.json();
       console.error('Error details:', errorData);
       drawTable('table-ref-plants', [], [
-        { label: 'Título', key: 'titulo' },
-        { label: 'Ano', key: 'ano', align: 'center' },
-        { label: 'Plantas', key: 'plantCount', align: 'center' }
+        { label: 'Título', key: 'titulo', type: 'text' },
+        { label: 'Ano', key: 'ano', type: 'year' },
+        { label: 'Plantas', key: 'plantCount', type: 'number' }
       ]);
     }
 
   } catch (error) {
     console.error('Error loading tables:', error);
     drawTable('table-authors', [], [
-      { label: 'Autor', key: 'author' },
-      { label: 'Publicações', key: 'count', align: 'center' }
+      { label: 'Autor', key: 'author', type: 'text' },
+      { label: 'Publicações', key: 'count', type: 'number' }
     ]);
     drawTable('table-communities', [], [
-      { label: 'Comunidade', key: 'community' },
-      { label: 'Estado', key: 'estado', align: 'center' },
-      { label: 'Plantas', key: 'plantCount', align: 'center' }
+      { label: 'Comunidade', key: 'community', type: 'text' },
+      { label: 'Estado', key: 'estado', type: 'state' },
+      { label: 'Plantas', key: 'plantCount', type: 'number' }
     ]);
     drawTable('table-ref-communities', [], [
-      { label: 'Título', key: 'titulo' },
-      { label: 'Ano', key: 'ano', align: 'center' },
-      { label: 'Comunidades', key: 'communityCount', align: 'center' }
+      { label: 'Título', key: 'titulo', type: 'text' },
+      { label: 'Ano', key: 'ano', type: 'year' },
+      { label: 'Comunidades', key: 'communityCount', type: 'number' }
     ]);
     drawTable('table-ref-plants', [], [
-      { label: 'Título', key: 'titulo' },
-      { label: 'Ano', key: 'ano', align: 'center' },
-      { label: 'Plantas', key: 'plantCount', align: 'center' }
+      { label: 'Título', key: 'titulo', type: 'text' },
+      { label: 'Ano', key: 'ano', type: 'year' },
+      { label: 'Plantas', key: 'plantCount', type: 'number' }
     ]);
   }
 }
 
 /**
  * Draw HTML table
+ * Column types: 'text', 'year', 'number', 'state'
  */
 function drawTable(elementId, data, columns) {
   const container = document.getElementById(elementId);
@@ -630,9 +631,10 @@ function drawTable(elementId, data, columns) {
   try {
     let html = '<table class="dashboard-table"><thead><tr>';
 
-    // Headers
+    // Headers with column type classes
     columns.forEach(col => {
-      html += `<th class="${col.align || 'left'}">${col.label}</th>`;
+      const colType = col.type || 'text';
+      html += `<th class="col-${colType}">${col.label}</th>`;
     });
     html += '</tr></thead><tbody>';
 
@@ -645,30 +647,22 @@ function drawTable(elementId, data, columns) {
       html += '<tr>';
       columns.forEach(col => {
         let value = row[col.key];
-        let cellClass = col.align || 'left';
+        const colType = col.type || 'text';
 
         // Handle null/undefined values
         if (value === null || value === undefined) {
           value = '-';
-        } else {
-          // Keep full titles - let CSS handle wrapping
-          // Don't truncate titles or authors
-
-          // Format numbers (but not years - they shouldn't have thousand separators)
-          if (typeof value === 'number') {
-            if (col.key === 'ano') {
-              // Years: no thousand separator
-              value = value.toString();
-            } else {
-              // Other numbers: use locale formatting
-              value = value.toLocaleString('pt-BR');
-            }
-            // Apply right alignment for numeric columns
-            cellClass = 'right';
+        } else if (typeof value === 'number') {
+          if (colType === 'year') {
+            // Years: no thousand separator
+            value = value.toString();
+          } else {
+            // Other numbers: use locale formatting
+            value = value.toLocaleString('pt-BR');
           }
         }
 
-        html += `<td class="${cellClass}">${value}</td>`;
+        html += `<td class="col-${colType}">${value}</td>`;
       });
       html += '</tr>';
     });
