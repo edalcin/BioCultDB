@@ -100,8 +100,8 @@
                     <% } %>
                   </a>
                 </th>
-                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                  <a href="?status=<%= statusFilter %>&sort=ano&order=<%= sortField === 'ano' && sortOrder === 'asc' ? 'desc' : 'asc' %>" class="hover:text-forest-600 flex items-center gap-1">
+                <th class="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                  <a href="?status=<%= statusFilter %>&sort=ano&order=<%= sortField === 'ano' && sortOrder === 'asc' ? 'desc' : 'asc' %>" class="hover:text-forest-600 flex items-center justify-end gap-1">
                     Ano
                     <% if (sortField === 'ano') { %>
                       <span><%= sortOrder === 'asc' ? '↑' : '↓' %></span>
@@ -142,8 +142,8 @@
                       <%= reference.autores.join(', ') %>
                     </p>
                   </td>
-                  <td class="px-4 py-3">
-                    <p class="text-sm text-gray-700">
+                  <td class="px-4 py-3 text-right">
+                    <p class="text-sm text-gray-700 font-mono">
                       <%= reference.ano %>
                     </p>
                   </td>

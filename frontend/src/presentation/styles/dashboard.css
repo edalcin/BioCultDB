@@ -37,7 +37,7 @@
 }
 
 .dashboard-table th.col-year {
-  @apply text-center;
+  @apply text-right;
   width: 60px;
   min-width: 60px;
 }
@@ -73,7 +73,7 @@
 }
 
 .dashboard-table td.col-year {
-  @apply text-center font-mono text-gray-600;
+  @apply text-right font-mono text-gray-600;
   white-space: nowrap;
 }
 
