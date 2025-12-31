@@ -164,6 +164,30 @@ A documentação técnica completa está disponível em:
 
 ## Workflow Completo
 
+```mermaid
+flowchart TD
+    A[Pesquisador] -->|Acessa porta 3001| B[Interface de Aquisição]
+    B -->|Insere referência + comunidades + plantas| C[MongoDB]
+    C -->|Status: pending| D[Dados Pendentes]
+
+    E[Curador] -->|Acessa porta 3002| F[Interface de Curadoria]
+    F -->|Lista referências pendentes| D
+    F -->|Revisa e edita| D
+    F -->|Aprova| G[Dados Aprovados]
+    G -->|Status: approved| C
+
+    H[Público] -->|Acessa porta 3003| I[Interface de Apresentação]
+    I -->|Busca e visualiza| G
+    I -->|Retorna resultados| H
+
+    style B fill:#e1f5ff
+    style F fill:#fff4e1
+    style I fill:#e8f5e9
+    style C fill:#f3e5f5
+```
+
+**Passos do workflow:**
+
 1. **Pesquisador** acessa interface de **Aquisição** (porta 3001)
 2. Insere dados da referência científica com comunidades e plantas
 3. Dados salvos com status `pending`
@@ -188,8 +212,18 @@ A documentação técnica completa está disponível em:
 - Exportação de dados (CSV, JSON)
 - API REST para integrações externas
 - Integração com APIs de periódicos científicos
-- Dashboard
-- "etnoChat" - Uso de inteligência artificial para interagir com o banco de dados
+- Dashboard Analítico - Interface visual interativa para exploração dos dados
+- "etnoChat" -  Interface Conversacional (via MCP) usando assistente de IA para interagir com o banco de dados
+
+## Projetos Relacionados
+
+O etnoDB faz parte de um ecossistema integrado de ferramentas para gestão de dados etnobotânicos:
+
+### [etnoArquitetura](https://github.com/edalcin/etnoArquitetura)
+Projeto principal que define a arquitetura de referência para sistemas etnobotânicos. Estabelece os três contextos fundamentais (Aquisição, Curadoria, Apresentação) e os padrões de design implementados no etnoDB.
+
+### [etnopapers](https://github.com/edalcin/etnopapers)
+Sistema de aquisição automatizada de dados secundários com auxílio de Inteligência Artificial. Permite a extração e inclusão de novos registros na base de dados do etnoDB a partir de artigos científicos de forma assistida por IA, agilizando o processo de entrada de dados.
 
 ## Contribuições
 
