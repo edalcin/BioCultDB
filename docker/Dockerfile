@@ -52,6 +52,10 @@ RUN npm ci --omit=dev
 COPY backend ./backend
 COPY --from=builder /app/frontend/dist ./frontend/dist
 
+# Copy frontend presentation styles and scripts (not compiled by Tailwind)
+COPY frontend/src/presentation/styles ./frontend/src/presentation/styles
+COPY frontend/src/presentation/scripts ./frontend/src/presentation/scripts
+
 # Create non-root user for security
 RUN addgroup -g 1001 -S nodejs && \
     adduser -S nodejs -u 1001 && \
