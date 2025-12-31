@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= pageTitle %> - etnoDB</title>
+  <link rel="stylesheet" href="/styles/main.css">
+</head>
+<body class="min-h-screen bg-gray-50">
+
+  <!-- Header -->
+  <header class="bg-forest-700 text-white shadow-lg">
+    <div class="container mx-auto px-4 py-4">
+      <div class="flex items-center gap-4">
+        <img src="/images/logo.png" alt="etnoDB Logo" class="h-16 w-16">
+        <div>
+          <h1 class="text-2xl font-bold"><%= contextName %></h1>
+          <p class="text-forest-100 text-sm"><%= contextDescription %></p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Navigation Menu -->
+  <nav class="bg-forest-600 text-white border-b border-forest-800">
+    <div class="container mx-auto px-4">
+      <ul class="flex gap-0">
+        <li>
+          <a href="/" class="block px-6 py-3 hover:bg-forest-700 transition-colors border-b-2 border-transparent hover:border-forest-300">
+            Busca
+          </a>
+        </li>
+        <li>
+          <a href="/painel" class="block px-6 py-3 hover:bg-forest-700 transition-colors border-b-2 <%= featureName === 'Painel' ? 'border-forest-400 font-medium' : 'border-transparent hover:border-forest-300' %>">
+            Painel
+          </a>
+        </li>
+        <li>
+          <a href="/etnochat" class="block px-6 py-3 hover:bg-forest-700 transition-colors border-b-2 <%= featureName === 'etnoChat' ? 'border-forest-400 font-medium' : 'border-transparent hover:border-forest-300' %>">
+            etnoChat
+          </a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="container mx-auto px-4 py-8">
+    <div class="max-w-2xl mx-auto text-center py-16">
+      <!-- Construction Icon -->
+      <div class="mb-8">
+        <svg class="w-32 h-32 mx-auto text-forest-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
+        </svg>
+      </div>
+
+      <h2 class="text-3xl font-bold text-gray-900 mb-4">Em Construção</h2>
+
+      <p class="text-lg text-gray-600 mb-8">
+        A funcionalidade <strong><%= featureName %></strong> está sendo desenvolvida e estará disponível em breve.
+      </p>
+
+      <div class="bg-forest-50 border border-forest-200 rounded-lg p-6 mb-8">
+        <h3 class="text-lg font-semibold text-forest-900 mb-2">O que esperar:</h3>
+        <% if (featureName === 'Painel') { %>
+          <ul class="text-left text-gray-700 space-y-2">
+            <li class="flex items-start gap-2">
+              <svg class="w-5 h-5 text-forest-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+              </svg>
+              <span>Visualização de estatísticas sobre comunidades e plantas cadastradas</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <svg class="w-5 h-5 text-forest-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+              </svg>
+              <span>Gráficos interativos de distribuição geográfica</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <svg class="w-5 h-5 text-forest-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+              </svg>
+              <span>Métricas sobre tipos de uso de plantas</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <svg class="w-5 h-5 text-forest-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+              </svg>
+              <span>Análises de crescimento da base de dados</span>
+            </li>
+          </ul>
+        <% } else if (featureName === 'etnoChat') { %>
+          <ul class="text-left text-gray-700 space-y-2">
+            <li class="flex items-start gap-2">
+              <svg class="w-5 h-5 text-forest-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+              </svg>
+              <span>Interface de conversação com IA sobre dados etnobotânicos</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <svg class="w-5 h-5 text-forest-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+              </svg>
+              <span>Perguntas em linguagem natural sobre comunidades e plantas</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <svg class="w-5 h-5 text-forest-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+              </svg>
+              <span>Sugestões de buscas e relacionamentos entre dados</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <svg class="w-5 h-5 text-forest-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+              </svg>
+              <span>Explicações contextualizadas sobre os dados</span>
+            </li>
+          </ul>
+        <% } %>
+      </div>
+
+      <a href="/" class="inline-block bg-forest-600 text-white px-6 py-3 rounded-lg hover:bg-forest-700 transition-colors font-medium">
+        Voltar para Busca
+      </a>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-white py-6 mt-12">
+    <div class="container mx-auto px-4 text-center">
+      <p class="text-sm">etnoDB - Base de Dados Etnobotânica</p>
+      <p class="text-xs text-gray-400 mt-1">Eduardo Dalcin - 2025/2026</p>
+      <p class="text-xs text-gray-400">
+        <a href="https://github.com/edalcin/etnoDB" target="_blank" class="hover:text-forest-300">https://github.com/edalcin/etnoDB</a>
+      </p>
+    </div>
+  </footer>
+
+</body>
+</html>

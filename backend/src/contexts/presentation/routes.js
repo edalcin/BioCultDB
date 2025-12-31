@@ -232,4 +232,28 @@ function sanitizeRegex(str) {
   return str.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
+/**
+ * GET /painel - Dashboard page (under construction)
+ */
+router.get('/painel', (req, res) => {
+  res.render('under-construction', {
+    pageTitle: 'Painel',
+    contextName: 'Painel de Controle',
+    contextDescription: 'Visualize estatísticas e métricas dos dados etnobotânicos',
+    featureName: 'Painel'
+  });
+});
+
+/**
+ * GET /etnochat - AI Chat interface (under construction)
+ */
+router.get('/etnochat', (req, res) => {
+  res.render('under-construction', {
+    pageTitle: 'etnoChat',
+    contextName: 'etnoChat',
+    contextDescription: 'Converse com a IA sobre dados etnobotânicos',
+    featureName: 'etnoChat'
+  });
+});
+
 module.exports = router;

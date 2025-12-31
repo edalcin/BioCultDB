@@ -22,6 +22,29 @@
     </div>
   </header>
 
+  <!-- Navigation Menu -->
+  <nav class="bg-forest-600 text-white border-b border-forest-800">
+    <div class="container mx-auto px-4">
+      <ul class="flex gap-0">
+        <li>
+          <a href="/" class="block px-6 py-3 hover:bg-forest-700 transition-colors border-b-2 border-forest-400 font-medium">
+            Busca
+          </a>
+        </li>
+        <li>
+          <a href="/painel" class="block px-6 py-3 hover:bg-forest-700 transition-colors border-b-2 border-transparent hover:border-forest-300">
+            Painel
+          </a>
+        </li>
+        <li>
+          <a href="/etnochat" class="block px-6 py-3 hover:bg-forest-700 transition-colors border-b-2 border-transparent hover:border-forest-300">
+            etnoChat
+          </a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
   <!-- Main Content -->
   <main class="container mx-auto px-4 py-8">
 
@@ -194,6 +217,24 @@
         </p>
       <% } %>
     </div>
+
+    <!-- Expand/Collapse All Controls -->
+    <% if (results.length > 0) { %>
+      <div class="mb-4 flex justify-end gap-2" x-data>
+        <button
+          @click="$dispatch('expand-all')"
+          class="text-sm px-3 py-1.5 bg-forest-600 text-white rounded hover:bg-forest-700 transition-colors"
+        >
+          Expandir Tudo
+        </button>
+        <button
+          @click="$dispatch('collapse-all')"
+          class="text-sm px-3 py-1.5 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors"
+        >
+          Colapsar Tudo
+        </button>
+      </div>
+    <% } %>
 
     <!-- Results Grid -->
     <% if (results.length > 0) { %>

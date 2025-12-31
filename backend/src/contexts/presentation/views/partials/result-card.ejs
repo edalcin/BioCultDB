@@ -1,4 +1,4 @@
-<article class="result-card" x-data="{ expanded: false }">
+<article class="result-card" x-data="{ expanded: false }" @expand-all.window="expanded = true" @collapse-all.window="expanded = false">
   <!-- Reference Header - Clickable -->
   <header
     class="border-b border-gray-200 pb-3 mb-3 cursor-pointer hover:bg-gray-50 -m-4 p-4 rounded-t-lg transition-colors"
@@ -90,7 +90,11 @@
               <div class="flex-1">
                 <p class="font-medium text-gray-900"><%= comunidade.nome %></p>
                 <p class="text-sm text-gray-600">
-                  <%= comunidade.municipio %>, <%= comunidade.estado %>
+                  <% if (comunidade.municipio && comunidade.municipio.trim()) { %>
+                    <%= comunidade.municipio %>, <%= comunidade.estado %>
+                  <% } else { %>
+                    <%= comunidade.estado %>
+                  <% } %>
                 </p>
               </div>
 
