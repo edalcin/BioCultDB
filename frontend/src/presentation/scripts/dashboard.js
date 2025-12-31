@@ -16,21 +16,32 @@ google.charts.setOnLoadCallback(loadDashboardData);
 async function loadDashboardData() {
   const filters = getFilters();
 
-  console.debug('Dashboard filters:', filters);
-  console.debug('Loading dashboard data...');
+  console.log('=== Dashboard Load Start ===');
+  console.log('Dashboard filters:', filters);
+  console.log('Loading dashboard data...');
 
   try {
-    // Load all stats in parallel
-    await Promise.all([
-      loadSummaryCards(filters),
-      loadMaps(filters),
-      loadCharts(filters),
-      loadTables(filters)
-    ]);
+    console.log('Loading summary cards...');
+    await loadSummaryCards(filters);
+    console.log('✓ Summary cards loaded');
 
-    console.debug('Dashboard data loaded successfully');
+    console.log('Loading maps...');
+    await loadMaps(filters);
+    console.log('✓ Maps loaded');
+
+    console.log('Loading charts...');
+    await loadCharts(filters);
+    console.log('✓ Charts loaded');
+
+    console.log('Loading tables...');
+    await loadTables(filters);
+    console.log('✓ Tables loaded');
+
+    console.log('=== Dashboard Load Complete ===');
   } catch (error) {
+    console.error('=== Dashboard Load Error ===');
     console.error('Error loading dashboard data:', error);
+    console.error('Stack:', error.stack);
     showError('Erro ao carregar dados do painel');
   }
 }
@@ -600,43 +611,72 @@ async function loadTables(filters) {
 function drawTable(elementId, data, columns) {
   const container = document.getElementById(elementId);
 
-  if (data.length === 0) {
-    container.innerHTML = '<p class="text-gray-500 text-sm text-center py-4">Nenhum dado disponível</p>';
+  if (!container) {
+    console.error(`Container not found: ${elementId}`);
     return;
   }
 
-  let html = '<table class="dashboard-table"><thead><tr>';
+  if (!data || !Array.isArray(data) || data.length === 0) {
+    container.innerHTML = '<div class="text-center text-gray-400 py-8">Nenhum dado disponível</div>';
+    return;
+  }
 
-  // Headers
-  columns.forEach(col => {
-    html += `<th class="${col.align || 'left'}">${col.label}</th>`;
-  });
-  html += '</tr></thead><tbody>';
+  if (!columns || columns.length === 0) {
+    console.error(`No columns provided for ${elementId}`);
+    container.innerHTML = '<div class="text-center text-red-400 py-8">Erro: Colunas não configuradas</div>';
+    return;
+  }
 
-  // Rows
-  data.forEach((row, index) => {
-    html += '<tr>';
+  try {
+    let html = '<table class="dashboard-table"><thead><tr>';
+
+    // Headers
     columns.forEach(col => {
-      let value = row[col.key];
-
-      // Truncate long titles
-      if (col.key === 'titulo' && typeof value === 'string' && value.length > 50) {
-        value = value.substring(0, 47) + '...';
-      }
-
-      // Truncate long author names
-      if (col.key === 'author' && typeof value === 'string' && value.length > 40) {
-        value = value.substring(0, 37) + '...';
-      }
-
-      const displayValue = typeof value === 'number' ? value.toLocaleString('pt-BR') : value;
-      html += `<td class="${col.align || 'left'}">${displayValue}</td>`;
+      html += `<th class="${col.align || 'left'}">${col.label}</th>`;
     });
-    html += '</tr>';
-  });
+    html += '</tr></thead><tbody>';
 
-  html += '</tbody></table>';
-  container.innerHTML = html;
+    // Rows
+    data.forEach((row, index) => {
+      if (!row || typeof row !== 'object') {
+        return;
+      }
+
+      html += '<tr>';
+      columns.forEach(col => {
+        let value = row[col.key];
+
+        // Handle null/undefined values
+        if (value === null || value === undefined) {
+          value = '-';
+        } else {
+          // Truncate long titles
+          if (col.key === 'titulo' && typeof value === 'string' && value.length > 50) {
+            value = value.substring(0, 47) + '...';
+          }
+
+          // Truncate long author names
+          if (col.key === 'author' && typeof value === 'string' && value.length > 40) {
+            value = value.substring(0, 37) + '...';
+          }
+
+          // Format numbers
+          if (typeof value === 'number') {
+            value = value.toLocaleString('pt-BR');
+          }
+        }
+
+        html += `<td class="${col.align || 'left'}">${value}</td>`;
+      });
+      html += '</tr>';
+    });
+
+    html += '</tbody></table>';
+    container.innerHTML = html;
+  } catch (error) {
+    console.error(`Error drawing table for ${elementId}:`, error);
+    container.innerHTML = '<div class="text-center text-red-400 py-8">Erro ao renderizar tabela</div>';
+  }
 }
 
 /**

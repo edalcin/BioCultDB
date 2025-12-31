@@ -30,15 +30,15 @@ const database = require('../../shared/database');
  */
 router.get('/health', async (req, res) => {
   try {
-    const collection = database.getCollection('etnodb');
+    const collection = database.getCollection(config.database.collection);
 
     const stats = {
       status: 'ok',
       timestamp: new Date().toISOString(),
       database: {
         connected: true,
-        name: 'etnodb',
-        collection: 'etnodb'
+        name: config.database.name,
+        collection: config.database.collection
       },
       references: {
         total: await collection.countDocuments(),
