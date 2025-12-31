@@ -219,6 +219,56 @@ async function getReferenceCountByStatus(filters = {}) {
 }
 
 /**
+ * Validate if author name is complete and valid
+ * Valid authors must have:
+ * - At least one word with 3+ letters (surname)
+ * - Format like "SURNAME, N." or "SURNAME, Name" (comma + initial/name)
+ * Invalid patterns:
+ * - Only initials like "A., P." or "A. P."
+ * - Single word without initial like "MOREIRA"
+ * @param {string} author - Author name to validate
+ * @returns {boolean} True if valid
+ */
+function isValidAuthor(author) {
+  if (!author || typeof author !== 'string') return false;
+
+  const trimmed = author.trim();
+
+  // Too short to be valid
+  if (trimmed.length < 4) return false;
+
+  // Check if it's only initials (e.g., "A., P." or "A. P." or "A.,P.")
+  // Pattern: only single letters followed by dots, commas, or spaces
+  const onlyInitialsPattern = /^([A-ZÀ-Ú]\s*[.,]\s*)+$/i;
+  if (onlyInitialsPattern.test(trimmed)) return false;
+
+  // Check if it's a single word without any initial (e.g., "MOREIRA")
+  // Valid format should have comma followed by initial/name
+  const hasCommaWithContent = /,\s*[A-ZÀ-Ú]/i.test(trimmed);
+  const hasSurnameWithInitial = /^[A-ZÀ-Ú][a-zà-ú]*[A-ZÀ-Ú]*[a-zà-ú]+.*,/i.test(trimmed);
+
+  // If no comma, it might be invalid (just a surname)
+  if (!trimmed.includes(',')) {
+    // Allow "Name Surname" format (at least 2 words, first with 2+ chars)
+    const words = trimmed.split(/\s+/);
+    if (words.length < 2) return false;
+    // First word should be at least 2 characters (not just initial)
+    if (words[0].replace(/[.,]/g, '').length < 2) return false;
+  } else {
+    // Has comma - check if it has proper surname before comma
+    const beforeComma = trimmed.split(',')[0].trim();
+    // Surname should have at least 3 letters
+    if (beforeComma.replace(/[^a-zA-ZÀ-Úà-ú]/g, '').length < 3) return false;
+
+    // After comma should have at least one letter (initial or name)
+    const afterComma = trimmed.split(',')[1];
+    if (!afterComma || !/[A-ZÀ-Úa-zà-ú]/.test(afterComma)) return false;
+  }
+
+  return true;
+}
+
+/**
  * Get top authors by number of publications
  * @param {number} limit - Number of results
  * @param {Object} filters - Query filters
@@ -252,8 +302,12 @@ async function getTopAuthors(limit = 10, filters = {}) {
 
       { $unwind: '$autores' },
 
-      // Filtrar autores incompletos/apenas iniciais (menos de 4 caracteres geralmente são incompletos)
-      { $match: { 'autores': { $regex: '^.{4,}' } } },
+      // Basic filter: at least 4 characters and must contain comma (SURNAME, Initial format)
+      { $match: {
+        'autores': {
+          $regex: '^.{4,}$',  // At least 4 chars
+        }
+      }},
 
       {
         $group: {
@@ -264,7 +318,9 @@ async function getTopAuthors(limit = 10, filters = {}) {
       },
 
       { $sort: { count: -1 } },
-      { $limit: limit },
+
+      // Get more results to filter afterwards
+      { $limit: limit * 3 },
 
       {
         $project: {
@@ -277,9 +333,15 @@ async function getTopAuthors(limit = 10, filters = {}) {
     ];
 
     const result = await collection.aggregate(pipeline).toArray();
-    logger.database(`Top authors query returned ${result.length} results`);
 
-    return result;
+    // Apply strict validation filter and limit
+    const validAuthors = result
+      .filter(item => isValidAuthor(item.author))
+      .slice(0, limit);
+
+    logger.database(`Top authors query returned ${validAuthors.length} valid results (from ${result.length} raw)`);
+
+    return validAuthors;
   } catch (error) {
     logger.error('Top authors failed:', error.message);
     throw error;

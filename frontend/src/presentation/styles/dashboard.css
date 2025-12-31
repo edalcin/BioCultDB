@@ -17,103 +17,121 @@
 
 /* Dashboard Tables */
 .dashboard-table {
-  @apply w-full text-sm;
-  table-layout: auto;
+  width: 100%;
+  font-size: 0.875rem;
+  table-layout: fixed;
   border-collapse: collapse;
 }
 
 .dashboard-table thead {
-  @apply bg-gray-50 border-b-2 border-gray-200;
+  background-color: #f9fafb;
+  border-bottom: 2px solid #e5e7eb;
 }
 
 .dashboard-table th {
-  @apply py-3 px-3 text-left font-semibold text-gray-700 uppercase text-xs tracking-wider;
+  padding: 0.75rem 0.5rem;
+  font-weight: 600;
+  color: #374151;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
   white-space: nowrap;
 }
 
 .dashboard-table th.col-text {
-  @apply text-left;
+  text-align: left;
   width: auto;
 }
 
 .dashboard-table th.col-year {
-  @apply text-right;
-  width: 60px;
-  min-width: 60px;
+  text-align: right !important;
+  width: 55px;
+  min-width: 55px;
+  padding-right: 0.75rem;
 }
 
 .dashboard-table th.col-number {
-  @apply text-right;
-  width: 80px;
-  min-width: 70px;
+  text-align: right !important;
+  width: 70px;
+  min-width: 60px;
+  padding-right: 0.75rem;
 }
 
 .dashboard-table th.col-state {
-  @apply text-left;
-  width: 120px;
-  min-width: 100px;
+  text-align: left;
+  width: 110px;
+  min-width: 90px;
 }
 
 .dashboard-table tbody tr {
-  @apply border-b border-gray-200;
+  border-bottom: 1px solid #e5e7eb;
 }
 
 .dashboard-table tbody tr:last-child {
-  @apply border-b-0;
+  border-bottom: none;
 }
 
 .dashboard-table td {
-  @apply py-2.5 px-3 text-gray-900;
+  padding: 0.5rem;
+  color: #111827;
+  vertical-align: top;
 }
 
 .dashboard-table td.col-text {
-  @apply text-left;
+  text-align: left;
   word-wrap: break-word;
   overflow-wrap: break-word;
 }
 
 .dashboard-table td.col-year {
-  @apply text-right font-mono text-gray-600;
+  text-align: right !important;
+  font-family: ui-monospace, monospace;
+  color: #4b5563;
   white-space: nowrap;
+  padding-right: 0.75rem;
 }
 
 .dashboard-table td.col-number {
-  @apply text-right font-semibold tabular-nums;
+  text-align: right !important;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
   white-space: nowrap;
+  padding-right: 0.75rem;
 }
 
 .dashboard-table td.col-state {
-  @apply text-left text-gray-600;
+  text-align: left;
+  color: #4b5563;
   white-space: nowrap;
 }
 
 /* Responsive tables */
 @media (max-width: 640px) {
   .dashboard-table {
-    @apply text-xs;
+    font-size: 0.75rem;
   }
 
   .dashboard-table th,
   .dashboard-table td {
-    @apply px-2 py-2;
+    padding: 0.375rem;
   }
 
   .dashboard-table th.col-year,
   .dashboard-table td.col-year {
-    width: 50px;
-    min-width: 50px;
+    width: 45px;
+    min-width: 45px;
   }
 
   .dashboard-table th.col-number,
   .dashboard-table td.col-number {
-    width: 60px;
-    min-width: 50px;
+    width: 50px;
+    min-width: 45px;
   }
 
   .dashboard-table th.col-state,
   .dashboard-table td.col-state {
-    width: 80px;
-    min-width: 70px;
+    width: 70px;
+    min-width: 60px;
   }
 }
 
