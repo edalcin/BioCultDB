@@ -252,6 +252,9 @@ async function getTopAuthors(limit = 10, filters = {}) {
 
       { $unwind: '$autores' },
 
+      // Filtrar autores incompletos/apenas iniciais (menos de 4 caracteres geralmente são incompletos)
+      { $match: { 'autores': { $regex: '^.{4,}' } } },
+
       {
         $group: {
           _id: '$autores',
