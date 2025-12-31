@@ -3,40 +3,27 @@
  * Card-based layout for search results with responsive grid
  */
 
-/* Results Grid - Responsive breakpoints */
+/* Results Grid - Collapsible Lines */
 .results-grid {
-  display: grid;
-  grid-template-columns: repeat(1, 1fr);
-  gap: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
   margin-bottom: 2rem;
 }
 
-@media (min-width: 768px) {
-  .results-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (min-width: 1280px) {
-  .results-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-@media (min-width: 1920px) {
-  .results-grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
-
-/* Result Card */
+/* Result Card - Collapsible Line Style */
 .result-card {
-  @apply bg-white rounded-lg shadow-md p-5 hover:shadow-lg transition-shadow duration-200;
-  border: 1px solid #e5e7eb;
+  @apply bg-white border-b border-gray-200 transition-all duration-200;
+  border-left: 4px solid transparent;
 }
 
 .result-card:hover {
-  border-color: #16a34a;
+  border-left-color: #16a34a;
+  background-color: #f9fafb;
+}
+
+.result-card:last-child {
+  border-bottom: none;
 }
 
 /* Text Truncation */
@@ -87,10 +74,6 @@
 
 /* Responsive text sizing */
 @media (max-width: 640px) {
-  .result-card {
-    @apply p-4;
-  }
-
   .result-card h3 {
     @apply text-base;
   }
