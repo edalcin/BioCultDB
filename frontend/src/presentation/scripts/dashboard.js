@@ -417,11 +417,8 @@ function drawBarChart(elementId, data) {
     const chartData = [['Planta', 'Citações']];
     data.forEach(item => {
       if (item && item.nomeCientifico && item.count !== undefined) {
-        // Truncate long names
-        const name = item.nomeCientifico.length > 30
-          ? item.nomeCientifico.substring(0, 27) + '...'
-          : item.nomeCientifico;
-        chartData.push([name, item.count]);
+        // Use full scientific name without truncation
+        chartData.push([item.nomeCientifico, item.count]);
       }
     });
 
@@ -434,15 +431,27 @@ function drawBarChart(elementId, data) {
 
     const options = {
       title: '',
-      hAxis: { title: 'Número de Citações', minValue: 0, titleTextStyle: { fontSize: 12 } },
-      vAxis: { title: '', titleTextStyle: { fontSize: 12 } },
+      hAxis: {
+        title: 'Número de Citações',
+        minValue: 0,
+        titleTextStyle: { fontSize: 11 }
+      },
+      vAxis: {
+        title: '',
+        textStyle: {
+          fontSize: 10,
+          italic: true
+        },
+        maxTextLines: 1
+      },
       legend: { position: 'none' },
       colors: ['#f59e0b'],
       backgroundColor: 'transparent',
-      chartArea: { width: '70%', height: '80%' },
-      fontSize: 11,
+      chartArea: { left: 150, width: '55%', height: '85%' },
+      fontSize: 10,
       fontName: 'system-ui',
-      bars: 'horizontal'
+      bars: 'horizontal',
+      bar: { groupWidth: '80%' }
     };
 
     const chart = new google.visualization.BarChart(container);

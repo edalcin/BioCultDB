@@ -4,15 +4,35 @@
 
 /* Dashboard Cards (Summary Stats) */
 .dashboard-card {
-  @apply rounded-lg shadow-lg p-6 relative overflow-hidden;
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  padding: 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
-.dashboard-card-icon {
-  @apply absolute top-4 right-4 opacity-20;
+.dashboard-card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  opacity: 0.95;
 }
 
-.dashboard-card-content {
-  @apply relative z-10;
+.dashboard-card-header svg {
+  flex-shrink: 0;
+}
+
+.dashboard-card-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.dashboard-card-value {
+  font-size: 2.25rem;
+  font-weight: 700;
+  text-align: center;
+  line-height: 1.2;
 }
 
 /* Dashboard Tables */
@@ -155,23 +175,23 @@
 /* Grid responsive adjustments */
 @media (max-width: 768px) {
   .dashboard-card {
-    @apply p-4;
+    padding: 0.875rem 1rem;
   }
 
-  .dashboard-card-content .text-3xl {
-    @apply text-2xl;
+  .dashboard-card-value {
+    font-size: 1.875rem;
   }
 }
 
 /* Print styles */
 @media print {
   .dashboard-card {
-    @apply break-inside-avoid;
+    break-inside: avoid;
   }
 
   nav,
   #filter-form,
   footer {
-    @apply hidden;
+    display: none;
   }
 }
