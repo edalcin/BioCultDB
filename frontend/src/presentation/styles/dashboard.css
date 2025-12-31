@@ -25,15 +25,19 @@
 }
 
 .dashboard-table th {
-  @apply px-4 py-3 text-left font-semibold text-gray-700 uppercase text-xs tracking-wider;
+  @apply py-3 text-left font-semibold text-gray-700 uppercase text-xs tracking-wider;
 }
 
 .dashboard-table th:first-child {
-  @apply px-4;
+  @apply px-4 text-left;
+}
+
+.dashboard-table th:not(:first-child) {
+  @apply px-6;
 }
 
 .dashboard-table th:last-child {
-  @apply px-8 text-right;
+  @apply text-right;
 }
 
 .dashboard-table th.center {
@@ -54,14 +58,17 @@
 
 .dashboard-table td {
   @apply py-3 text-gray-900;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .dashboard-table td:first-child {
   @apply px-4 text-left;
 }
 
-.dashboard-table td:last-child {
-  @apply px-8 text-right font-mono;
+.dashboard-table td:not(:first-child) {
+  @apply px-6;
 }
 
 .dashboard-table td.center {
@@ -69,7 +76,7 @@
 }
 
 .dashboard-table td.right {
-  @apply text-right font-mono px-8;
+  @apply text-right font-mono px-6;
 }
 
 .dashboard-table td.left {

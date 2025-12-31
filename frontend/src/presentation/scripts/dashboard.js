@@ -645,28 +645,30 @@ function drawTable(elementId, data, columns) {
       html += '<tr>';
       columns.forEach(col => {
         let value = row[col.key];
+        let cellClass = col.align || 'left';
 
         // Handle null/undefined values
         if (value === null || value === undefined) {
           value = '-';
         } else {
-          // Truncate long titles
-          if (col.key === 'titulo' && typeof value === 'string' && value.length > 50) {
-            value = value.substring(0, 47) + '...';
-          }
+          // Keep full titles - let CSS handle wrapping
+          // Don't truncate titles or authors
 
-          // Truncate long author names
-          if (col.key === 'author' && typeof value === 'string' && value.length > 40) {
-            value = value.substring(0, 37) + '...';
-          }
-
-          // Format numbers
+          // Format numbers (but not years - they shouldn't have thousand separators)
           if (typeof value === 'number') {
-            value = value.toLocaleString('pt-BR');
+            if (col.key === 'ano') {
+              // Years: no thousand separator
+              value = value.toString();
+            } else {
+              // Other numbers: use locale formatting
+              value = value.toLocaleString('pt-BR');
+            }
+            // Apply right alignment for numeric columns
+            cellClass = 'right';
           }
         }
 
-        html += `<td class="${col.align || 'left'}">${value}</td>`;
+        html += `<td class="${cellClass}">${value}</td>`;
       });
       html += '</tr>';
     });
