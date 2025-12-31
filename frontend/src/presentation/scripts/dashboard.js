@@ -189,29 +189,29 @@ async function loadMaps(filters) {
       drawGeoChart('map-references', [], 'Referências');
     }
 
-    // Communities by state
-    const communitiesUrl = `/painel/api/stats/communities-by-state?${queryString}`;
-    console.debug('Fetching:', communitiesUrl);
-    const communitiesRes = await fetch(communitiesUrl);
-    if (communitiesRes.ok) {
-      const communitiesByState = await communitiesRes.json();
-      if (Array.isArray(communitiesByState)) {
-        drawGeoChart('map-communities', communitiesByState, 'Comunidades');
+    // Plants by state
+    const plantsUrl = `/painel/api/stats/plants-by-state?${queryString}`;
+    console.debug('Fetching:', plantsUrl);
+    const plantsRes = await fetch(plantsUrl);
+    if (plantsRes.ok) {
+      const plantsByState = await plantsRes.json();
+      if (Array.isArray(plantsByState)) {
+        drawGeoChart('map-plants', plantsByState, 'Plantas');
       } else {
-        console.error('Invalid communities by state data:', communitiesByState);
-        drawGeoChart('map-communities', [], 'Comunidades');
+        console.error('Invalid plants by state data:', plantsByState);
+        drawGeoChart('map-plants', [], 'Plantas');
       }
     } else {
-      console.error('Communities by state error:', communitiesRes.status, communitiesRes.statusText);
-      const errorData = await communitiesRes.json();
+      console.error('Plants by state error:', plantsRes.status, plantsRes.statusText);
+      const errorData = await plantsRes.json();
       console.error('Error details:', errorData);
-      drawGeoChart('map-communities', [], 'Comunidades');
+      drawGeoChart('map-plants', [], 'Plantas');
     }
 
   } catch (error) {
     console.error('Error loading maps:', error);
     drawGeoChart('map-references', [], 'Referências');
-    drawGeoChart('map-communities', [], 'Comunidades');
+    drawGeoChart('map-plants', [], 'Plantas');
   }
 }
 
@@ -417,8 +417,11 @@ function drawBarChart(elementId, data) {
     const chartData = [['Planta', 'Citações']];
     data.forEach(item => {
       if (item && item.nomeCientifico && item.count !== undefined) {
-        // Don't truncate names - let them display fully
-        chartData.push([item.nomeCientifico, item.count]);
+        // Truncate long names
+        const name = item.nomeCientifico.length > 30
+          ? item.nomeCientifico.substring(0, 27) + '...'
+          : item.nomeCientifico;
+        chartData.push([name, item.count]);
       }
     });
 
@@ -432,19 +435,14 @@ function drawBarChart(elementId, data) {
     const options = {
       title: '',
       hAxis: { title: 'Número de Citações', minValue: 0, titleTextStyle: { fontSize: 12 } },
-      vAxis: {
-        title: '',
-        titleTextStyle: { fontSize: 12 },
-        textStyle: { fontSize: 11 }
-      },
+      vAxis: { title: '', titleTextStyle: { fontSize: 12 } },
       legend: { position: 'none' },
       colors: ['#f59e0b'],
       backgroundColor: 'transparent',
-      chartArea: { width: '75%', height: '85%' },
+      chartArea: { width: '70%', height: '80%' },
       fontSize: 11,
       fontName: 'system-ui',
-      bars: 'horizontal',
-      tooltip: { isHtml: true }
+      bars: 'horizontal'
     };
 
     const chart = new google.visualization.BarChart(container);
@@ -647,17 +645,14 @@ function drawTable(elementId, data, columns) {
       html += '<tr>';
       columns.forEach(col => {
         let value = row[col.key];
-        let cellClass = col.align || 'left';
 
         // Handle null/undefined values
         if (value === null || value === undefined) {
           value = '-';
         } else {
-          // Allow long titles but preserve word breaks for better display
-          // Don't truncate - let CSS handle wrapping
-          if (col.key === 'titulo' && typeof value === 'string') {
-            // Keep the full title for proper wrapping in the table
-            value = value;
+          // Truncate long titles
+          if (col.key === 'titulo' && typeof value === 'string' && value.length > 50) {
+            value = value.substring(0, 47) + '...';
           }
 
           // Truncate long author names
@@ -665,21 +660,13 @@ function drawTable(elementId, data, columns) {
             value = value.substring(0, 37) + '...';
           }
 
-          // Format numbers (but not years)
+          // Format numbers
           if (typeof value === 'number') {
-            // Don't format year field with thousand separators
-            if (col.key !== 'ano') {
-              value = value.toLocaleString('pt-BR');
-            } else {
-              // Just convert to string for years
-              value = value.toString();
-            }
-            // Apply right alignment for numeric columns
-            cellClass = 'right';
+            value = value.toLocaleString('pt-BR');
           }
         }
 
-        html += `<td class="${cellClass}">${value}</td>`;
+        html += `<td class="${col.align || 'left'}">${value}</td>`;
       });
       html += '</tr>';
     });
