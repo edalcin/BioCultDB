@@ -54,6 +54,7 @@ Interface especializada para controle de qualidade com acesso restrito a pesquis
 - Listagem de referências com status (pendente/aprovada/rejeitada)
 - Edição de conteúdo (metadados, comunidades, plantas)
 - Workflow de aprovação implementando princípios C.A.R.E. (Collective Benefit, Authority to Control, Responsibility, Ethics)
+- **Justificativa de rejeição**: Campo obrigatório para documentar o motivo ao rejeitar uma referência, com exibição permanente do motivo e remoção automática ao alterar para outro status
 - Validação taxonômica (planejada para implementação futura)
 
 ### 3. **Apresentação** (Busca e Visualização) - Home Page
@@ -67,6 +68,34 @@ Interface pública e padrão para disseminação dos dados curados, com apresent
 - Visualização de resultados em formato de cards responsivos
 - Acesso aberto aos dados aprovados
 - Exportação de dados em formatos abertos (planejado)
+
+### 4. **Painel de Estatísticas** (Dashboard Analítico)
+Interface visual interativa para exploração e análise dos dados etnobotânicos.
+
+**Porta**: 3003 (Rota `/painel`)
+**Funcionalidades**:
+- **Cartões de Resumo**: Total de comunidades, referências aprovadas, plantas únicas e autores únicos
+- **Mapas de Calor**: Distribuição geográfica de referências e comunidades por estado (GeoChart)
+- **Gráficos Interativos**:
+  - Evolução temporal de publicações por ano (gráfico de área)
+  - Top 10 plantas mais citadas (gráfico de barras)
+- **Tabelas Analíticas**:
+  - Top 10 autores mais produtivos
+  - Comunidades com maior número de plantas documentadas
+  - Referências com mais comunidades estudadas
+  - Referências com maior diversidade de plantas
+- **Filtros Avançados**: Estado, tipo de comunidade e período de publicação
+- **Tecnologia**: Google Charts + HTMX + Alpine.js
+
+### 5. **etnoChat** (Interface Conversacional) - Em Desenvolvimento
+Interface de conversação com IA para interagir com o banco de dados em linguagem natural.
+
+**Porta**: 3003 (Rota `/etnochat`)
+**Status**: Em desenvolvimento
+**Funcionalidades Planejadas**:
+- Perguntas em linguagem natural sobre comunidades e plantas
+- Sugestões de buscas e relacionamentos entre dados
+- Explicações contextualizadas sobre os dados etnobotânicos
 
 ## Estrutura de Dados
 
@@ -193,9 +222,10 @@ flowchart TD
 3. Dados salvos com status `pending`
 4. **Curador** acessa interface de **Curadoria** (porta 3002)
 5. Revisa e edita dados se necessário
-6. Aprova referência (status → `approved`)
+6. Aprova ou rejeita referência (com justificativa obrigatória para rejeições)
 7. **Público** acessa interface de **Apresentação** (porta 3003)
 8. Busca e visualiza dados aprovados
+9. Acessa **Painel de Estatísticas** (`/painel`) para análises visuais e exploratórias
 
 ## Segurança
 
@@ -212,8 +242,7 @@ flowchart TD
 - Exportação de dados (CSV, JSON)
 - API REST para integrações externas
 - Integração com APIs de periódicos científicos
-- Dashboard Analítico - Interface visual interativa para exploração dos dados
-- "etnoChat" -  Interface Conversacional (via MCP) usando assistente de IA para interagir com o banco de dados
+- Conclusão do etnoChat com integração via MCP (Model Context Protocol)
 
 ## Projetos Relacionados
 
