@@ -86,13 +86,13 @@ async function findReferences(query = {}, options = {}) {
       if (skip > 0) pipeline.push({ $skip: skip });
       if (limit > 0) pipeline.push({ $limit: limit });
 
-      // Remove computed field and apply projection
-      pipeline.push({
-        $project: {
-          _sortField: 0,
-          ...(Object.keys(projection).length > 0 ? projection : {})
-        }
-      });
+      // Remove computed sort field
+      pipeline.push({ $unset: '_sortField' });
+
+      // Apply projection if specified
+      if (Object.keys(projection).length > 0) {
+        pipeline.push({ $project: projection });
+      }
 
       const references = await collection.aggregate(pipeline).toArray();
       logger.database(`Found ${references.length} references (aggregation, sort: ${sortField})`);
