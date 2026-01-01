@@ -11,7 +11,7 @@
 const express = require('express');
 const router = express.Router();
 const { validateReference } = require('../../services/validation');
-const { insertReference } = require('../../services/database');
+const { checkDuplicateReference, insertReference } = require('../../services/database');
 const logger = require('../../shared/logger');
 
 /**
@@ -143,6 +143,22 @@ router.post('/reference/submit', async (req, res) => {
         contextDescription: 'Cadastro de referências científicas com dados de comunidades e plantas',
         showNavigation: true,
         errors: validation.errors,
+        formData: req.body
+      });
+    }
+
+    // Check for duplicate reference (title + year)
+    const existingReference = await checkDuplicateReference(referenceData.titulo, referenceData.ano);
+
+    if (existingReference) {
+      logger.acquisition(`Duplicate reference detected: "${referenceData.titulo}" (${referenceData.ano})`);
+
+      return res.render('index', {
+        pageTitle: 'Entrada de Dados',
+        contextName: 'Entrada de Dados Etnobotânicos',
+        contextDescription: 'Cadastro de referências científicas com dados de comunidades e plantas',
+        showNavigation: true,
+        errors: [`Referência duplicada: Já existe uma referência com o título "${referenceData.titulo}" e ano ${referenceData.ano} na base de dados.`],
         formData: req.body
       });
     }

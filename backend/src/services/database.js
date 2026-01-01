@@ -12,6 +12,33 @@ const logger = require('../shared/logger');
 const { createReference, updateReference, Status } = require('../models/Reference');
 
 /**
+ * Check if a reference with the same title and year already exists
+ * @param {string} titulo - Reference title
+ * @param {number} ano - Publication year
+ * @returns {Promise<Object|null>} Existing reference or null
+ */
+async function checkDuplicateReference(titulo, ano) {
+  try {
+    const collection = database.getCollection(config.database.collection);
+
+    // Case-insensitive search for title and exact match for year
+    const existing = await collection.findOne({
+      titulo: { $regex: new RegExp(`^${titulo.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i') },
+      ano: ano
+    });
+
+    if (existing) {
+      logger.database(`Duplicate reference found: "${titulo}" (${ano})`);
+    }
+
+    return existing;
+  } catch (error) {
+    logger.error('Failed to check duplicate reference:', error.message);
+    throw new Error(`Falha ao verificar duplicata: ${error.message}`);
+  }
+}
+
+/**
  * Insert new reference
  * @param {Object} referenceData - Reference data
  * @returns {Promise<Object>} Inserted document with _id
@@ -328,6 +355,7 @@ async function searchReferences(query = {}, page = 1, limit = 50) {
 }
 
 module.exports = {
+  checkDuplicateReference,
   insertReference,
   findReferences,
   findReferenceById,
