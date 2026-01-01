@@ -133,21 +133,25 @@ Uma referência científica pode documentar múltiplas comunidades, e cada comun
 
 ```json
 {
-  "titulo": "Diversity Of Plant Uses In Two Caiçara Communities",
-  "autores": ["HANAZAKI, N.", "TAMASHIRO, J. Y.", ...],
-  "ano": 2000,
-  "status": "approved",
+  "titulo": "string",
+  "autores": ["SOBRENOME, I.", ...],
+  "ano": number,
+  "resumo": "string em português",
+  "DOI": "string | null",
   "comunidades": [
     {
-      "nome": "Ponta do Almada",
-      "tipo": "Caiçaras",
-      "municipio": "Ubatuba",
-      "estado": "São Paulo",
+      "nome": "string",
+      "tipo": "string (da lista válida)",
+      "municipio": "string | null",
+      "estado": "string | null",
+      "local": "string | null",
+      "atividadesEconomicas": ["string", ...] | null,
+      "observacoes": "string | null",
       "plantas": [
         {
-          "nomeCientifico": ["Foeniculum vulgare"],
-          "nomeVernacular": ["erva-doce"],
-          "tipoUso": ["medicinal"]
+          "nomeCientifico": ["Genus species", ...],
+          "nomeVernacular": ["nome-comum", ...],
+          "tipoUso": ["string", ...]
         }
       ]
     }
