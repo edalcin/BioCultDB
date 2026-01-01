@@ -189,29 +189,29 @@ async function loadMaps(filters) {
       drawGeoChart('map-references', [], 'Referências');
     }
 
-    // Plants by state
-    const plantsUrl = `/painel/api/stats/plants-by-state?${queryString}`;
-    console.debug('Fetching:', plantsUrl);
-    const plantsRes = await fetch(plantsUrl);
-    if (plantsRes.ok) {
-      const plantsByState = await plantsRes.json();
-      if (Array.isArray(plantsByState)) {
-        drawGeoChart('map-plants', plantsByState, 'Plantas');
+    // Communities by state
+    const communitiesUrl = `/painel/api/stats/communities-by-state?${queryString}`;
+    console.debug('Fetching:', communitiesUrl);
+    const communitiesRes = await fetch(communitiesUrl);
+    if (communitiesRes.ok) {
+      const communitiesByState = await communitiesRes.json();
+      if (Array.isArray(communitiesByState)) {
+        drawGeoChart('map-communities', communitiesByState, 'Comunidades');
       } else {
-        console.error('Invalid plants by state data:', plantsByState);
-        drawGeoChart('map-plants', [], 'Plantas');
+        console.error('Invalid communities by state data:', communitiesByState);
+        drawGeoChart('map-communities', [], 'Comunidades');
       }
     } else {
-      console.error('Plants by state error:', plantsRes.status, plantsRes.statusText);
-      const errorData = await plantsRes.json();
+      console.error('Communities by state error:', communitiesRes.status, communitiesRes.statusText);
+      const errorData = await communitiesRes.json();
       console.error('Error details:', errorData);
-      drawGeoChart('map-plants', [], 'Plantas');
+      drawGeoChart('map-communities', [], 'Comunidades');
     }
 
   } catch (error) {
     console.error('Error loading maps:', error);
     drawGeoChart('map-references', [], 'Referências');
-    drawGeoChart('map-plants', [], 'Plantas');
+    drawGeoChart('map-communities', [], 'Comunidades');
   }
 }
 

@@ -403,6 +403,61 @@ async function getReferencesByState(filters = {}) {
 }
 
 /**
+ * Get number of unique communities by state (for heat map)
+ * @param {Object} filters - Query filters
+ * @returns {Promise<Array>} Array of {state, count}
+ */
+async function getCommunitiesByState(filters = {}) {
+  try {
+    const collection = database.getCollection(config.database.collection);
+
+    const pipeline = [
+      { $match: { status: Status.APPROVED, ...filters } },
+      { $unwind: '$comunidades' },
+
+      ...(filters['comunidades.tipo']
+        ? [{ $match: { 'comunidades.tipo': filters['comunidades.tipo'] }}]
+        : []),
+
+      {
+        $group: {
+          _id: {
+            estado: '$comunidades.estado',
+            nome: '$comunidades.nome',
+            municipio: { $ifNull: ['$comunidades.municipio', ''] }
+          }
+        }
+      },
+
+      {
+        $group: {
+          _id: '$_id.estado',
+          count: { $sum: 1 }
+        }
+      },
+
+      { $sort: { count: -1 } },
+
+      {
+        $project: {
+          _id: 0,
+          state: '$_id',
+          count: 1
+        }
+      }
+    ];
+
+    const result = await collection.aggregate(pipeline).toArray();
+    logger.database(`Communities by state returned ${result.length} states`);
+
+    return result;
+  } catch (error) {
+    logger.error('Communities by state failed:', error.message);
+    throw error;
+  }
+}
+
+/**
  * Get number of unique plants by state (for heat map)
  * @param {Object} filters - Query filters
  * @returns {Promise<Array>} Array of {state, count}
@@ -767,6 +822,7 @@ module.exports = {
   getReferenceCountByStatus,
   getTopAuthors,
   getReferencesByState,
+  getCommunitiesByState,
   getPlantsByState,
   getTopCommunitiesByPlants,
   getTopReferencesByCommunities,

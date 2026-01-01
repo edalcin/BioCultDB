@@ -52,6 +52,54 @@ async function findReferences(query = {}, options = {}) {
       sort = { createdAt: -1 }
     } = options;
 
+    // Check if we need special sorting for array fields or dates
+    const sortField = Object.keys(sort)[0];
+    const sortOrder = sort[sortField];
+
+    // Use aggregation for special sort fields to ensure correct ordering
+    if (sortField === 'autores' || sortField === 'createdAt') {
+      const pipeline = [
+        { $match: query }
+      ];
+
+      // Add computed sort field based on the sort type
+      if (sortField === 'autores') {
+        // Sort by first author (first element of array)
+        pipeline.push({
+          $addFields: {
+            _sortField: { $arrayElemAt: ['$autores', 0] }
+          }
+        });
+      } else if (sortField === 'createdAt') {
+        // Ensure createdAt is treated as Date for proper sorting
+        pipeline.push({
+          $addFields: {
+            _sortField: { $toDate: '$createdAt' }
+          }
+        });
+      }
+
+      // Sort by computed field
+      pipeline.push({ $sort: { _sortField: sortOrder } });
+
+      // Skip and limit
+      if (skip > 0) pipeline.push({ $skip: skip });
+      if (limit > 0) pipeline.push({ $limit: limit });
+
+      // Remove computed field and apply projection
+      pipeline.push({
+        $project: {
+          _sortField: 0,
+          ...(Object.keys(projection).length > 0 ? projection : {})
+        }
+      });
+
+      const references = await collection.aggregate(pipeline).toArray();
+      logger.database(`Found ${references.length} references (aggregation, sort: ${sortField})`);
+      return references;
+    }
+
+    // Use simple find for other fields
     const cursor = collection
       .find(query, { projection })
       .sort(sort);

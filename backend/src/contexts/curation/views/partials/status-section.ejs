@@ -86,6 +86,9 @@
     <% if (reference.updatedAt && reference.createdAt && reference.updatedAt.toString() !== reference.createdAt.toString()) { %>
       <p><strong>Atualizado em:</strong> <%= new Date(reference.updatedAt).toLocaleString('pt-BR') %></p>
     <% } %>
+    <% if (reference.fonte) { %>
+      <p><strong>Fonte:</strong> <%= reference.fonte %></p>
+    <% } %>
   </div>
 
   <!-- Delete Confirmation Modal -->

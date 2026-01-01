@@ -16,6 +16,7 @@ const {
   getReferenceCountByStatus,
   getTopAuthors,
   getReferencesByState,
+  getCommunitiesByState,
   getPlantsByState,
   getTopCommunitiesByPlants,
   getTopReferencesByCommunities,
@@ -289,7 +290,7 @@ router.get('/painel', (req, res) => {
     res.render('painel', {
       pageTitle: 'Painel de Estatísticas',
       contextName: 'Painel de Informações',
-      contextDescription: 'Visualize estatísticas e métricas dos dados etnobotânicos',
+      contextDescription: 'Visualize estatísticas e métricas sobre as referências, comunidades e sua relação com as plantas',
       showNavigation: true
     });
   } catch (error) {
@@ -423,6 +424,22 @@ router.get('/painel/api/stats/plants-by-state', async (req, res) => {
 });
 
 /**
+ * GET /painel/api/stats/communities-by-state
+ * Número de comunidades por estado (para mapa de calor)
+ */
+router.get('/painel/api/stats/communities-by-state', async (req, res) => {
+  try {
+    const { tipo, anoInicio, anoFim } = req.query;
+    const filters = buildFilters({ tipo, anoInicio, anoFim });
+    const result = await getCommunitiesByState(filters);
+    res.json(result);
+  } catch (error) {
+    logger.error('Communities by state failed:', error.message);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
  * GET /painel/api/stats/top-communities
  * Comunidades com maior uso de plantas
  */
@@ -493,7 +510,7 @@ router.get('/etnochat', (req, res) => {
   res.render('under-construction', {
     pageTitle: 'etnoChat',
     contextName: 'etnoChat',
-    contextDescription: 'Converse com a IA sobre dados etnobotânicos',
+    contextDescription: 'Converse com a IA sobre as referências, comunidades e sua relação com as plantas',
     featureName: 'etnoChat'
   });
 });
