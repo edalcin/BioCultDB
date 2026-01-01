@@ -42,6 +42,8 @@ Interface dedicada à entrada de **dados secundários extraídos de artigos cien
 **Funcionalidade**: Formulário hierárquico para entrada de:
 - Referência bibliográfica completa (título, autores, ano, resumo, DOI)
 - Comunidades tradicionais documentadas no artigo
+  - O sistema suporta a classificação de comunidades tradicionais em 29 categorias, conforme o **[Decreto Nº 8.750, de 9 de maio 2016](https://www.planalto.gov.br/ccivil_03/_Ato2015-2018/2016/Decreto/D8750.htm)**, que regulamenta a Política Nacional de Desenvolvimento Sustentável dos Povos e Comunidades Tradicionais.
+
 - Plantas e seus usos reportados para cada comunidade
 
 **Importante**: Cada registro está sempre vinculado à sua publicação científica original, garantindo rastreabilidade e respeito aos direitos autorais.
@@ -123,13 +125,7 @@ Referência (Publicação Científica)
         └── tipoUso[]
 ```
 
-### Tipos de Comunidades Tradicionais
 
-O sistema suporta a classificação de comunidades tradicionais em 29 categorias, conforme o **[Decreto Nº 8.750, de 9 de maio 2016](https://www.planalto.gov.br/ccivil_03/_Ato2015-2018/2016/Decreto/D8750.htm)**, que regulamenta a Política Nacional de Desenvolvimento Sustentável dos Povos e Comunidades Tradicionais.
-
-### Exemplo de Registro
-
-Uma referência científica pode documentar múltiplas comunidades, e cada comunidade pode ter múltiplas plantas associadas:
 
 ```json
 {
