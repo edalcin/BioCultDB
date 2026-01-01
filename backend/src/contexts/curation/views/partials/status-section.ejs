@@ -1,4 +1,4 @@
-<section class="card mb-8 border-l-4 <%= reference.status === 'approved' ? 'border-green-500' : reference.status === 'rejected' ? 'border-red-500' : 'border-yellow-500' %>" x-data="{ showDeleteModal: false }" @open-delete-modal.window="showDeleteModal = true">
+<section class="card mb-8 border-l-4 <%= reference.status === 'approved' ? 'border-green-500' : reference.status === 'rejected' ? 'border-red-500' : 'border-yellow-500' %>" x-data="{ showDeleteModal: false, selectedStatus: '<%= reference.status %>' }" @open-delete-modal.window="showDeleteModal = true">
   <div class="flex items-start justify-between mb-4">
     <div>
       <h2 class="text-xl font-semibold text-gray-900 mb-2">Status da Referência</h2>
@@ -18,13 +18,14 @@
 
       <div class="space-y-2">
         <!-- Pending -->
-        <label class="flex items-center p-3 border rounded cursor-pointer hover:bg-white transition-colors <%= reference.status === 'pending' ? 'bg-white border-yellow-500 ring-1 ring-yellow-500' : 'border-gray-200' %>">
+        <label class="flex items-center p-3 border rounded cursor-pointer hover:bg-white transition-colors" :class="selectedStatus === 'pending' ? 'bg-white border-yellow-500 ring-1 ring-yellow-500' : 'border-gray-200'">
           <input
             type="radio"
             name="status"
             value="pending"
             <%= reference.status === 'pending' ? 'checked' : '' %>
             class="h-4 w-4 text-yellow-600 focus:ring-yellow-500"
+            @change="selectedStatus = 'pending'"
           >
           <span class="ml-3 flex items-center gap-2">
             <span class="font-medium text-gray-900">Pendente</span>
@@ -33,13 +34,14 @@
         </label>
 
         <!-- Approved -->
-        <label class="flex items-center p-3 border rounded cursor-pointer hover:bg-white transition-colors <%= reference.status === 'approved' ? 'bg-white border-green-500 ring-1 ring-green-500' : 'border-gray-200' %>">
+        <label class="flex items-center p-3 border rounded cursor-pointer hover:bg-white transition-colors" :class="selectedStatus === 'approved' ? 'bg-white border-green-500 ring-1 ring-green-500' : 'border-gray-200'">
           <input
             type="radio"
             name="status"
             value="approved"
             <%= reference.status === 'approved' ? 'checked' : '' %>
             class="h-4 w-4 text-green-600 focus:ring-green-500"
+            @change="selectedStatus = 'approved'"
           >
           <span class="ml-3 flex items-center gap-2">
             <span class="font-medium text-gray-900">Aprovado</span>
@@ -48,19 +50,35 @@
         </label>
 
         <!-- Rejected -->
-        <label class="flex items-center p-3 border rounded cursor-pointer hover:bg-white transition-colors <%= reference.status === 'rejected' ? 'bg-white border-red-500 ring-1 ring-red-500' : 'border-gray-200' %>">
+        <label class="flex items-center p-3 border rounded cursor-pointer hover:bg-white transition-colors" :class="selectedStatus === 'rejected' ? 'bg-white border-red-500 ring-1 ring-red-500' : 'border-gray-200'">
           <input
             type="radio"
             name="status"
             value="rejected"
             <%= reference.status === 'rejected' ? 'checked' : '' %>
             class="h-4 w-4 text-red-600 focus:ring-red-500"
+            @change="selectedStatus = 'rejected'"
           >
           <span class="ml-3 flex items-center gap-2">
             <span class="font-medium text-gray-900">Rejeitado</span>
             <span class="text-xs text-gray-600">(não será exibido)</span>
           </span>
         </label>
+
+        <!-- Justificativa de Rejeição -->
+        <div x-show="selectedStatus === 'rejected'" x-transition class="mt-3 p-3 bg-red-50 border border-red-200 rounded">
+          <label class="form-label text-sm text-red-800 mb-2" for="justificativaRejeicao">
+            Justificativa da Rejeição <span class="text-red-600">*</span>
+          </label>
+          <textarea
+            id="justificativaRejeicao"
+            name="justificativaRejeicao"
+            rows="3"
+            class="form-input text-sm"
+            placeholder="Informe o motivo da rejeição desta referência..."
+            x-bind:required="selectedStatus === 'rejected'"
+          ><%= reference.justificativaRejeicao || '' %></textarea>
+        </div>
       </div>
 
       <div class="mt-4 flex items-center gap-3">
@@ -77,6 +95,14 @@
       </div>
     </div>
   </form>
+
+  <!-- Justificativa de Rejeição (exibição permanente) -->
+  <% if (reference.status === 'rejected' && reference.justificativaRejeicao) { %>
+  <div class="mt-4 p-3 bg-red-50 border border-red-200 rounded">
+    <p class="text-sm font-medium text-red-800 mb-1">Motivo da Rejeição:</p>
+    <p class="text-sm text-red-700"><%= reference.justificativaRejeicao %></p>
+  </div>
+  <% } %>
 
   <!-- Metadata -->
   <div class="mt-4 pt-4 border-t border-gray-200 text-xs text-gray-600 space-y-1">

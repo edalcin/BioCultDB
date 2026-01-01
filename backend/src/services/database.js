@@ -192,9 +192,10 @@ async function updateReferenceById(id, updateData) {
  * Update reference status only
  * @param {string|ObjectId} id - Reference ID
  * @param {string} status - New status (pending|approved|rejected)
+ * @param {string|null} justificativaRejeicao - Justification for rejection (only for 'rejected' status)
  * @returns {Promise<Object>} Updated reference
  */
-async function updateReferenceStatus(id, status) {
+async function updateReferenceStatus(id, status, justificativaRejeicao = null) {
   try {
     // Validate status
     if (!Object.values(Status).includes(status)) {
@@ -204,15 +205,35 @@ async function updateReferenceStatus(id, status) {
     const collection = database.getCollection(config.database.collection);
     const objectId = typeof id === 'string' ? new ObjectId(id) : id;
 
-    // MongoDB driver v6+ returns document directly, not { value: document }
-    const result = await collection.findOneAndUpdate(
-      { _id: objectId },
-      {
+    // Build update operation based on status
+    let updateOperation;
+
+    if (status === Status.REJECTED && justificativaRejeicao) {
+      // Save justification when rejecting
+      updateOperation = {
+        $set: {
+          status,
+          justificativaRejeicao,
+          updatedAt: new Date()
+        }
+      };
+    } else {
+      // Remove justification when approving or setting to pending
+      updateOperation = {
         $set: {
           status,
           updatedAt: new Date()
+        },
+        $unset: {
+          justificativaRejeicao: ''
         }
-      },
+      };
+    }
+
+    // MongoDB driver v6+ returns document directly, not { value: document }
+    const result = await collection.findOneAndUpdate(
+      { _id: objectId },
+      updateOperation,
       { returnDocument: 'after' }
     );
 

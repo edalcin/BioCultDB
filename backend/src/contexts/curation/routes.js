@@ -255,13 +255,16 @@ async function handleReferenceUpdate(req, res) {
  */
 router.post('/reference/status/:id', async (req, res) => {
   try {
-    const { status } = req.body;
+    const { status, justificativaRejeicao } = req.body;
 
     if (!status || !Object.values(Status).includes(status)) {
       throw new Error('Status inválido');
     }
 
-    const updated = await updateReferenceStatus(req.params.id, status);
+    // Justificativa só é salva quando o status é "rejected"
+    const justificativa = status === Status.REJECTED ? (justificativaRejeicao?.trim() || null) : null;
+
+    const updated = await updateReferenceStatus(req.params.id, status, justificativa);
 
     logger.curation(`Reference status updated to "${status}": ${updated._id}`);
 
