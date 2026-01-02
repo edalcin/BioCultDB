@@ -117,9 +117,9 @@ function etnoChat() {
           { id: 'gpt-4-turbo', name: 'GPT-4 Turbo' }
         ],
         gemini: [
+          { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash' },
           { id: 'gemini-2.0-flash', name: 'Gemini 2.0 Flash' },
-          { id: 'gemini-1.5-pro', name: 'Gemini 1.5 Pro' },
-          { id: 'gemini-1.5-flash', name: 'Gemini 1.5 Flash' }
+          { id: 'gemini-2.5-flash-lite', name: 'Gemini 2.5 Flash Lite' }
         ]
       };
 

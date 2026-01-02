@@ -20,7 +20,15 @@
       "Bash(node check-database.js:*)",
       "Bash(netstat:*)",
       "Bash(MONGO_URI=\"mongodb://etnodb:qWtnJsbAs!85zg*6@192.168.1.10:27017/?authSource=etnodb\" node:*)",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "Bash(cd:*)",
+      "Bash(git log:*)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebSearch",
+      "WebFetch(domain:www.npmjs.com)",
+      "Bash(npm install:*)",
+      "Bash(mkdir:*)",
+      "Bash(ls:*)"
     ]
   }
 }
