@@ -218,19 +218,19 @@ async function streamChat({ provider, apiKey, model, messages, onText, onEnd, on
     switch (provider) {
       case 'claude': {
         const client = new Anthropic({ apiKey });
-        const stream = await client.messages.stream({
-          model,
-          max_tokens: 4096,
-          system: systemPrompt,
-          messages: formattedMessages
-        });
+        const stream = client.messages
+          .stream({
+            model,
+            max_tokens: 4096,
+            system: systemPrompt,
+            messages: formattedMessages
+          })
+          .on('text', (text) => {
+            fullResponse += text;
+            onText(text);
+          });
 
-        for await (const event of stream) {
-          if (event.type === 'content_block_delta' && event.delta.text) {
-            fullResponse += event.delta.text;
-            onText(event.delta.text);
-          }
-        }
+        await stream.finalMessage();
         break;
       }
 
