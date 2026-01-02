@@ -503,16 +503,110 @@ router.get('/painel/api/stats/publications-by-year', async (req, res) => {
   }
 });
 
+// Import etnoChat service
+const etnochatService = require('./services/etnochat');
+
 /**
- * GET /etnochat - AI Chat interface (under construction)
+ * GET /etnochat - AI Chat interface
  */
 router.get('/etnochat', (req, res) => {
-  res.render('under-construction', {
+  res.render('etnochat', {
     pageTitle: 'etnoChat',
     contextName: 'etnoChat',
-    contextDescription: 'Converse com a IA sobre as referências, comunidades e sua relação com as plantas',
-    featureName: 'etnoChat'
+    contextDescription: 'Converse com a IA sobre dados etnobotanicos',
+    showNavigation: true
   });
+});
+
+/**
+ * GET /etnochat/api/providers - List available AI providers
+ */
+router.get('/etnochat/api/providers', (req, res) => {
+  res.json(etnochatService.getProviders());
+});
+
+/**
+ * POST /etnochat/api/validate-key - Validate API key
+ */
+router.post('/etnochat/api/validate-key', async (req, res) => {
+  try {
+    const { provider, apiKey } = req.body;
+
+    if (!provider || !apiKey) {
+      return res.status(400).json({
+        valid: false,
+        error: 'Provider e apiKey sao obrigatorios'
+      });
+    }
+
+    const result = await etnochatService.validateApiKey(provider, apiKey);
+    res.json(result);
+  } catch (error) {
+    logger.error('Validate key error:', error.message);
+    res.status(500).json({
+      valid: false,
+      error: 'Erro ao validar chave'
+    });
+  }
+});
+
+/**
+ * GET /etnochat/api/models - List available models for a provider
+ */
+router.get('/etnochat/api/models', (req, res) => {
+  const { provider } = req.query;
+
+  if (!provider) {
+    return res.status(400).json({ error: 'Provider e obrigatorio' });
+  }
+
+  const models = etnochatService.getModels(provider);
+  res.json(models);
+});
+
+/**
+ * POST /etnochat/api/chat - Chat with AI (SSE streaming)
+ */
+router.post('/etnochat/api/chat', async (req, res) => {
+  try {
+    const { provider, apiKey, model, messages } = req.body;
+
+    if (!provider || !apiKey || !model || !messages) {
+      return res.status(400).json({
+        error: 'provider, apiKey, model e messages sao obrigatorios'
+      });
+    }
+
+    // Set up SSE headers
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+    res.flushHeaders();
+
+    // Stream the response
+    await etnochatService.streamChat({
+      provider,
+      apiKey,
+      model,
+      messages,
+      onText: (text) => {
+        res.write(`data: ${JSON.stringify({ text })}\n\n`);
+      },
+      onEnd: () => {
+        res.write('data: [DONE]\n\n');
+        res.end();
+      },
+      onError: (error) => {
+        logger.error('Chat stream error:', error.message);
+        res.write(`data: ${JSON.stringify({ error: error.message })}\n\n`);
+        res.end();
+      }
+    });
+  } catch (error) {
+    logger.error('Chat error:', error.message);
+    res.write(`data: ${JSON.stringify({ error: 'Erro ao processar mensagem' })}\n\n`);
+    res.end();
+  }
 });
 
 module.exports = router;
