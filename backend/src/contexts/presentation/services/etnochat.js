@@ -117,23 +117,105 @@ function getProviders() {
 }
 
 /**
- * Extract MongoDB query from AI response
+ * Extract MongoDB query from AI response (hidden format)
  * @param {string} text - AI response text
- * @returns {Object|null} Parsed query or null
+ * @returns {{query: Object|null, cleanText: string}} Parsed query and cleaned text
  */
 function extractMongoQuery(text) {
-  const regex = /```mongodb\s*([\s\S]*?)```/g;
-  const match = regex.exec(text);
+  // New hidden format: <!--QUERY ... QUERY-->
+  const hiddenRegex = /<!--QUERY\s*([\s\S]*?)QUERY-->/g;
+  // Legacy format: ```mongodb ... ```
+  const legacyRegex = /```mongodb\s*([\s\S]*?)```/g;
+
+  let match = hiddenRegex.exec(text);
+  let query = null;
+  let cleanText = text;
 
   if (match) {
     try {
-      return JSON.parse(match[1].trim());
+      query = JSON.parse(match[1].trim());
+      // Remove the query block from visible text
+      cleanText = text.replace(hiddenRegex, '').trim();
     } catch (e) {
-      logger.error('Failed to parse MongoDB query:', e.message);
-      return null;
+      logger.error('Failed to parse hidden MongoDB query:', e.message);
+    }
+  } else {
+    // Try legacy format
+    match = legacyRegex.exec(text);
+    if (match) {
+      try {
+        query = JSON.parse(match[1].trim());
+        // Remove the query block from visible text
+        cleanText = text.replace(legacyRegex, '').trim();
+      } catch (e) {
+        logger.error('Failed to parse legacy MongoDB query:', e.message);
+      }
     }
   }
-  return null;
+
+  return { query, cleanText };
+}
+
+/**
+ * Format query results in a human-readable way
+ * @param {Array} data - Query results
+ * @returns {string} Formatted text
+ */
+function formatQueryResults(data) {
+  if (!data || data.length === 0) {
+    return 'Nenhum resultado encontrado.';
+  }
+
+  // Check if it's a count result
+  if (data.length === 1 && data[0].total !== undefined) {
+    return `**Total:** ${data[0].total} registros`;
+  }
+
+  // Check if it's a grouped count result (e.g., tipos de uso)
+  if (data[0]._id !== undefined && data[0].count !== undefined) {
+    const lines = data.map((item, i) => {
+      const name = item._id || 'Não especificado';
+      return `${i + 1}. **${name}**: ${item.count} ocorrências`;
+    });
+    return lines.join('\n');
+  }
+
+  // Check if it's a community list
+  if (data[0]._id !== undefined && (data[0].estado !== undefined || data[0].municipio !== undefined)) {
+    const lines = data.map((item, i) => {
+      const parts = [item._id];
+      if (item.municipio) parts.push(item.municipio);
+      if (item.estado) parts.push(item.estado);
+      return `${i + 1}. **${parts.join('** - ')}`;
+    });
+    return `**Comunidades encontradas (${data.length}):**\n\n` + lines.join('\n');
+  }
+
+  // Check if it's a reference list
+  if (data[0].titulo !== undefined) {
+    const lines = data.map((item, i) => {
+      const autores = Array.isArray(item.autores) ? item.autores.join(', ') : item.autores;
+      let line = `${i + 1}. **${item.titulo}**`;
+      if (autores) line += ` - ${autores}`;
+      if (item.ano) line += ` (${item.ano})`;
+      return line;
+    });
+    return `**Referências encontradas (${data.length}):**\n\n` + lines.join('\n');
+  }
+
+  // Generic formatting for other results
+  const lines = data.slice(0, 20).map((item, i) => {
+    // Try to find a meaningful display value
+    const displayValue = item.nome || item._id || item.titulo || JSON.stringify(item);
+    return `${i + 1}. ${displayValue}`;
+  });
+
+  let result = lines.join('\n');
+  if (data.length > 20) {
+    result += `\n\n_...e mais ${data.length - 20} resultados_`;
+  }
+
+  return result;
 }
 
 /**
@@ -296,14 +378,25 @@ async function streamChat({ provider, apiKey, model, messages, onText, onEnd, on
     }
 
     // Check for MongoDB query in response and execute if found
-    const querySpec = extractMongoQuery(fullResponse);
+    const { query: querySpec, cleanText } = extractMongoQuery(fullResponse);
+
     if (querySpec) {
       const queryResult = await executeQuery(querySpec);
 
-      // Send query results
-      const resultText = `\n\n**Resultados da consulta (${queryResult.count} registros):**\n\`\`\`json\n${JSON.stringify(queryResult.data, null, 2)}\n\`\`\``;
-      onText(resultText);
-      fullResponse += resultText;
+      if (queryResult.success && queryResult.data && queryResult.data.length > 0) {
+        // Format results in a human-readable way (not JSON)
+        const formattedResults = formatQueryResults(queryResult.data);
+        const resultText = `\n\n${formattedResults}`;
+        onText(resultText);
+        fullResponse = cleanText + resultText;
+      } else if (queryResult.success && queryResult.count === 0) {
+        const noDataText = '\n\nNão foram encontrados dados para esta consulta.';
+        onText(noDataText);
+        fullResponse = cleanText + noDataText;
+      } else {
+        // Just use clean text without query block
+        fullResponse = cleanText;
+      }
     }
 
     onEnd(fullResponse);
