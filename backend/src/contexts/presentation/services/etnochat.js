@@ -142,8 +142,6 @@ function extractMongoQuery(text) {
  * @returns {Promise<Object>} Query results
  */
 async function executeQuery(querySpec) {
-  const collection = database.getCollection(config.database.collection);
-
   // Security: Always enforce approved status
   const ensureApproved = (query) => {
     if (!query.status) {
@@ -153,6 +151,12 @@ async function executeQuery(querySpec) {
   };
 
   try {
+    // Ensure database connection
+    if (!database.isConnected) {
+      await database.connect();
+    }
+
+    const collection = database.getCollection(config.database.collection);
     if (querySpec.operation === 'find') {
       const query = ensureApproved(querySpec.query || {});
       const options = querySpec.options || {};
