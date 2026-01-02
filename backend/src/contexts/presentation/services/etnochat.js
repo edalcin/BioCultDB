@@ -79,8 +79,10 @@ async function validateApiKey(provider, apiKey) {
 
       case 'gemini': {
         const client = new GoogleGenAI({ apiKey });
-        const model = client.getGenerativeModel({ model: 'gemini-1.5-flash' });
-        await model.generateContent('Hi');
+        await client.models.generateContent({
+          model: 'gemini-1.5-flash',
+          contents: 'Hi'
+        });
         return { valid: true };
       }
 
@@ -256,24 +258,27 @@ async function streamChat({ provider, apiKey, model, messages, onText, onEnd, on
 
       case 'gemini': {
         const client = new GoogleGenAI({ apiKey });
-        const genModel = client.getGenerativeModel({
-          model,
-          systemInstruction: systemPrompt
-        });
 
         // Convert messages to Gemini format
-        const history = formattedMessages.slice(0, -1).map(m => ({
-          role: m.role === 'assistant' ? 'model' : 'user',
-          parts: [{ text: m.content }]
-        }));
+        const geminiContents = [
+          { role: 'user', parts: [{ text: systemPrompt }] },
+          { role: 'model', parts: [{ text: 'Entendido. Sou o etnoChat, assistente especializado em dados etnobotanicos do etnoDB. Estou pronto para ajudar.' }] }
+        ];
 
-        const chat = genModel.startChat({ history });
-        const lastMessage = formattedMessages[formattedMessages.length - 1].content;
+        for (const m of formattedMessages) {
+          geminiContents.push({
+            role: m.role === 'assistant' ? 'model' : 'user',
+            parts: [{ text: m.content }]
+          });
+        }
 
-        const result = await chat.sendMessageStream(lastMessage);
+        const result = await client.models.generateContentStream({
+          model,
+          contents: geminiContents
+        });
 
-        for await (const chunk of result.stream) {
-          const text = chunk.text();
+        for await (const chunk of result) {
+          const text = chunk.text;
           if (text) {
             fullResponse += text;
             onText(text);
