@@ -3,6 +3,10 @@
 
 <div align="center">
   <img src="./docs/etnodbLogoTrans.png" alt="etnoDB Logo" width="200">
+
+  [![GitHub release](https://img.shields.io/github/v/release/edalcin/etnoDB)](https://github.com/edalcin/etnoDB/releases)
+  [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+  [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18139413.svg)](https://doi.org/10.5281/zenodo.18139413)
 </div>
 
 Sistema web para gerenciamento de **dados secundários** etnobotânicos sobre a relação entre comunidades tradicionais e plantas, extraídos de artigos científicos publicados.
