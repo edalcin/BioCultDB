@@ -1,4 +1,5 @@
 # etnoDB - Base de Dados Etnobotânica
+## Versão 1.0
 
 <div align="center">
   <img src="./docs/etnodbLogoTrans.png" alt="etnoDB Logo" width="200">
