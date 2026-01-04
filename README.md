@@ -94,12 +94,11 @@ Interface visual interativa para exploração e análise dos dados etnobotânico
 - **Filtros Avançados**: Estado, tipo de comunidade e período de publicação
 - **Tecnologia**: Google Charts + HTMX + Alpine.js
 
-### 5. **etnoChat** (Interface Conversacional) - Em Desenvolvimento
+### 5. **etnoChat** (Interface Conversacional)
 Interface de conversação com IA para interagir com o banco de dados em linguagem natural.
 
 **Porta**: 3003 (Rota `/etnochat`)
-**Status**: Em desenvolvimento
-**Funcionalidades Planejadas**:
+**Funcionalidades**:
 - Perguntas em linguagem natural sobre comunidades e plantas
 - Sugestões de buscas e relacionamentos entre dados
 - Explicações contextualizadas sobre os dados etnobotânicos
