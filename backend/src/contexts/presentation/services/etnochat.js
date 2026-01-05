@@ -432,40 +432,32 @@ async function streamChat({ provider, apiKey, model, messages, onText, onEnd, on
     // Check for MongoDB query in response and execute if found
     let { query: querySpec, cleanText } = extractMongoQuery(fullResponse);
 
-    // Clean any [object Object] patterns from the LLM response
-    cleanText = cleanText.replace(/\[object Object\]/g, '').replace(/\n{3,}/g, '\n\n').trim();
+    // Clean any patterns that shouldn't appear in the response
+    cleanText = cleanText
+      .replace(/\[object Object\]/g, '')
+      .replace(/\n{3,}/g, '\n\n')
+      .trim();
 
     if (querySpec) {
+      // Execute the query but DON'T add results to response
+      // The LLM already formats the data in its response
+      // We only execute to validate the query works
       const queryResult = await executeQuery(querySpec);
 
-      if (queryResult.success && queryResult.data && queryResult.data.length > 0) {
-        // Format results in a human-readable way (not JSON)
-        const formattedResults = formatQueryResults(queryResult.data);
-        // Ensure formattedResults is always a string and clean any [object Object] patterns
-        let resultText = `\n\n${typeof formattedResults === 'string' ? formattedResults : safeStringify(formattedResults)}`;
-        // Remove any [object Object] that might have leaked through
-        resultText = resultText.replace(/\[object Object\]/g, '').replace(/\n{3,}/g, '\n\n').trim();
-        if (resultText && resultText !== '\n\n') {
-          onText(resultText);
-          fullResponse = cleanText + resultText;
-        } else {
-          fullResponse = cleanText;
-        }
-      } else if (queryResult.success && queryResult.count === 0) {
-        const noDataText = '\n\nNão foram encontrados dados para esta consulta.';
-        onText(noDataText);
-        fullResponse = cleanText + noDataText;
-      } else {
-        // Just use clean text without query block
-        fullResponse = cleanText;
+      if (!queryResult.success) {
+        logger.error('Query execution failed:', queryResult.error);
       }
+
+      // Just use the clean text (LLM response without the query block)
+      fullResponse = cleanText;
     }
 
-    // Clean any remaining [object Object] patterns from the response
-    // This can happen if the LLM includes raw data in its response
-    fullResponse = fullResponse.replace(/\[object Object\]/g, '');
-    // Also clean any standalone object patterns that might leak through
-    fullResponse = fullResponse.replace(/^\s*\{\s*"[^"]+"\s*:/gm, '');
+    // Clean any remaining unwanted patterns from the response
+    fullResponse = fullResponse
+      .replace(/\[object Object\]/g, '')
+      .replace(/\{"[^"]+"\s*:/g, '')  // Remove JSON-like patterns
+      .replace(/\n{3,}/g, '\n\n')
+      .trim();
 
     onEnd(fullResponse);
   } catch (error) {
