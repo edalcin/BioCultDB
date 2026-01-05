@@ -157,6 +157,53 @@ function extractMongoQuery(text) {
 }
 
 /**
+ * Safely convert any value to a displayable string
+ * Handles arrays, objects, ObjectIds, and primitives
+ * @param {*} value - Value to convert
+ * @returns {string} String representation
+ */
+function safeStringify(value) {
+  if (value === null || value === undefined) {
+    return '';
+  }
+  if (typeof value === 'string') {
+    return value;
+  }
+  if (typeof value === 'number' || typeof value === 'boolean') {
+    return String(value);
+  }
+  if (Array.isArray(value)) {
+    // Flatten nested arrays and join with comma
+    const flattened = value.flat(Infinity).filter(v => v !== null && v !== undefined);
+    return flattened.map(v => safeStringify(v)).join(', ');
+  }
+  if (typeof value === 'object') {
+    // Handle MongoDB ObjectId
+    if (value._bsontype === 'ObjectId' || value.constructor?.name === 'ObjectId') {
+      return value.toString();
+    }
+    // Handle Date objects
+    if (value instanceof Date) {
+      return value.toLocaleDateString('pt-BR');
+    }
+    // For other objects, try to extract meaningful values
+    const meaningfulKeys = ['nome', 'titulo', 'name', 'title', 'value'];
+    for (const key of meaningfulKeys) {
+      if (value[key]) {
+        return safeStringify(value[key]);
+      }
+    }
+    // Last resort: JSON stringify
+    try {
+      return JSON.stringify(value);
+    } catch {
+      return '[objeto complexo]';
+    }
+  }
+  return String(value);
+}
+
+/**
  * Format query results in a human-readable way
  * @param {Array} data - Query results
  * @returns {string} Formatted text
@@ -174,7 +221,7 @@ function formatQueryResults(data) {
   // Check if it's a grouped count result (e.g., tipos de uso)
   if (data[0]._id !== undefined && data[0].count !== undefined) {
     const lines = data.map((item, i) => {
-      const name = item._id || 'Não especificado';
+      const name = safeStringify(item._id) || 'Não especificado';
       return `${i + 1}. **${name}**: ${item.count} ocorrências`;
     });
     return lines.join('\n');
@@ -183,9 +230,9 @@ function formatQueryResults(data) {
   // Check if it's a community list
   if (data[0]._id !== undefined && (data[0].estado !== undefined || data[0].municipio !== undefined)) {
     const lines = data.map((item, i) => {
-      const parts = [item._id];
-      if (item.municipio) parts.push(item.municipio);
-      if (item.estado) parts.push(item.estado);
+      const parts = [safeStringify(item._id)];
+      if (item.municipio) parts.push(safeStringify(item.municipio));
+      if (item.estado) parts.push(safeStringify(item.estado));
       return `${i + 1}. **${parts.join('** - ')}`;
     });
     return `**Comunidades encontradas (${data.length}):**\n\n` + lines.join('\n');
@@ -194,8 +241,8 @@ function formatQueryResults(data) {
   // Check if it's a reference list
   if (data[0].titulo !== undefined) {
     const lines = data.map((item, i) => {
-      const autores = Array.isArray(item.autores) ? item.autores.join(', ') : item.autores;
-      let line = `${i + 1}. **${item.titulo}**`;
+      const autores = Array.isArray(item.autores) ? item.autores.join(', ') : safeStringify(item.autores);
+      let line = `${i + 1}. **${safeStringify(item.titulo)}**`;
       if (autores) line += ` - ${autores}`;
       if (item.ano) line += ` (${item.ano})`;
       return line;
@@ -206,7 +253,12 @@ function formatQueryResults(data) {
   // Generic formatting for other results
   const lines = data.slice(0, 20).map((item, i) => {
     // Try to find a meaningful display value
-    const displayValue = item.nome || item._id || item.titulo || JSON.stringify(item);
+    const displayValue = safeStringify(item.nome) ||
+                         safeStringify(item._id) ||
+                         safeStringify(item.titulo) ||
+                         safeStringify(item.nomeCientifico) ||
+                         safeStringify(item.nomeVernacular) ||
+                         JSON.stringify(item);
     return `${i + 1}. ${displayValue}`;
   });
 
@@ -378,7 +430,10 @@ async function streamChat({ provider, apiKey, model, messages, onText, onEnd, on
     }
 
     // Check for MongoDB query in response and execute if found
-    const { query: querySpec, cleanText } = extractMongoQuery(fullResponse);
+    let { query: querySpec, cleanText } = extractMongoQuery(fullResponse);
+
+    // Clean any [object Object] patterns from the LLM response
+    cleanText = cleanText.replace(/\[object Object\]/g, '').replace(/\n{3,}/g, '\n\n').trim();
 
     if (querySpec) {
       const queryResult = await executeQuery(querySpec);
@@ -386,9 +441,16 @@ async function streamChat({ provider, apiKey, model, messages, onText, onEnd, on
       if (queryResult.success && queryResult.data && queryResult.data.length > 0) {
         // Format results in a human-readable way (not JSON)
         const formattedResults = formatQueryResults(queryResult.data);
-        const resultText = `\n\n${formattedResults}`;
-        onText(resultText);
-        fullResponse = cleanText + resultText;
+        // Ensure formattedResults is always a string and clean any [object Object] patterns
+        let resultText = `\n\n${typeof formattedResults === 'string' ? formattedResults : safeStringify(formattedResults)}`;
+        // Remove any [object Object] that might have leaked through
+        resultText = resultText.replace(/\[object Object\]/g, '').replace(/\n{3,}/g, '\n\n').trim();
+        if (resultText && resultText !== '\n\n') {
+          onText(resultText);
+          fullResponse = cleanText + resultText;
+        } else {
+          fullResponse = cleanText;
+        }
       } else if (queryResult.success && queryResult.count === 0) {
         const noDataText = '\n\nNão foram encontrados dados para esta consulta.';
         onText(noDataText);
@@ -398,6 +460,12 @@ async function streamChat({ provider, apiKey, model, messages, onText, onEnd, on
         fullResponse = cleanText;
       }
     }
+
+    // Clean any remaining [object Object] patterns from the response
+    // This can happen if the LLM includes raw data in its response
+    fullResponse = fullResponse.replace(/\[object Object\]/g, '');
+    // Also clean any standalone object patterns that might leak through
+    fullResponse = fullResponse.replace(/^\s*\{\s*"[^"]+"\s*:/gm, '');
 
     onEnd(fullResponse);
   } catch (error) {
