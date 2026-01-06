@@ -520,26 +520,28 @@ async function loadSankeyChart(filters, limitUsos = 10) {
     const sankeyRes = await fetch(sankeyUrl);
     if (sankeyRes.ok) {
       const sankeyData = await sankeyRes.json();
-      if (Array.isArray(sankeyData)) {
+      if (sankeyData && sankeyData.links) {
         drawSankeyChart('chart-sankey', sankeyData);
       } else {
         console.error('Invalid sankey data:', sankeyData);
-        drawSankeyChart('chart-sankey', []);
+        drawSankeyChart('chart-sankey', { links: [], useTypeOrder: [], communityTypeOrder: [] });
       }
     } else {
       console.error('Sankey error:', sankeyRes.status, sankeyRes.statusText);
       const errorData = await sankeyRes.json();
       console.error('Error details:', errorData);
-      drawSankeyChart('chart-sankey', []);
+      drawSankeyChart('chart-sankey', { links: [], useTypeOrder: [], communityTypeOrder: [] });
     }
   } catch (error) {
     console.error('Error loading sankey chart:', error);
-    drawSankeyChart('chart-sankey', []);
+    drawSankeyChart('chart-sankey', { links: [], useTypeOrder: [], communityTypeOrder: [] });
   }
 }
 
 /**
  * Draw Sankey diagram for community type to use type relationships
+ * @param {string} elementId - DOM element ID
+ * @param {Object} data - { links, useTypeOrder, communityTypeOrder }
  */
 function drawSankeyChart(elementId, data) {
   const container = document.getElementById(elementId);
@@ -549,23 +551,32 @@ function drawSankeyChart(elementId, data) {
   }
 
   // If no data, show placeholder
-  if (!data || data.length === 0) {
+  if (!data || !data.links || data.links.length === 0) {
     container.innerHTML = '<div class="text-center text-gray-400 py-12">Sem dados disponíveis</div>';
     return;
   }
 
   try {
+    const { links, useTypeOrder, communityTypeOrder } = data;
+
+    // Sort links by community type order (source) and use type order (target)
+    // This helps Google Charts render nodes in the correct order
+    const sortedLinks = [...links].sort((a, b) => {
+      const aSourceIdx = communityTypeOrder.indexOf(a.source);
+      const bSourceIdx = communityTypeOrder.indexOf(b.source);
+      if (aSourceIdx !== bSourceIdx) {
+        return aSourceIdx - bSourceIdx;
+      }
+      const aTargetIdx = useTypeOrder.indexOf(a.target);
+      const bTargetIdx = useTypeOrder.indexOf(b.target);
+      return aTargetIdx - bTargetIdx;
+    });
+
     // Prepare data for Google Charts Sankey
     const chartData = [['De', 'Para', 'Quantidade']];
 
-    // Aggregate totals for labels
-    const sourceTotal = {};
-    const targetTotal = {};
-
-    data.forEach(item => {
+    sortedLinks.forEach(item => {
       if (item && item.source && item.target && item.value) {
-        sourceTotal[item.source] = (sourceTotal[item.source] || 0) + item.value;
-        targetTotal[item.target] = (targetTotal[item.target] || 0) + item.value;
         chartData.push([item.source, item.target, item.value]);
       }
     });
@@ -577,7 +588,7 @@ function drawSankeyChart(elementId, data) {
 
     const dataTable = google.visualization.arrayToDataTable(chartData);
 
-    // Color palette for nodes
+    // Color palette for nodes - distinct colors for better visualization
     const colors = [
       '#1e3a5f', '#2d5a87', '#3d7aaf', // Blues
       '#15803d', '#22c55e', '#86efac', // Greens
@@ -607,7 +618,7 @@ function drawSankeyChart(elementId, data) {
           colorMode: 'gradient',
           colors: colors
         },
-        iterations: 64
+        iterations: 0 // Disable automatic reordering to preserve our sort order
       },
       tooltip: {
         textStyle: {

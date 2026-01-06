@@ -762,13 +762,13 @@ async function getTopReferencesByPlants(limit = 10, filters = {}) {
  * Get Sankey diagram data: community type -> use type relationships
  * @param {Object} filters - Query filters
  * @param {number} limitUsos - Limit to top N use types (default: 10)
- * @returns {Promise<Array>} Array of {source, target, value}
+ * @returns {Promise<Object>} { links: Array of {source, target, value}, useTypeOrder: Array of use types sorted by frequency }
  */
 async function getSankeyData(filters = {}, limitUsos = 10) {
   try {
     const collection = database.getCollection(config.database.collection);
 
-    // First, get the top N use types by total count
+    // First, get the top N use types by total count (ordered by frequency)
     const topUsosResult = await collection.aggregate([
       { $match: { status: Status.APPROVED, ...filters } },
       { $unwind: '$comunidades' },
@@ -784,14 +784,39 @@ async function getSankeyData(filters = {}, limitUsos = 10) {
       { $group: { _id: '$comunidades.plantas.tipoUso', total: { $sum: 1 } } },
       { $sort: { total: -1 } },
       { $limit: limitUsos },
-      { $project: { _id: 0, tipoUso: '$_id' } }
+      { $project: { _id: 0, tipoUso: '$_id', total: 1 } }
     ]).toArray();
 
-    const topUsos = topUsosResult.map(item => item.tipoUso);
+    // Create ordered list of use types by frequency (descending)
+    const useTypeOrder = topUsosResult.map(item => item.tipoUso);
+    const useTypeTotals = {};
+    topUsosResult.forEach(item => {
+      useTypeTotals[item.tipoUso] = item.total;
+    });
 
-    if (topUsos.length === 0) {
-      return [];
+    if (useTypeOrder.length === 0) {
+      return { links: [], useTypeOrder: [], communityTypeOrder: [] };
     }
+
+    // Get top community types by total count
+    const topCommunityResult = await collection.aggregate([
+      { $match: { status: Status.APPROVED, ...filters } },
+      { $unwind: '$comunidades' },
+      ...(filters['comunidades.estado'] || filters['comunidades.tipo']
+        ? [{ $match: {
+            ...(filters['comunidades.estado'] && { 'comunidades.estado': filters['comunidades.estado'] }),
+            ...(filters['comunidades.tipo'] && { 'comunidades.tipo': filters['comunidades.tipo'] })
+          }}]
+        : []),
+      { $unwind: '$comunidades.plantas' },
+      { $unwind: { path: '$comunidades.plantas.tipoUso', preserveNullAndEmptyArrays: false } },
+      { $match: { 'comunidades.plantas.tipoUso': { $in: useTypeOrder } } },
+      { $group: { _id: { $ifNull: ['$comunidades.tipo', 'Não especificado'] }, total: { $sum: 1 } } },
+      { $sort: { total: -1 } },
+      { $project: { _id: 0, tipoComunidade: '$_id', total: 1 } }
+    ]).toArray();
+
+    const communityTypeOrder = topCommunityResult.map(item => item.tipoComunidade);
 
     // Now get Sankey data filtered to only include top N use types
     const pipeline = [
@@ -816,7 +841,7 @@ async function getSankeyData(filters = {}, limitUsos = 10) {
       { $unwind: { path: '$comunidades.plantas.tipoUso', preserveNullAndEmptyArrays: false } },
 
       // Filter to only top N use types
-      { $match: { 'comunidades.plantas.tipoUso': { $in: topUsos } } },
+      { $match: { 'comunidades.plantas.tipoUso': { $in: useTypeOrder } } },
 
       // Group by community type and use type
       {
@@ -837,16 +862,17 @@ async function getSankeyData(filters = {}, limitUsos = 10) {
           target: '$_id.tipoUso',
           value: '$count'
         }
-      },
-
-      // Sort by value descending
-      { $sort: { value: -1 } }
+      }
     ];
 
-    const result = await collection.aggregate(pipeline).toArray();
-    logger.database(`Sankey data returned ${result.length} connections (top ${limitUsos} use types)`);
+    const links = await collection.aggregate(pipeline).toArray();
+    logger.database(`Sankey data returned ${links.length} connections (top ${limitUsos} use types)`);
 
-    return result;
+    return {
+      links,
+      useTypeOrder,
+      communityTypeOrder
+    };
   } catch (error) {
     logger.error('Sankey data aggregation failed:', error.message);
     throw error;
