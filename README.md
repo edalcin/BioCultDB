@@ -258,6 +258,13 @@ Projeto principal que define a arquitetura de referência para sistemas etnobot�
 ### [etnopapers](https://github.com/edalcin/etnopapers)
 Sistema de aquisição automatizada de dados secundários com auxílio de Inteligência Artificial. Permite a extração e inclusão de novos registros na base de dados do etnoDB a partir de artigos científicos de forma assistida por IA, agilizando o processo de entrada de dados.
 
+### [etnotermos](https://github.com/edalcin/etnotermos) 🆕
+Sistema de gerenciamento de vocabulário controlado para terminologia etnobotânica seguindo o padrão ANSI/NISO Z39.19-2005. **Visualmente integrado** ao etnoDB, o etnotermos compartilha a mesma identidade visual, banco de dados MongoDB ("etnodb") e fornece vocabulário controlado para os campos:
+- **comunidades.tipo**: As 29 categorias de comunidades tradicionais (Decreto 8.750/2016)
+- **comunidades.plantas.tipoUso**: Tipos de uso de plantas (medicinal, alimentício, ritualístico, etc.)
+
+O etnotermos gerencia relacionamentos hierárquicos entre termos (termos genéricos/específicos), sinônimos, notas de escopo, e variantes multilíngues, garantindo consistência terminológica em todo o etnoDB. Roda nas portas 4000 (interface pública) e 4001 (interface admin).
+
 ## Contribuições
 
 Contribuições são bem-vindas! Caso tenha sugestões, encontre bugs ou tenha comentários sobre o projeto, abra uma [Issue](../../issues).
