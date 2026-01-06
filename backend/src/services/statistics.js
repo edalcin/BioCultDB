@@ -759,6 +759,74 @@ async function getTopReferencesByPlants(limit = 10, filters = {}) {
 }
 
 /**
+ * Get Sankey diagram data: community type -> use type relationships
+ * @param {Object} filters - Query filters
+ * @returns {Promise<Array>} Array of {source, target, value}
+ */
+async function getSankeyData(filters = {}) {
+  try {
+    const collection = database.getCollection(config.database.collection);
+
+    const pipeline = [
+      // Filter approved references
+      { $match: { status: Status.APPROVED, ...filters } },
+
+      // Unwind communities
+      { $unwind: '$comunidades' },
+
+      // Apply community filters if they exist
+      ...(filters['comunidades.estado'] || filters['comunidades.tipo']
+        ? [{ $match: {
+            ...(filters['comunidades.estado'] && { 'comunidades.estado': filters['comunidades.estado'] }),
+            ...(filters['comunidades.tipo'] && { 'comunidades.tipo': filters['comunidades.tipo'] })
+          }}]
+        : []),
+
+      // Unwind plants
+      { $unwind: '$comunidades.plantas' },
+
+      // Unwind use types (can have multiple per plant)
+      { $unwind: { path: '$comunidades.plantas.tipoUso', preserveNullAndEmptyArrays: false } },
+
+      // Filter out empty use types
+      { $match: { 'comunidades.plantas.tipoUso': { $exists: true, $ne: null, $ne: '' } } },
+
+      // Group by community type and use type
+      {
+        $group: {
+          _id: {
+            tipoComunidade: { $ifNull: ['$comunidades.tipo', 'Não especificado'] },
+            tipoUso: '$comunidades.plantas.tipoUso'
+          },
+          count: { $sum: 1 }
+        }
+      },
+
+      // Project to Sankey format
+      {
+        $project: {
+          _id: 0,
+          source: '$_id.tipoComunidade',
+          target: '$_id.tipoUso',
+          value: '$count'
+        }
+      },
+
+      // Sort by value descending
+      { $sort: { value: -1 } }
+    ];
+
+    const result = await collection.aggregate(pipeline).toArray();
+    logger.database(`Sankey data returned ${result.length} connections`);
+
+    return result;
+  } catch (error) {
+    logger.error('Sankey data aggregation failed:', error.message);
+    throw error;
+  }
+}
+
+/**
  * Get publications by year (for timeline chart)
  * @param {Object} filters - Query filters
  * @returns {Promise<Array>} Array of {year, count}
@@ -827,5 +895,6 @@ module.exports = {
   getTopCommunitiesByPlants,
   getTopReferencesByCommunities,
   getTopReferencesByPlants,
-  getPublicationsByYear
+  getPublicationsByYear,
+  getSankeyData
 };

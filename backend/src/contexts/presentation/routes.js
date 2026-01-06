@@ -21,7 +21,8 @@ const {
   getTopCommunitiesByPlants,
   getTopReferencesByCommunities,
   getTopReferencesByPlants,
-  getPublicationsByYear
+  getPublicationsByYear,
+  getSankeyData
 } = require('../../services/statistics');
 const database = require('../../shared/database');
 
@@ -499,6 +500,22 @@ router.get('/painel/api/stats/publications-by-year', async (req, res) => {
     res.json(result);
   } catch (error) {
     logger.error('Publications by year failed:', error.message);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * GET /painel/api/stats/sankey
+ * Dados para diagrama Sankey: tipo de comunidade -> tipo de uso
+ */
+router.get('/painel/api/stats/sankey', async (req, res) => {
+  try {
+    const { estado, tipo, anoInicio, anoFim } = req.query;
+    const filters = buildFilters({ estado, tipo, anoInicio, anoFim });
+    const result = await getSankeyData(filters);
+    res.json(result);
+  } catch (error) {
+    logger.error('Sankey data failed:', error.message);
     res.status(500).json({ error: error.message });
   }
 });

@@ -5,7 +5,7 @@
 
 // Load Google Charts
 google.charts.load('current', {
-  'packages': ['corechart', 'geochart', 'table']
+  'packages': ['corechart', 'geochart', 'table', 'sankey']
 });
 
 google.charts.setOnLoadCallback(loadDashboardData);
@@ -32,6 +32,10 @@ async function loadDashboardData() {
     console.log('Loading charts...');
     await loadCharts(filters);
     console.log('✓ Charts loaded');
+
+    console.log('Loading sankey...');
+    await loadSankeyChart(filters);
+    console.log('✓ Sankey loaded');
 
     console.log('Loading tables...');
     await loadTables(filters);
@@ -459,6 +463,123 @@ function drawBarChart(elementId, data) {
   } catch (error) {
     console.error(`Error drawing BarChart for ${elementId}:`, error);
     container.innerHTML = '<div class="text-center text-red-400 py-12">Erro ao renderizar gráfico</div>';
+  }
+}
+
+/**
+ * Load Sankey chart data
+ */
+async function loadSankeyChart(filters) {
+  const queryString = buildQueryString(filters);
+
+  try {
+    const sankeyUrl = `/painel/api/stats/sankey?${queryString}`;
+    console.debug('Fetching:', sankeyUrl);
+    const sankeyRes = await fetch(sankeyUrl);
+    if (sankeyRes.ok) {
+      const sankeyData = await sankeyRes.json();
+      if (Array.isArray(sankeyData)) {
+        drawSankeyChart('chart-sankey', sankeyData);
+      } else {
+        console.error('Invalid sankey data:', sankeyData);
+        drawSankeyChart('chart-sankey', []);
+      }
+    } else {
+      console.error('Sankey error:', sankeyRes.status, sankeyRes.statusText);
+      const errorData = await sankeyRes.json();
+      console.error('Error details:', errorData);
+      drawSankeyChart('chart-sankey', []);
+    }
+  } catch (error) {
+    console.error('Error loading sankey chart:', error);
+    drawSankeyChart('chart-sankey', []);
+  }
+}
+
+/**
+ * Draw Sankey diagram for community type to use type relationships
+ */
+function drawSankeyChart(elementId, data) {
+  const container = document.getElementById(elementId);
+  if (!container) {
+    console.error(`Container not found: ${elementId}`);
+    return;
+  }
+
+  // If no data, show placeholder
+  if (!data || data.length === 0) {
+    container.innerHTML = '<div class="text-center text-gray-400 py-12">Sem dados disponíveis</div>';
+    return;
+  }
+
+  try {
+    // Prepare data for Google Charts Sankey
+    const chartData = [['De', 'Para', 'Quantidade']];
+
+    // Aggregate totals for labels
+    const sourceTotal = {};
+    const targetTotal = {};
+
+    data.forEach(item => {
+      if (item && item.source && item.target && item.value) {
+        sourceTotal[item.source] = (sourceTotal[item.source] || 0) + item.value;
+        targetTotal[item.target] = (targetTotal[item.target] || 0) + item.value;
+        chartData.push([item.source, item.target, item.value]);
+      }
+    });
+
+    if (chartData.length < 2) {
+      container.innerHTML = '<div class="text-center text-gray-400 py-12">Sem dados disponíveis</div>';
+      return;
+    }
+
+    const dataTable = google.visualization.arrayToDataTable(chartData);
+
+    // Color palette for nodes
+    const colors = [
+      '#1e3a5f', '#2d5a87', '#3d7aaf', // Blues
+      '#15803d', '#22c55e', '#86efac', // Greens
+      '#b45309', '#f59e0b', '#fcd34d', // Ambers
+      '#7c2d12', '#dc2626', '#f87171', // Reds
+      '#581c87', '#9333ea', '#c084fc', // Purples
+      '#155e75', '#0891b2', '#22d3ee', // Cyans
+      '#713f12', '#ca8a04', '#fde047', // Yellows
+      '#be185d', '#ec4899', '#f9a8d4'  // Pinks
+    ];
+
+    const options = {
+      height: 500,
+      sankey: {
+        node: {
+          colors: colors,
+          label: {
+            fontName: 'system-ui',
+            fontSize: 12,
+            color: '#1f2937',
+            bold: true
+          },
+          nodePadding: 20,
+          width: 15
+        },
+        link: {
+          colorMode: 'gradient',
+          colors: colors
+        },
+        iterations: 64
+      },
+      tooltip: {
+        textStyle: {
+          fontName: 'system-ui',
+          fontSize: 13
+        }
+      }
+    };
+
+    const chart = new google.visualization.Sankey(container);
+    chart.draw(dataTable, options);
+  } catch (error) {
+    console.error(`Error drawing Sankey chart for ${elementId}:`, error);
+    container.innerHTML = '<div class="text-center text-red-400 py-12">Erro ao renderizar diagrama Sankey</div>';
   }
 }
 
