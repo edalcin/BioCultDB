@@ -507,12 +507,14 @@ router.get('/painel/api/stats/publications-by-year', async (req, res) => {
 /**
  * GET /painel/api/stats/sankey
  * Dados para diagrama Sankey: tipo de comunidade -> tipo de uso
+ * Query params:
+ * - limitUsos: número de top tipos de uso a exibir (default: 10)
  */
 router.get('/painel/api/stats/sankey', async (req, res) => {
   try {
-    const { estado, tipo, anoInicio, anoFim } = req.query;
+    const { estado, tipo, anoInicio, anoFim, limitUsos = 10 } = req.query;
     const filters = buildFilters({ estado, tipo, anoInicio, anoFim });
-    const result = await getSankeyData(filters);
+    const result = await getSankeyData(filters, parseInt(limitUsos));
     res.json(result);
   } catch (error) {
     logger.error('Sankey data failed:', error.message);

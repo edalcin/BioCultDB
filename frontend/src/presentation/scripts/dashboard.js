@@ -8,7 +8,47 @@ google.charts.load('current', {
   'packages': ['corechart', 'geochart', 'table', 'sankey']
 });
 
-google.charts.setOnLoadCallback(loadDashboardData);
+// Current Sankey limit (Top N use types)
+let currentSankeyLimit = 10;
+
+google.charts.setOnLoadCallback(initDashboard);
+
+/**
+ * Initialize dashboard and set up event listeners
+ */
+function initDashboard() {
+  // Set up Sankey limit buttons
+  setupSankeyButtons();
+
+  // Load dashboard data
+  loadDashboardData();
+}
+
+/**
+ * Set up Sankey limit buttons event listeners
+ */
+function setupSankeyButtons() {
+  const buttons = document.querySelectorAll('.sankey-limit-btn');
+
+  buttons.forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      const limit = parseInt(e.target.dataset.limit);
+
+      // Update button styles
+      buttons.forEach(b => {
+        b.classList.remove('bg-forest-600', 'text-white', 'hover:bg-forest-700');
+        b.classList.add('bg-gray-200', 'text-gray-700', 'hover:bg-gray-300');
+      });
+      e.target.classList.remove('bg-gray-200', 'text-gray-700', 'hover:bg-gray-300');
+      e.target.classList.add('bg-forest-600', 'text-white', 'hover:bg-forest-700');
+
+      // Update current limit and reload chart
+      currentSankeyLimit = limit;
+      const filters = getFilters();
+      await loadSankeyChart(filters, limit);
+    });
+  });
+}
 
 /**
  * Load all dashboard data
@@ -34,7 +74,7 @@ async function loadDashboardData() {
     console.log('✓ Charts loaded');
 
     console.log('Loading sankey...');
-    await loadSankeyChart(filters);
+    await loadSankeyChart(filters, currentSankeyLimit);
     console.log('✓ Sankey loaded');
 
     console.log('Loading tables...');
@@ -468,12 +508,14 @@ function drawBarChart(elementId, data) {
 
 /**
  * Load Sankey chart data
+ * @param {Object} filters - Dashboard filters
+ * @param {number} limitUsos - Top N use types to show (default: 10)
  */
-async function loadSankeyChart(filters) {
+async function loadSankeyChart(filters, limitUsos = 10) {
   const queryString = buildQueryString(filters);
 
   try {
-    const sankeyUrl = `/painel/api/stats/sankey?${queryString}`;
+    const sankeyUrl = `/painel/api/stats/sankey?${queryString}&limitUsos=${limitUsos}`;
     console.debug('Fetching:', sankeyUrl);
     const sankeyRes = await fetch(sankeyUrl);
     if (sankeyRes.ok) {

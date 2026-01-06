@@ -84,8 +84,23 @@
 <!-- Sankey Diagram Row -->
 <div class="grid grid-cols-1 gap-6 mb-8">
   <div class="card">
-    <h3 class="text-lg font-semibold text-gray-900 mb-4">Tipos de Comunidade x Tipos de Uso</h3>
-    <p class="text-sm text-gray-500 mb-4">Relação entre os tipos de comunidades tradicionais e os tipos de uso das plantas</p>
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4">
+      <div>
+        <h3 class="text-lg font-semibold text-gray-900">Tipos de Comunidade x Tipos de Uso</h3>
+        <p class="text-sm text-gray-500">Relação entre os tipos de comunidades tradicionais e os tipos de uso das plantas</p>
+      </div>
+      <div class="flex gap-2 mt-3 sm:mt-0" id="sankey-filters">
+        <button type="button" data-limit="10" class="sankey-limit-btn px-3 py-1.5 text-sm font-medium rounded-md bg-forest-600 text-white hover:bg-forest-700 focus:outline-none focus:ring-2 focus:ring-forest-500">
+          Top 10
+        </button>
+        <button type="button" data-limit="20" class="sankey-limit-btn px-3 py-1.5 text-sm font-medium rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-forest-500">
+          Top 20
+        </button>
+        <button type="button" data-limit="30" class="sankey-limit-btn px-3 py-1.5 text-sm font-medium rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-forest-500">
+          Top 30
+        </button>
+      </div>
+    </div>
     <div id="chart-sankey" class="w-full" style="min-height: 500px;"></div>
   </div>
 </div>

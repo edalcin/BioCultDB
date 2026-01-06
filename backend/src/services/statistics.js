@@ -761,12 +761,39 @@ async function getTopReferencesByPlants(limit = 10, filters = {}) {
 /**
  * Get Sankey diagram data: community type -> use type relationships
  * @param {Object} filters - Query filters
+ * @param {number} limitUsos - Limit to top N use types (default: 10)
  * @returns {Promise<Array>} Array of {source, target, value}
  */
-async function getSankeyData(filters = {}) {
+async function getSankeyData(filters = {}, limitUsos = 10) {
   try {
     const collection = database.getCollection(config.database.collection);
 
+    // First, get the top N use types by total count
+    const topUsosResult = await collection.aggregate([
+      { $match: { status: Status.APPROVED, ...filters } },
+      { $unwind: '$comunidades' },
+      ...(filters['comunidades.estado'] || filters['comunidades.tipo']
+        ? [{ $match: {
+            ...(filters['comunidades.estado'] && { 'comunidades.estado': filters['comunidades.estado'] }),
+            ...(filters['comunidades.tipo'] && { 'comunidades.tipo': filters['comunidades.tipo'] })
+          }}]
+        : []),
+      { $unwind: '$comunidades.plantas' },
+      { $unwind: { path: '$comunidades.plantas.tipoUso', preserveNullAndEmptyArrays: false } },
+      { $match: { 'comunidades.plantas.tipoUso': { $exists: true, $ne: null, $ne: '' } } },
+      { $group: { _id: '$comunidades.plantas.tipoUso', total: { $sum: 1 } } },
+      { $sort: { total: -1 } },
+      { $limit: limitUsos },
+      { $project: { _id: 0, tipoUso: '$_id' } }
+    ]).toArray();
+
+    const topUsos = topUsosResult.map(item => item.tipoUso);
+
+    if (topUsos.length === 0) {
+      return [];
+    }
+
+    // Now get Sankey data filtered to only include top N use types
     const pipeline = [
       // Filter approved references
       { $match: { status: Status.APPROVED, ...filters } },
@@ -788,8 +815,8 @@ async function getSankeyData(filters = {}) {
       // Unwind use types (can have multiple per plant)
       { $unwind: { path: '$comunidades.plantas.tipoUso', preserveNullAndEmptyArrays: false } },
 
-      // Filter out empty use types
-      { $match: { 'comunidades.plantas.tipoUso': { $exists: true, $ne: null, $ne: '' } } },
+      // Filter to only top N use types
+      { $match: { 'comunidades.plantas.tipoUso': { $in: topUsos } } },
 
       // Group by community type and use type
       {
@@ -817,7 +844,7 @@ async function getSankeyData(filters = {}) {
     ];
 
     const result = await collection.aggregate(pipeline).toArray();
-    logger.database(`Sankey data returned ${result.length} connections`);
+    logger.database(`Sankey data returned ${result.length} connections (top ${limitUsos} use types)`);
 
     return result;
   } catch (error) {
