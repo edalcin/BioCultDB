@@ -288,6 +288,9 @@ function etnoChat() {
 
         this.currentConversation.messages.push(assistantMessage);
 
+        let hasReceivedData = false;
+        let streamError = null;
+
         while (true) {
           const { done, value } = await reader.read();
           if (done) break;
@@ -303,6 +306,7 @@ function etnoChat() {
               try {
                 const parsed = JSON.parse(data);
                 if (parsed.text) {
+                  hasReceivedData = true;
                   assistantMessage.content += parsed.text;
                   // Update the last message in the array
                   this.currentConversation.messages[this.currentConversation.messages.length - 1] = { ...assistantMessage };
@@ -310,6 +314,7 @@ function etnoChat() {
                 }
                 if (parsed.error) {
                   console.error('Stream error:', parsed.error);
+                  streamError = parsed.error;
                 }
               } catch (e) {
                 // Ignore JSON parse errors for incomplete chunks
@@ -318,14 +323,31 @@ function etnoChat() {
           }
         }
 
+        // Check if we received any data
+        if (!hasReceivedData || assistantMessage.content.trim() === '') {
+          // Remove empty assistant message
+          this.currentConversation.messages.pop();
+          throw new Error(streamError || 'Nenhuma resposta recebida do servidor. Verifique sua conexão e tente novamente.');
+        }
+
         this.updateCurrentConversation();
       } catch (e) {
         console.error('Chat error:', e);
-        this.currentConversation.messages.push({
-          role: 'assistant',
-          content: 'Desculpe, ocorreu um erro ao processar sua mensagem. Por favor, tente novamente.',
-          timestamp: new Date().toISOString()
-        });
+
+        // Don't add duplicate assistant messages if one already exists empty
+        const lastMsg = this.currentConversation.messages[this.currentConversation.messages.length - 1];
+        if (lastMsg && lastMsg.role === 'assistant' && lastMsg.content.trim() === '') {
+          // Update the existing empty message with error
+          lastMsg.content = `**Erro:** ${e.message}\n\nPor favor, tente novamente.`;
+          lastMsg.timestamp = new Date().toISOString();
+        } else {
+          // Add new error message
+          this.currentConversation.messages.push({
+            role: 'assistant',
+            content: `**Erro:** ${e.message}\n\nPor favor, tente novamente.`,
+            timestamp: new Date().toISOString()
+          });
+        }
         this.updateCurrentConversation();
       } finally {
         this.isStreaming = false;

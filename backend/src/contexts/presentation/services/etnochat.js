@@ -364,6 +364,8 @@ async function executeQuery(querySpec) {
  */
 async function streamChat({ provider, apiKey, model, messages, onText, onEnd, onError }) {
   try {
+    logger.info(`Starting chat stream for provider: ${provider}, model: ${model}`);
+
     // Format messages with system prompt
     const formattedMessages = messages.map(m => ({
       role: m.role,
@@ -385,9 +387,14 @@ async function streamChat({ provider, apiKey, model, messages, onText, onEnd, on
           .on('text', (text) => {
             fullResponse += text;
             onText(text);
+          })
+          .on('error', (error) => {
+            logger.error('Claude stream error:', error.message);
+            throw error;
           });
 
         await stream.finalMessage();
+        logger.info(`Claude stream completed, response length: ${fullResponse.length}`);
         break;
       }
 
@@ -478,9 +485,11 @@ async function streamChat({ provider, apiKey, model, messages, onText, onEnd, on
       .replace(/\n{3,}/g, '\n\n')
       .trim();
 
+    logger.info(`Stream completed successfully, final response length: ${fullResponse.length}`);
     onEnd(fullResponse);
   } catch (error) {
     logger.error('Stream chat failed:', error.message);
+    logger.error('Error stack:', error.stack);
     onError(error);
   }
 }
