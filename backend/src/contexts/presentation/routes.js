@@ -549,7 +549,7 @@ router.get('/etnochat/api/providers', (req, res) => {
  */
 router.post('/etnochat/api/validate-key', async (req, res) => {
   try {
-    const { provider, apiKey } = req.body;
+    const { provider, apiKey, model } = req.body;
 
     if (!provider || !apiKey) {
       return res.status(400).json({
@@ -558,7 +558,7 @@ router.post('/etnochat/api/validate-key', async (req, res) => {
       });
     }
 
-    const result = await etnochatService.validateApiKey(provider, apiKey);
+    const result = await etnochatService.validateApiKey(provider, apiKey, model);
     res.json(result);
   } catch (error) {
     logger.error('Validate key error:', error.message);

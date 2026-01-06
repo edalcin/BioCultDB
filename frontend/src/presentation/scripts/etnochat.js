@@ -107,9 +107,9 @@ function etnoChat() {
     updateAvailableModels() {
       const modelsByProvider = {
         claude: [
-          { id: 'claude-sonnet-4-20250514', name: 'Claude Sonnet 4' },
-          { id: 'claude-3-5-sonnet-20241022', name: 'Claude 3.5 Sonnet' },
-          { id: 'claude-3-5-haiku-20241022', name: 'Claude 3.5 Haiku' }
+          { id: 'claude-opus-4-5-20251101', name: 'Claude Opus 4.5' },
+          { id: 'claude-sonnet-4-5-20250929', name: 'Claude Sonnet 4.5' },
+          { id: 'claude-3-5-haiku-20241022', name: 'Claude Haiku 3.5' }
         ],
         openai: [
           { id: 'gpt-4o', name: 'GPT-4o' },
@@ -117,9 +117,10 @@ function etnoChat() {
           { id: 'gpt-4-turbo', name: 'GPT-4 Turbo' }
         ],
         gemini: [
-          { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash' },
-          { id: 'gemini-2.0-flash', name: 'Gemini 2.0 Flash' },
-          { id: 'gemini-2.5-flash-lite', name: 'Gemini 2.5 Flash Lite' }
+          { id: 'gemini-3.0-flash', name: 'Gemini 3.0 Flash' },
+          { id: 'gemini-3.0-pro', name: 'Gemini 3.0 Pro' },
+          { id: 'gemini-2.0-flash-thinking-exp-01-21', name: 'Gemini 2.0 Flash Thinking (Experimental)' },
+          { id: 'gemini-2.0-flash-thinking-exp', name: 'Gemini 2.0 Flash Thinking (Experimental - Latest)' }
         ]
       };
 
@@ -128,6 +129,13 @@ function etnoChat() {
 
     async validateKey() {
       if (!this.tempSettings.apiKey || !this.tempSettings.provider) return;
+
+      // Require model selection for validation
+      if (!this.tempSettings.model) {
+        this.validationStatus = 'invalid';
+        this.validationError = 'Selecione um modelo antes de validar';
+        return;
+      }
 
       this.validationStatus = 'validating';
       this.validationError = '';
@@ -138,7 +146,8 @@ function etnoChat() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             provider: this.tempSettings.provider,
-            apiKey: this.tempSettings.apiKey
+            apiKey: this.tempSettings.apiKey,
+            model: this.tempSettings.model
           })
         });
 

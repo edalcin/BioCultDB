@@ -25,9 +25,9 @@ const PROVIDERS = {
   claude: {
     name: 'Claude (Anthropic)',
     models: [
-      { id: 'claude-sonnet-4-20250514', name: 'Claude Sonnet 4' },
-      { id: 'claude-3-5-sonnet-20241022', name: 'Claude 3.5 Sonnet' },
-      { id: 'claude-3-5-haiku-20241022', name: 'Claude 3.5 Haiku' }
+      { id: 'claude-opus-4-5-20251101', name: 'Claude Opus 4.5' },
+      { id: 'claude-sonnet-4-5-20250929', name: 'Claude Sonnet 4.5' },
+      { id: 'claude-3-5-haiku-20241022', name: 'Claude Haiku 3.5' }
     ]
   },
   openai: {
@@ -41,9 +41,10 @@ const PROVIDERS = {
   gemini: {
     name: 'Google Gemini',
     models: [
-      { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash' },
-      { id: 'gemini-2.0-flash', name: 'Gemini 2.0 Flash' },
-      { id: 'gemini-2.5-flash-lite', name: 'Gemini 2.5 Flash Lite' }
+      { id: 'gemini-3.0-flash', name: 'Gemini 3.0 Flash' },
+      { id: 'gemini-3.0-pro', name: 'Gemini 3.0 Pro' },
+      { id: 'gemini-2.0-flash-thinking-exp-01-21', name: 'Gemini 2.0 Flash Thinking (Experimental)' },
+      { id: 'gemini-2.0-flash-thinking-exp', name: 'Gemini 2.0 Flash Thinking (Experimental - Latest)' }
     ]
   }
 };
@@ -52,15 +53,34 @@ const PROVIDERS = {
  * Validate API key by making a minimal API call
  * @param {string} provider - Provider name (claude, openai, gemini)
  * @param {string} apiKey - API key to validate
+ * @param {string} model - Model ID to test (optional, uses default if not provided)
  * @returns {Promise<{valid: boolean, error?: string}>}
  */
-async function validateApiKey(provider, apiKey) {
+async function validateApiKey(provider, apiKey, model = null) {
   try {
+    // Get default model if not provided
+    if (!model) {
+      const providerConfig = PROVIDERS[provider];
+      if (!providerConfig || !providerConfig.models || providerConfig.models.length === 0) {
+        return { valid: false, error: 'Provedor desconhecido ou sem modelos' };
+      }
+      model = providerConfig.models[0].id;
+    }
+
+    // Verify model is available for this provider
+    const providerConfig = PROVIDERS[provider];
+    if (providerConfig) {
+      const modelExists = providerConfig.models.some(m => m.id === model);
+      if (!modelExists) {
+        return { valid: false, error: `Modelo ${model} não disponível para ${providerConfig.name}` };
+      }
+    }
+
     switch (provider) {
       case 'claude': {
         const client = new Anthropic({ apiKey });
         await client.messages.create({
-          model: 'claude-3-5-haiku-20241022',
+          model: model,
           max_tokens: 1,
           messages: [{ role: 'user', content: 'Hi' }]
         });
@@ -70,7 +90,7 @@ async function validateApiKey(provider, apiKey) {
       case 'openai': {
         const client = new OpenAI({ apiKey });
         await client.chat.completions.create({
-          model: 'gpt-4o-mini',
+          model: model,
           max_tokens: 1,
           messages: [{ role: 'user', content: 'Hi' }]
         });
@@ -80,7 +100,7 @@ async function validateApiKey(provider, apiKey) {
       case 'gemini': {
         const client = new GoogleGenAI({ apiKey });
         await client.models.generateContent({
-          model: 'gemini-2.0-flash',
+          model: model,
           contents: 'Hi'
         });
         return { valid: true };
@@ -90,7 +110,7 @@ async function validateApiKey(provider, apiKey) {
         return { valid: false, error: 'Provedor desconhecido' };
     }
   } catch (error) {
-    logger.error(`API key validation failed for ${provider}:`, error.message);
+    logger.error(`API key validation failed for ${provider} with model ${model}:`, error.message);
     return { valid: false, error: error.message };
   }
 }
