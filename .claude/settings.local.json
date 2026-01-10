@@ -28,7 +28,10 @@
       "WebFetch(domain:www.npmjs.com)",
       "Bash(npm install:*)",
       "Bash(mkdir:*)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(git pull:*)",
+      "Bash(git stash:*)",
+      "WebFetch(domain:ai.google.dev)"
     ]
   }
 }
