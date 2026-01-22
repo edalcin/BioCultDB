@@ -1,0 +1,13 @@
+Medicinal
+Alimentício
+Tecnologia Social
+Combustível
+Ambiental
+Fonte genética
+Ornamental
+Tóxico
+Espiritual
+Lúdico
+Cuidados pessoais
+Quimico
+Outros
