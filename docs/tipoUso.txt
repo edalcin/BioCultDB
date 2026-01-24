@@ -1,3 +1,5 @@
+alimentício
+ambiental
 anticorpos
 antidepressivo
 antidiabético
@@ -18,9 +20,9 @@ asma
 asma brônquica
 asma e tosse
 azia
+baixa a pressão
 baixar a febre
 baixar a pressão
-baixa a pressão
 baixo astral
 balanço
 banho
@@ -83,14 +85,15 @@ contusão
 contusões
 coqueluche
 corante
+coração
+corpo
 corpo ruim
 corrimento
-corpo
-coração
 cortes
 cosmético
 cozinha
 crescer cabelo
+cuidados pessoais
 cura
 curar insônia
 cólica
@@ -113,13 +116,13 @@ depressão
 depurativo
 depurativo do sangue
 derrames
-desânimo
 descarrego
 desinfetante
-desintoxicação alimentar
 desintoxicar
-diabetes
+desintoxicação alimentar
+desânimo
 diabete
+diabetes
 diaforético
 diarréia
 digestivo
@@ -127,6 +130,7 @@ digestão
 disenteria
 disfunção erétil
 diurético
+doce
 doença do coração
 doença venérea
 doenças
@@ -167,11 +171,10 @@ dores no geral
 dores no peito
 dores no útero
 dormir
-doce
 dúvida
 edema
-emagrecimento
 emagrecer
+emagrecimento
 energia
 enferrujado
 enjoo
@@ -188,15 +191,16 @@ esgotamento físico
 espectro
 espinha
 espinhela caída
+espiritual
 estimulante
 estimulante sexual
+estresse
 estômago
 estômago e fígado
-estresse
 excitante
 expectorante
-falta de ar
 falta de apetite
+falta de ar
 falta de memória
 febre
 febres
@@ -208,12 +212,13 @@ fio
 fisioterápico
 flatulência
 fome
+fonte genética
 fortificante
 fraqueza
-frio
+fraturas
 frieira
 frieiras
-fraturas
+frio
 fumo
 furúnculo
 furúnculos
@@ -223,11 +228,11 @@ fígado e rins
 fôlego
 garganta
 garganta inflamada
+gases
 gastrite
 gazes
-gases
-gota
 gordura no fígado
+gota
 gripe
 gripe e resfriado
 gripe e tosse
@@ -266,8 +271,8 @@ inflamação no corpo
 inflamação no fígado
 inflamação no útero
 inflamações
-insônia
 inseticida
+insônia
 intestino
 intestino preso
 intoxicação
@@ -282,14 +287,16 @@ litúrgico
 lubrificante
 luxação
 luxações
+lúdico
 machucado
 machucados
 madeira
-mal de Parkinson
+mal de parkinson
 mal estar
 malária
 mancha na pele
 mau hálito
+medicinal
 memória
 menopausa
 menstruação
@@ -297,18 +304,19 @@ menstruação atrasada
 menstruação dolorosa
 micoses
 mioma
-místico
 mordida de cobra
+má digestão
+místico
 móveis
 músculos
-má digestão
-náusea
-náuseas
 nervosismo
 nervoso
 nevralgia
+náusea
+náuseas
 olho
 olho gordo
+ornamental
 ossos
 outros
 ouvido
@@ -334,8 +342,8 @@ picada de mosquito
 picadas
 picadas de insetos
 pigmentação
-piorreia
 piolho
+piorreia
 pneumonia
 ponta de flecha
 porrete
@@ -372,6 +380,7 @@ queimadura
 queimaduras
 queixo
 quengo
+químico
 ralação
 reconstituinte
 refrescante
@@ -401,12 +410,13 @@ seio
 sinusite
 sistema nervoso
 soluço
-sonífero
 sono
+sonífero
 suor
 sustento
 taquicardia
 tecnologia
+tecnologia social
 tecnológico
 tifo
 tonificante
@@ -420,6 +430,7 @@ triglicerídeos
 tuberculose
 tumor
 tumores
+tóxico
 uropatia
 urticária
 utensílio

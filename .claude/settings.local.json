@@ -31,7 +31,9 @@
       "Bash(ls:*)",
       "Bash(git pull:*)",
       "Bash(git stash:*)",
-      "WebFetch(domain:ai.google.dev)"
+      "WebFetch(domain:ai.google.dev)",
+      "Bash(npm audit:*)",
+      "Bash(git rebase:*)"
     ]
   }
 }
