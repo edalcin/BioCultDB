@@ -42,3 +42,6 @@ Thumbs.db
 # MongoDB
 data/
 dump/
+
+# Security audits
+audit/
