@@ -45,3 +45,5 @@ dump/
 
 # Security audits
 audit/
+
+graphify-out/

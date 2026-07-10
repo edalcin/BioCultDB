@@ -1,4 +1,4 @@
-# etnoDB Documentation Index
+# BioCultDB Documentation Index
 
 **Project**: Ethnobotanical Database Web Interface
 **Date**: 2025-12-25
@@ -142,7 +142,7 @@
 ### Option 1: Quick Start (1 hour)
 ```bash
 # Follow QUICK_START.md
-cd D:\git\etnoDB
+cd D:\git\BioCultDB
 npm init -y
 # ... follow guide
 ```

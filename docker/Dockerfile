@@ -1,4 +1,4 @@
-# Multi-stage build for etnoDB application
+# Multi-stage build for BioCultDB application
 # Target: <500MB image size (estimated: 120-180MB)
 
 # ============================================

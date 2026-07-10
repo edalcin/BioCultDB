@@ -33,7 +33,7 @@ This quickstart guide provides developers with everything needed to set up, deve
 
 ```bash
 git clone <repository-url>
-cd etnoDB
+cd BioCultDB
 git checkout main  # Always work on main branch per spec
 ```
 
@@ -90,7 +90,7 @@ npm run dev
 ## Project Structure
 
 ```
-etnoDB/
+BioCultDB/
 ├── backend/
 │   ├── src/
 │   │   ├── models/              # MongoDB data models

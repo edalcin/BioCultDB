@@ -395,7 +395,7 @@ test('search responds within 2s for 1000 records', async () => {
 
 ---
 
-**Prepared by**: Technology Analysis for etnoDB
+**Prepared by**: Technology Analysis for BioCultDB
 **Date**: 2025-12-25
 **Version**: 1.0 FINAL
 **Status**: ✅ READY FOR IMPLEMENTATION

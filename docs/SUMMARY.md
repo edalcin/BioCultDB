@@ -1,4 +1,4 @@
-# Technology Stack Research Summary - etnoDB
+# Technology Stack Research Summary - BioCultDB
 
 **Research Date**: 2025-12-25
 **Project**: Ethnobotanical Database Web Interface
@@ -478,6 +478,6 @@ All requirements met with significant margins for future growth.
 
 ---
 
-**Prepared by**: Technology Stack Research for etnoDB
+**Prepared by**: Technology Stack Research for BioCultDB
 **Date**: 2025-12-25
 **Version**: 1.0 FINAL

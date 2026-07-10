@@ -569,7 +569,7 @@ checkImageSize()
 
 ## 10. Conclusion
 
-**For etnoDB project:**
+**For BioCultDB project:**
 
 ✅ **Node.js 22 Alpine + Fastify + HTMX = 140MB**
 - Well under 500MB limit (72% margin)
