@@ -1,4 +1,4 @@
-# Quick Start Guide - etnoDB Implementation
+# Quick Start Guide - BioCultDB Implementation
 
 **Start Date**: 2025-12-25
 **Stack**: Node.js + Fastify + HTMX
@@ -25,7 +25,7 @@ git --version
 ### Step 1.1: Create project structure
 
 ```bash
-cd D:\git\etnoDB
+cd D:\git\BioCultDB
 
 # Create directories
 mkdir -p src/apps/acquisition/views/partials

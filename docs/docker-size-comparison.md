@@ -1,4 +1,4 @@
-# Docker Image Size Comparison - etnoDB
+# Docker Image Size Comparison - BioCultDB
 
 **Date**: 2025-12-25
 **Purpose**: Real-world Docker image size measurements for different technology stacks
@@ -594,4 +594,4 @@ TOTAL:           140MB (100%)
 
 **Document Version**: 1.0
 **Verified**: Real Docker builds on 2025-12-25
-**Author**: Docker Size Analysis for etnoDB Project
+**Author**: Docker Size Analysis for BioCultDB Project

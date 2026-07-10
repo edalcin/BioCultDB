@@ -6,4 +6,4 @@ Este projeto deve rodar em um docker que será instalado no Unraid.
 O docker será gerado automáticamente a cada modificação do código, e ficará disponível em ghcr.io/edalcin/ 
 Este projeto irá commit sempre para o main branch e nunca irá criar qualquer outro branch. 
 Esta aplicação irá rodar no mesmo servidor que o ArangoDB, apenas em um outro docker. 
-A interface será dividida nos contextos de "aquisição" (entrada de dados), "curadoria" (edição dos dados) e "apresentação" (busca e apresentação dos dados, em forma de cards), conforme a arquitetura definida em https://github.com/edalcin/etnoArquitetura
+A interface será dividida nos contextos de "aquisição" (entrada de dados), "curadoria" (edição dos dados) e "apresentação" (busca e apresentação dos dados, em forma de cards), conforme a arquitetura definida em https://github.com/edalcin/Arquitetura-BioCultural

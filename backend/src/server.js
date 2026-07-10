@@ -23,7 +23,7 @@ const curationApp = require('./contexts/curation/app');
  */
 async function startServer() {
   try {
-    logger.server('Starting etnoDB server...');
+    logger.server('Starting BioCultDB server...');
 
     // Connect to MongoDB
     logger.server('Connecting to database...');
@@ -133,7 +133,7 @@ function createPlaceholderApp(contextName, displayName) {
       <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>${displayName} - etnoDB</title>
+        <title>${displayName} - BioCultDB</title>
         <style>
           body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
@@ -151,7 +151,7 @@ function createPlaceholderApp(contextName, displayName) {
       </head>
       <body>
         <h1>${displayName}</h1>
-        <p>Contexto ${contextName} do etnoDB</p>
+          <p>Contexto ${contextName} do BioCultDB</p>
         <div class="status">
           <p>✓ Servidor rodando corretamente</p>
           <p>Aguardando implementação das funcionalidades (Fase 3-5)</p>

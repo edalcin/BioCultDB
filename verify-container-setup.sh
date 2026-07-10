@@ -3,7 +3,7 @@
 # Script para verificar o setup do container em Unraid
 # Execute via: docker exec etnodb-app bash -c 'bash /app/verify-container-setup.sh'
 
-echo "=== etnoDB Container Verification ==="
+echo "=== BioCultDB Container Verification ==="
 echo ""
 
 echo "1. App Directory Structure:"

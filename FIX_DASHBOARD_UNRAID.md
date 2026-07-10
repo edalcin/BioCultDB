@@ -10,7 +10,7 @@
 ### Opção 1: Reconstruir do Zero (Mais Seguro)
 ```bash
 # No Unraid, execute:
-cd /path/to/etnoDB
+cd /path/to/BioCultDB
 docker-compose -f docker/docker-compose.yml down
 docker-compose -f docker/docker-compose.yml up --build
 
@@ -146,7 +146,7 @@ Essas correções foram feitas:
 4. `0228f75` - Corrige carregamento do Painel
 5. `a1e5b2d` - Diagnóstico inicial
 
-Todos estão no repositório remoto: https://github.com/edalcin/etnoDB
+Todos estão no repositório remoto: https://github.com/edalcin/BioCultDB
 
 ## Resumo
 

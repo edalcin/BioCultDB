@@ -1,4 +1,4 @@
-# Technology Stack Recommendation for etnoDB Web Interface
+# Technology Stack Recommendation for BioCultDB Web Interface
 
 **Date**: 2025-12-25
 **Project**: Ethnobotanical Database Web Interface
@@ -801,4 +801,4 @@ export function setupMetrics(app) {
 
 **Document Version**: 1.0
 **Last Updated**: 2025-12-25
-**Author**: Technology Stack Analysis for etnoDB Project
+**Author**: Technology Stack Analysis for BioCultDB Project

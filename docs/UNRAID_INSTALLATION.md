@@ -1,6 +1,6 @@
-# Guia de Instalação do etnoDB no Unraid
+# Guia de Instalação do BioCultDB no Unraid
 
-**Documentação de Deployment do etnoDB via Interface Web do Unraid**
+**Documentação de Deployment do BioCultDB via Interface Web do Unraid**
 
 ---
 
@@ -57,7 +57,7 @@ docker exec mongodb mongosh --eval "db.version()"
 
 ---
 
-## Seção 2: Adicionar Container etnoDB
+## Seção 2: Adicionar Container BioCultDB
 
 ### Passo 2.1: Acessar Interface Docker do Unraid
 
@@ -430,7 +430,7 @@ docker exec mongodb mongodump --out /backup/etnodb-$(date +%Y%m%d)
 /usr/bin/docker exec mongodb mongodump --out /mnt/user/backups/etnodb-$(date +%Y%m%d)
 ```
 
-### Atualizar etnoDB
+### Atualizar BioCultDB
 
 Para atualizar para nova versão:
 
@@ -606,4 +606,4 @@ Para questões sobre instalação ou uso:
 ---
 
 **Última atualização**: 2025-12-25
-**Versão**: etnoDB 1.0
+**Versão**: BioCultDB 1.0

@@ -1,10 +1,10 @@
-# etnoDB - Base de Dados Etnobotânica
+# BioCultDB - Base de Dados Etnobotânica
 ## Versão 1.0
 
 <div align="center">
-  <img src="docs\etnoImagens\etnodb2Trans300.png" alt="etnoDB Logo" width="200">
+  <img src="docs\etnoImagens\etnodb2Trans300.png" alt="BioCultDB Logo" width="200">
 
-  [![GitHub release](https://img.shields.io/github/v/release/edalcin/etnoDB)](https://github.com/edalcin/etnoDB/releases)
+  [![GitHub release](https://img.shields.io/github/v/release/edalcin/BioCultDB)](https://github.com/edalcin/BioCultDB/releases)
   [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18139413.svg)](https://doi.org/10.5281/zenodo.18139413)
 </div>
 
@@ -12,7 +12,7 @@ Sistema web para gerenciamento de **dados secundários** etnobotânicos sobre a 
 
 > "Se os dados não estão fisicamente sob o controle de quem os gerou, a soberania é apenas uma promessa bonita em um termo de consentimento."
 >
-> — Eduardo Dalcin, em [*Sementes Livres, Solos Próprios: Por que o Conhecimento Tradicional exige uma Arquitetura Federada*](https://eduardo.dalc.in/por-que-o-conhecimento-tradicional-exige-uma-arquitetura-federada/), post que resume e ilustra didaticamente a arquitetura federada da qual o etnoDB é o membro de referência para fontes secundárias.
+> — Eduardo Dalcin, em [*Sementes Livres, Solos Próprios: Por que o Conhecimento Tradicional exige uma Arquitetura Federada*](https://eduardo.dalc.in/por-que-o-conhecimento-tradicional-exige-uma-arquitetura-federada/), post que resume e ilustra didaticamente a arquitetura federada da qual o BioCultDB é o membro de referência para fontes secundárias.
 
 ## O que é Etnobotânica?
 
@@ -22,13 +22,13 @@ A etnobotânica é uma disciplina que investiga as interações e relações com
 
 ## Sobre o Projeto
 
-O **etnoDB** é uma interface baseada na web para um banco de dados MongoDB que centraliza **dados secundários** sobre conhecimento tradicional de comunidades brasileiras em relação ao uso de plantas.
+O **BioCultDB** é uma interface baseada na web para um banco de dados MongoDB que centraliza **dados secundários** sobre conhecimento tradicional de comunidades brasileiras em relação ao uso de plantas.
 
 ### O que são Dados Secundários?
 
 **Dados secundários** são informações que já foram coletadas, publicadas e estão disponíveis em fontes existentes, como artigos científicos, livros, relatórios e outras publicações. Diferentemente dos dados primários (coletados diretamente pelo pesquisador através de entrevistas, observações ou experimentos), os dados secundários representam a compilação e sistematização de conhecimentos já documentados na literatura científica.
 
-No contexto do etnoDB:
+No contexto do BioCultDB:
 - **Fonte**: Artigos científicos publicados em periódicos revisados por pares
 - **Conteúdo**: Relações documentadas entre comunidades tradicionais e plantas (usos, nomes vernaculares, conhecimentos associados)
 - **Evidência**: Cada registro no banco de dados está vinculado à sua publicação científica original (referência bibliográfica completa com autores, ano, título, DOI)
@@ -41,7 +41,7 @@ Essa abordagem permite:
 
 ## Arquitetura
 
-O projeto segue a arquitetura proposta em [etnoArquitetura](https://github.com/edalcin/etnoArquitetura), organizada em três contextos principais:
+O projeto segue a arquitetura proposta em [Arquitetura BioCultural](https://github.com/edalcin/Arquitetura-BioCultural), organizada em três contextos principais:
 
 ### 1. **Aquisição** (Entrada de Dados Secundários)
 Interface dedicada à entrada de **dados secundários extraídos de artigos científicos publicados**.
@@ -253,22 +253,22 @@ flowchart TD
 
 ## Projetos Relacionados
 
-O etnoDB faz parte de um ecossistema integrado de ferramentas para gestão de dados etnobotânicos:
+O BioCultDB faz parte de um ecossistema integrado de ferramentas para gestão de dados etnobotânicos:
 
-### [etnoArquitetura](https://github.com/edalcin/etnoArquitetura)
-Projeto principal que define a arquitetura de referência para sistemas etnobotânicos. Estabelece os três contextos fundamentais (Aquisição, Curadoria, Apresentação) e os padrões de design implementados no etnoDB.
+### [Arquitetura BioCultural](https://github.com/edalcin/Arquitetura-BioCultural)
+Projeto principal que define a arquitetura de referência para sistemas etnobotânicos. Estabelece os três contextos fundamentais (Aquisição, Curadoria, Apresentação) e os padrões de design implementados no BioCultDB.
 
-### [etnopapers](https://github.com/edalcin/etnopapers)
-Sistema de aquisição automatizada de dados secundários com auxílio de Inteligência Artificial. Permite a extração e inclusão de novos registros na base de dados do etnoDB a partir de artigos científicos de forma assistida por IA, agilizando o processo de entrada de dados.
+### [BioCultPapers](https://github.com/edalcin/BioCultPapers)
+Sistema de aquisição automatizada de dados secundários com auxílio de Inteligência Artificial. Permite a extração e inclusão de novos registros na base de dados do BioCultDB a partir de artigos científicos de forma assistida por IA, agilizando o processo de entrada de dados.
 
-### [etnotermos](https://github.com/edalcin/etnotermos) 🆕 v2.0
-Sistema de curadoria de vocabulário controlado etnobotânico sob o padrão **[SKOS-XL](https://www.w3.org/TR/skos-reference/skos-xl.html)** (W3C). **Visualmente integrado** ao etnoDB, o etnotermos compartilha a mesma identidade visual, banco de dados MongoDB (`etnodb`) e gerencia o vocabulário controlado dos campos:
+### [BioCultTermos](https://github.com/edalcin/BioCultTermos) 🆕 v2.0
+Sistema de curadoria de vocabulário controlado etnobotânico sob o padrão **[SKOS-XL](https://www.w3.org/TR/skos-reference/skos-xl.html)** (W3C). **Visualmente integrado** ao BioCultDB, o BioCultTermos compartilha a mesma identidade visual, banco de dados MongoDB (`etnodb`) e gerencia o vocabulário controlado dos campos:
 - **`comunidades.tipo`**: As 29 categorias de comunidades tradicionais (Decreto 8.750/2016)
 - **`comunidades.plantas.nomeVernacular`**: Nomes vernaculares de plantas
 - **`comunidades.plantas.tipoUso`**: Tipos de uso de plantas (medicinal, alimentício, ritualístico, etc.)
 - **`comunidades.atividadesEconomicas`**: Atividades econômicas reportadas
 
-O etnotermos v2.0 opera em três contextos (C4 Model):
+O BioCultTermos v2.0 opera em três contextos (C4 Model):
 1. **Aquisição** — lê automaticamente os valores brutos da coleção `etnodb` e os transforma em conceitos SKOS-XL candidatos
 2. **Apresentação** (porta 4000) — interface pública para consulta e navegação dos termos curados
 3. **Curadoria** (porta 4001) — interface autenticada para categorizar, relacionar e validar conceitos segundo SKOS-XL
@@ -281,13 +281,13 @@ Contribuições são bem-vindas! Caso tenha sugestões, encontre bugs ou tenha c
 
 ## Suporte
 
-Para questões, problemas ou sugestões sobre o etnoDB, utilize a seção [Issues](../../issues) do repositório.
+Para questões, problemas ou sugestões sobre o BioCultDB, utilize a seção [Issues](../../issues) do repositório.
 
 ## Contato
 
 Para mais informações sobre o projeto:
 - **Desenvolvedor**: Eduardo Dalcin - edalcin@jbrj.gov.br
-- **Referência Arquitetônica**: [etnoArquitetura](https://github.com/edalcin/etnoArquitetura)
+- **Referência Arquitetônica**: [Arquitetura BioCultural](https://github.com/edalcin/Arquitetura-BioCultural)
 
 ---
 
@@ -295,20 +295,20 @@ Para mais informações sobre o projeto:
 
 ---
 
-## EtnoArquitetura Federada — v3.0
+## Arquitetura BioCultural Federada — v3.0
 
-O **etnoDB** faz parte da [EtnoArquitetura](https://github.com/edalcin/etnoArquitetura), um ecossistema federado para gestão de Conhecimento Tradicional Associado à Biodiversidade (CTA). Na versão 3.0, a arquitetura é explicitamente federada: cada iniciativa e comunidade é soberana na gestão de seus próprios dados.
+O **BioCultDB** faz parte da [Arquitetura BioCultural](https://github.com/edalcin/Arquitetura-BioCultural), um ecossistema federado para gestão de Conhecimento Tradicional Associado à Biodiversidade (CTA). Na versão 3.0, a arquitetura é explicitamente federada: cada iniciativa e comunidade é soberana na gestão de seus próprios dados.
 
-### Papel do etnoDB na Federação
+### Papel do BioCultDB na Federação
 
-O etnoDB é o componente central de uma **Iniciativa de Fontes Secundárias** — tipo de membro da federação especializado em sistematizar CTA extraído de literatura científica publicada. O etnoDB atual (junto com etnoTermos e etnopapers) constitui a **Iniciativa #1** (membro de referência) da federação.
+O BioCultDB é o componente central de uma **Iniciativa de Fontes Secundárias** — tipo de membro da federação especializado em sistematizar CTA extraído de literatura científica publicada. O BioCultDB atual (junto com BioCultTermos e BioCultPapers) constitui a **Iniciativa #1** (membro de referência) da federação.
 
 ```mermaid
 graph TD
-    subgraph I1["Iniciativa de Fontes Secundárias (etnoDB)"]
-        EP(etnopapers) -->|extrai de PDFs| EDB
-        EDB(etnoDB\nAquisição · Curadoria · Apresentação) <--> MDB[(MongoDB)]
-        ET(etnoTermos\nSKOS-XL) <--> MDB
+    subgraph I1["Iniciativa de Fontes Secundárias (BioCultDB)"]
+        EP(BioCultPapers) -->|extrai de PDFs| EDB
+        EDB(BioCultDB\nAquisição · Curadoria · Apresentação) <--> MDB[(MongoDB)]
+        ET(BioCultTermos\nSKOS-XL) <--> MDB
     end
 
     PL{{"Pluriverso\nMiddleware de Federação"}}
@@ -317,24 +317,24 @@ graph TD
     U((Usuário)) <-->|API| PL
 ```
 
-O MongoDB do etnoDB **pertence à Iniciativa #1** — não é mais um recurso compartilhado da arquitetura. Outras iniciativas e comunidades operam seus próprios bancos de dados.
+O MongoDB do BioCultDB **pertence à Iniciativa #1** — não é mais um recurso compartilhado da arquitetura. Outras iniciativas e comunidades operam seus próprios bancos de dados.
 
 ### Mudanças Necessárias para v3.0
 
-> **Nota**: Nenhuma implementação está sendo realizada agora. Este documento registra, em alto nível, o que precisará ser desenvolvido para que o etnoDB participe plenamente da arquitetura federada.
+> **Nota**: Nenhuma implementação está sendo realizada agora. Este documento registra, em alto nível, o que precisará ser desenvolvido para que o BioCultDB participe plenamente da arquitetura federada.
 
 | Mudança | Descrição |
 |---------|-----------|
 | **Endpoint de harvest** | Implementar `GET /api/federation/records` paginado, retornando apenas registros `status: approved` e `visibility: public`, com suporte a filtro `updated_since` para coletas incrementais |
 | **Campo `member_id`** | Cada registro deve carregar identificador único do membro (`member_id`) para rastreabilidade no índice federado do Pluriverso |
 | **Campo `visibility`** | Adicionar campo de visibilidade por registro (`public`, `restricted`, `private`) para controle granular do que é publicado na federação |
-| **Remoção de pressuposto de MongoDB compartilhado** | Remover qualquer configuração ou código que pressuponha coexistência com etnoRelatos no mesmo banco |
+| **Remoção de pressuposto de MongoDB compartilhado** | Remover qualquer configuração ou código que pressuponha coexistência com BioCultRelatos no mesmo banco |
 
 ### Componentes Relacionados
 
 | Componente | Relação |
 |------------|---------|
-| **[etnopapers](https://github.com/edalcin/etnopapers)** | Alimenta o etnoDB com dados extraídos de PDFs via IA |
-| **[etnoTermos](https://github.com/edalcin/etnotermos)** | Fornece vocabulários SKOS-XL para aquisição, curadoria e apresentação |
-| **[Pluriverso](https://github.com/edalcin/pluriverso)** | Coleta registros públicos do etnoDB via harvest REST; harmoniza com dados de outros membros |
-| **[etnoArquitetura](https://github.com/edalcin/etnoArquitetura)** | Documentação completa da arquitetura e decisões de design ([ADR-004](https://github.com/edalcin/etnoArquitetura/blob/main/docs/architecture-decisions/ADR-004-federated-architecture.md)) |
+| **[BioCultPapers](https://github.com/edalcin/BioCultPapers)** | Alimenta o BioCultDB com dados extraídos de PDFs via IA |
+| **[BioCultTermos](https://github.com/edalcin/BioCultTermos)** | Fornece vocabulários SKOS-XL para aquisição, curadoria e apresentação |
+| **[Pluriverso](https://github.com/edalcin/pluriverso)** | Coleta registros públicos do BioCultDB via harvest REST; harmoniza com dados de outros membros |
+| **[Arquitetura BioCultural](https://github.com/edalcin/Arquitetura-BioCultural)** | Documentação completa da arquitetura e decisões de design ([ADR-004](https://github.com/edalcin/Arquitetura-BioCultural/blob/main/docs/architecture-decisions/ADR-004-federated-architecture.md)) |

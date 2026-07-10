@@ -1,4 +1,4 @@
-# Implementation Examples - etnoDB Web Interface
+# Implementation Examples - BioCultDB Web Interface
 
 **Date**: 2025-12-25
 **Companion to**: technology-stack-recommendation.md

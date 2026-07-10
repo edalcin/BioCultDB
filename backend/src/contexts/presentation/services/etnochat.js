@@ -426,7 +426,7 @@ async function streamChat({ provider, apiKey, model, messages, onText, onEnd, on
         // Convert messages to Gemini format
         const geminiContents = [
           { role: 'user', parts: [{ text: systemPrompt }] },
-          { role: 'model', parts: [{ text: 'Entendido. Sou o etnoChat, assistente especializado em dados etnobotanicos do etnoDB. Estou pronto para ajudar.' }] }
+          { role: 'model', parts: [{ text: 'Entendido. Sou o etnoChat, assistente especializado em dados etnobotanicos do BioCultDB. Estou pronto para ajudar.' }] }
         ];
 
         for (const m of formattedMessages) {

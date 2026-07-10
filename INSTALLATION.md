@@ -1,6 +1,6 @@
-# Instalação e Desenvolvimento - etnoDB
+# Instalação e Desenvolvimento - BioCultDB
 
-Este documento contém instruções detalhadas para instalação, desenvolvimento e deploy do etnoDB.
+Este documento contém instruções detalhadas para instalação, desenvolvimento e deploy do BioCultDB.
 
 ## Requisitos
 
@@ -16,7 +16,7 @@ Este documento contém instruções detalhadas para instalação, desenvolviment
 ```bash
 # Clone o repositório
 git clone <repository-url>
-cd etnoDB
+cd BioCultDB
 
 # Instale as dependências
 npm install
@@ -68,7 +68,7 @@ Para instruções detalhadas de instalação via interface web do Unraid, consul
 **Resumo rápido (via interface web Unraid):**
 
 1. **Crie container MongoDB** (se necessário - Seção 1 do guia)
-2. **Adicione container etnoDB** via interface Docker
+2. **Adicione container BioCultDB** via interface Docker
 3. **Configure via interface Unraid**:
    - **Nome**: etnodb
    - **Repository**: ghcr.io/edalcin/etnodb:latest

@@ -20,7 +20,7 @@ services:
       timeout: 5s
       retries: 5
 
-  # etnoDB Application
+  # BioCultDB Application
   app:
     build:
       context: ..

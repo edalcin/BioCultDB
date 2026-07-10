@@ -6,7 +6,7 @@
 
 ## Resumo
 
-Implementar o **etnoChat**, uma interface de chat com IA para consultas em linguagem natural sobre dados etnobotanicos do etnoDB. Suporta multiplos provedores de IA (Claude, OpenAI, Gemini) com API keys armazenadas no browser.
+Implementar o **etnoChat**, uma interface de chat com IA para consultas em linguagem natural sobre dados etnobotanicos do BioCultDB. Suporta multiplos provedores de IA (Claude, OpenAI, Gemini) com API keys armazenadas no browser.
 
 ## Requisitos Confirmados
 
@@ -19,7 +19,7 @@ Implementar o **etnoChat**, uma interface de chat com IA para consultas em lingu
 
 ```
 +------------------+      +------------------+      +------------------+
-|    Browser       |      |  etnoDB Server   |      |   AI Provider    |
+|    BioCultDB Server   |      |   AI Provider    |
 |   (Frontend)     |      |  (Port 3003)     |      |   (External)     |
 +------------------+      +------------------+      +------------------+
 | Alpine.js State  |<---->| Express Routes   |----->| Claude API       |

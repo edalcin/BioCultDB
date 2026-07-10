@@ -1,4 +1,4 @@
-# Technology Stack Decision - etnoDB Web Interface
+# Technology Stack Decision - BioCultDB Web Interface
 
 **Date**: 2025-12-25
 **Status**: ✅ FINAL RECOMMENDATION
