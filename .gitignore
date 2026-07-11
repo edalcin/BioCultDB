@@ -39,9 +39,11 @@ Thumbs.db
 *.tmp
 .cache/
 
-# MongoDB
+# SQLite local database (ADR-005 — never committed)
 data/
-dump/
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
 
 # Security audits
 audit/

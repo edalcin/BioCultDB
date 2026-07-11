@@ -94,10 +94,18 @@ class Database {
     `);
   }
 
+  /**
+   * Idempotently add a generated column. `PRAGMA table_info` does not
+   * reliably reflect columns added via `ALTER TABLE ... ADD COLUMN ...
+   * GENERATED ALWAYS AS (...) VIRTUAL` (confirmed: sqlite_master.sql has
+   * the column, but table_info omits it) — so existence is detected by
+   * catching SQLite's own "duplicate column name" error instead.
+   */
   _ensureGeneratedColumn(name, expression) {
-    const columns = this.db.prepare(`PRAGMA table_info(${TABLE})`).all();
-    if (!columns.some((c) => c.name === name)) {
+    try {
       this.db.exec(`ALTER TABLE ${TABLE} ADD COLUMN ${name} GENERATED ALWAYS AS (${expression}) VIRTUAL;`);
+    } catch (error) {
+      if (!/duplicate column name/i.test(error.message)) throw error;
     }
   }
 
