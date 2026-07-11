@@ -1,0 +1,41 @@
+# Unidade de Fontes Secundárias (ADR-005 / Arquitetura-BioCultural v3.1)
+# UM único serviço: BioCultDB + BioCultTermos no mesmo container, sobre o
+# mesmo arquivo SQLite compartilhado (/data/unidade.sqlite). Sem MongoDB.
+#
+# Pré-requisito: submodule BioCultTermos inicializado.
+#   git submodule update --init --recursive
+#
+# Uso:
+#   docker compose -f docker/docker-compose.unidade.yml up --build
+#
+# BioCultDB:    http://localhost:3001 (Aquisição) / :3002 (Curadoria) / :3003 (Apresentação)
+# BioCultTermos: http://localhost:4000 (público) / :4001 (admin)
+
+services:
+  unidade-fontes-secundarias:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.unidade
+    image: biocult-unidade-fontes-secundarias:latest
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+      - "3002:3002"
+      - "3003:3003"
+      - "4000:4000"
+      - "4001:4001"
+    environment:
+      NODE_ENV: production
+      SQLITE_DB_PATH: /data/unidade.sqlite
+      # BioCultTermos admin auth (see BioCultTermos/backend/.env.example) —
+      # example only, never a real credential:
+      ADMIN_USERS: '[{"username":"curador1","passwordHash":"$$2b$$10$$SUBSTITUIR_HASH_AQUI"}]'
+      AUDIO_STORAGE_PATH: /data/audio
+      # Optional: LLM provider keys for BioCultDB's etnoChat (DA8) are
+      # supplied per-request by the user in the UI, not via env var.
+    volumes:
+      - sqlite_data:/data
+
+volumes:
+  sqlite_data:
+    name: unidade_fontes_secundarias_sqlite_data

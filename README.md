@@ -180,6 +180,45 @@ Referência (Publicação Científica)
 - **Renderização**: Server-side rendering com HTMX para interatividade
 - **Responsividade**: Design responsivo de 320px (mobile) a 1920px+ (desktop)
 
+## Empacotamento por Unidade Federada (ADR-005)
+
+Na Arquitetura BioCultural v3.1, o BioCultDB é o repositório "anfitrião" da **Unidade de Fontes
+Secundárias**: um único container Docker que roda BioCultDB (3001-3003) **e** BioCultTermos
+(4000-4001) sobre o **mesmo arquivo SQLite compartilhado** (`/data/unidade.sqlite`, ADR-005 da
+[Arquitetura-BioCultural](https://github.com/edalcin/Arquitetura-BioCultural)). Sem MongoDB, sem
+servidor de banco separado — soberania = arquivo único, portável, backup = copiar o arquivo.
+
+BioCultTermos entra como **git submodule** em `./bioculttermos`.
+
+### Subir a unidade
+
+```bash
+# 1. Clonar com o submodule (ou inicializar depois, se já clonado)
+git clone --recurse-submodules https://github.com/edalcin/BioCultDB.git
+# ou, em um clone existente:
+git submodule update --init --recursive
+
+# 2. Subir o container único da unidade
+docker compose -f docker/docker-compose.unidade.yml up --build
+```
+
+Isso builda `docker/Dockerfile.unidade` (multi-stage: compila Tailwind CSS + `better-sqlite3` de
+ambos os apps; runtime `node:20-alpine` não-root) e sobe UM container com `docker/start-unit.sh`
+(via `dumb-init`) iniciando os dois processos Node (BioCultDB e BioCultTermos) lado a lado. Ambos
+abrem o mesmo arquivo via `SQLITE_DB_PATH=/data/unidade.sqlite` (volume nomeado `sqlite_data`,
+persiste entre reinícios). Verificado (build real + run real): as 5 portas respondem, as tabelas
+`biocultdb_records` e `etnotermos*` coexistem no mesmo arquivo, e o `AcquisitionService` do
+BioCultTermos lê registros gravados pelo BioCultDB no mesmo banco (integração ponta a ponta
+testada).
+
+### Unidade Comunidade Tradicional (mesmo padrão, ainda não materializado)
+
+A segunda unidade da federação (`BioCultRelatos` + `BioCultTermos`, hoje `BioCultRelatos` é
+greenfield/só documentação) seguirá o MESMO padrão quando `BioCultRelatos` existir: repo anfitrião
+= `BioCultRelatos`, `BioCultTermos` como submodule, `Dockerfile.unidade` + `start-unit.sh` +
+`docker-compose.unidade.yml` análogos (trocando as portas 3001-3003 do BioCultDB pela porta do
+BioCultRelatos), um único container, um único arquivo SQLite compartilhado.
+
 ## Princípios C.A.R.E.
 
 O projeto implementa os princípios C.A.R.E. para dados de povos indígenas e comunidades tradicionais:

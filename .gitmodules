@@ -1,0 +1,3 @@
+[submodule "bioculttermos"]
+	path = bioculttermos
+	url = https://github.com/edalcin/BioCultTermos.git

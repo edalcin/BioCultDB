@@ -1,0 +1,96 @@
+# Multi-stage build for the "Unidade de Fontes Secundárias" (BioCultDB +
+# BioCultTermos, ADR-005 / Arquitetura-BioCultural v3.1): ONE container runs
+# both apps over a SHARED SQLite file. BioCultTermos is a git submodule at
+# ./bioculttermos (must be checked out — `git submodule update --init`).
+#
+# Build from the repo root (submodule content must be in the build context):
+#   docker build -f docker/Dockerfile.unidade -t biocult-unidade-fontes-secundarias .
+
+# ============================================
+# Stage 1: Builder — install deps, compile better-sqlite3, build Tailwind CSS
+# for BOTH apps
+# ============================================
+FROM node:20-alpine AS builder
+WORKDIR /build
+
+# Toolchain to compile better-sqlite3 (native addon) for both apps —
+# discarded with this stage.
+RUN apk add --no-cache python3 make g++
+
+# --- BioCultDB (root package.json) ---
+COPY package*.json ./biocultdb/
+RUN cd biocultdb && npm ci
+COPY backend ./biocultdb/backend
+COPY frontend ./biocultdb/frontend
+COPY tailwind.config.js postcss.config.js ./biocultdb/
+RUN cd biocultdb && npm run build:css
+
+# --- BioCultTermos (submodule, its own backend/frontend packages) ---
+COPY bioculttermos/backend/package*.json ./bioculttermos/backend/
+COPY bioculttermos/frontend/package*.json ./bioculttermos/frontend/
+RUN cd bioculttermos/backend && npm ci && \
+    cd ../frontend && npm ci
+COPY bioculttermos/backend ./bioculttermos/backend
+COPY bioculttermos/frontend ./bioculttermos/frontend
+COPY bioculttermos/tailwind.config.js ./bioculttermos/
+RUN cd bioculttermos/frontend && npm run build:css
+
+# ============================================
+# Stage 2: Runtime — minimal image, both apps, shared SQLite file
+# ============================================
+FROM node:20-alpine
+
+ARG BUILD_DATE
+ARG GIT_COMMIT
+LABEL build.date="${BUILD_DATE}"
+LABEL build.commit="${GIT_COMMIT}"
+LABEL unit="fontes-secundarias"
+
+WORKDIR /app
+
+# curl (healthcheck) + dumb-init (PID 1, signal forwarding) + bash
+# (start-unit.sh uses `wait -n`, not available in Alpine's default ash) +
+# a build toolchain to compile better-sqlite3's production node_modules for
+# BOTH apps. Toolchain install, use, and removal are a SINGLE RUN so the
+# intermediate ~300MB of build tools never lands in a layer (Docker layers
+# are additive — `apk del` in a later RUN would NOT shrink the image).
+RUN apk add --no-cache curl dumb-init bash python3 make g++ && \
+    mkdir -p biocultdb bioculttermos
+
+COPY package*.json ./biocultdb/
+RUN cd biocultdb && npm ci --omit=dev
+COPY bioculttermos/backend/package*.json ./bioculttermos/backend/
+RUN cd bioculttermos/backend && npm ci --omit=dev
+
+RUN apk del python3 make g++
+
+# Application code (with compiled CSS from the builder stage)
+COPY backend ./biocultdb/backend
+COPY --from=builder /build/biocultdb/frontend/dist ./biocultdb/frontend/dist
+COPY frontend/src/presentation/styles ./biocultdb/frontend/src/presentation/styles
+COPY frontend/src/presentation/scripts ./biocultdb/frontend/src/presentation/scripts
+
+COPY --from=builder /build/bioculttermos/backend ./bioculttermos/backend
+COPY docker/start-unit.sh /app/start-unit.sh
+
+# Non-root user + /data directory owned by it (the docker-compose named
+# volume mounted at /data inherits this ownership on first mount — a root-
+# owned mountpoint would make database.connect()'s mkdirSync('/data') and
+# the first SQLite file creation fail with EACCES).
+RUN chmod +x /app/start-unit.sh && \
+    addgroup -g 1001 -S nodejs && \
+    adduser -S nodejs -u 1001 && \
+    mkdir -p /data/audio && \
+    chown -R nodejs:nodejs /app /data
+
+USER nodejs
+
+# BioCultDB: 3001 (Aquisição) 3002 (Curadoria) 3003 (Apresentação)
+# BioCultTermos: 4000 (público) 4001 (admin)
+EXPOSE 3001 3002 3003 4000 4001
+
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+  CMD curl -f http://localhost:3001/ && curl -f http://localhost:4000/health || exit 1
+
+ENTRYPOINT ["dumb-init", "--"]
+CMD ["/app/start-unit.sh"]

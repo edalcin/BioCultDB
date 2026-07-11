@@ -1,0 +1,5 @@
+# Force LF line endings for files that run inside Linux containers,
+# regardless of the checkout platform (Windows dev machines convert to CRLF
+# by default, which breaks shell scripts' shebang line: `#!/bin/bash\r`).
+*.sh text eol=lf
+Dockerfile* text eol=lf
