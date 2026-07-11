@@ -2,7 +2,8 @@
 ## Versão 1.0
 
 <div align="center">
-  <img src="docs\etnoImagens\etnodb2Trans300.png" alt="BioCultDB Logo" width="200">
+  <img src="docs\BioCultDBLogo.png" alt="BioCultDB Logo" width="200">
+
 
   [![GitHub release](https://img.shields.io/github/v/release/edalcin/BioCultDB)](https://github.com/edalcin/BioCultDB/releases)
   [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18139413.svg)](https://doi.org/10.5281/zenodo.18139413)
