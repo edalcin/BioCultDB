@@ -19,10 +19,6 @@ docs/
 README.md
 LICENSE.md
 
-# Specifications
-specs/
-.specify/
-
 # Development files
 .env
 .env.local

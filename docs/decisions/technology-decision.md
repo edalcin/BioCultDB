@@ -1,5 +1,7 @@
 # Technology Stack Decision - BioCultDB Web Interface
 
+> **Nota de atualização (2026-07-11)**: A implementação real adotou **Express**, não Fastify, como framework backend (ver `package.json`). O restante deste documento preserva o raciocínio original da decisão de stack (dez/2025) como registro histórico — os benchmarks e comparações de Fastify abaixo NÃO refletem o código atual.
+
 **Date**: 2025-12-25
 **Status**: ✅ FINAL RECOMMENDATION
 **Project**: Ethnobotanical Database Web Interface
@@ -387,11 +389,9 @@ test('search responds within 2s for 1000 records', async () => {
 
 ## References
 
-- **Main recommendation**: `docs/technology-stack-recommendation.md`
-- **Implementation examples**: `docs/implementation-examples.md`
-- **Docker size analysis**: `docs/docker-size-comparison.md`
-- **Project specification**: `specs/001-web-interface/spec.md`
-- **Implementation plan**: `specs/001-web-interface/plan.md`
+- **Especificação do projeto**: [`docs/decisions/spec.md`](./spec.md)
+- **Plano de implementação**: superado, removido na limpeza de 2026-07-11 (ver `docs/LIMPEZA_2026-07-11.md`)
+- Os documentos de pesquisa originais (`technology-stack-recommendation.md`, `implementation-examples.md`, `docker-size-comparison.md`) foram removidos na limpeza de 2026-07-11 por serem redundantes com este resumo executivo
 
 ---
 

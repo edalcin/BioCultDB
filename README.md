@@ -193,11 +193,11 @@ O projeto implementa os princípios C.A.R.E. para dados de povos indígenas e co
 A documentação técnica completa está disponível em:
 
 - **Instalação e Desenvolvimento**: [`INSTALLATION.md`](./INSTALLATION.md)
-- **Especificação de Requisitos**: [`specs/spec.md`](./specs/spec.md)
-- **Plano de Implementação**: [`specs/plan.md`](./specs/plan.md)
-- **Modelo de Dados**: [`specs/data-model.md`](./specs/data-model.md)
-- **Contratos de API**: [`specs/contracts/`](./specs/contracts/)
-- **Quickstart para Desenvolvedores**: [`specs/quickstart.md`](./specs/quickstart.md)
+- **Especificação de Requisitos**: [`docs/decisions/spec.md`](./docs/decisions/spec.md)
+- **Modelo de Dados**: [`docs/decisions/data-model.md`](./docs/decisions/data-model.md)
+- **Contratos de API**: [`docs/decisions/contracts/`](./docs/decisions/contracts/)
+- **Decisão de Stack Tecnológica**: [`docs/decisions/technology-decision.md`](./docs/decisions/technology-decision.md)
+- **Arquitetura do etnoChat**: [`docs/decisions/etnochat-plan.md`](./docs/decisions/etnochat-plan.md)
 
 ## Workflow Completo
 

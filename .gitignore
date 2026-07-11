@@ -47,3 +47,6 @@ dump/
 audit/
 
 graphify-out/
+
+# Claude Code local settings (may contain machine-specific permission rules)
+.claude/settings.local.json
