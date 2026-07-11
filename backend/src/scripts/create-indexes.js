@@ -1,160 +1,105 @@
 /**
- * MongoDB Index Creation Script
+ * SQLite Schema/Index Bootstrap Script
  *
- * Creates indexes for optimal query performance
- * Run once during deployment or database setup
+ * `database.connect()` already ensures the `biocultdb_records` table, its
+ * generated-column indexes and the FTS5 virtual table exist (idempotent,
+ * called on every server boot — see backend/src/shared/database.js
+ * `_ensureSchema()`). This script remains for manual operation:
  *
- * Usage: node backend/src/scripts/create-indexes.js
+ *   node backend/src/scripts/create-indexes.js         # ensure schema (no-op if already present)
+ *   node backend/src/scripts/create-indexes.js --drop  # drop indexes/FTS table and recreate them
+ *
+ * Usage: node backend/src/scripts/create-indexes.js [--drop]
  */
 
 const database = require('../shared/database');
-const config = require('../shared/config');
 const logger = require('../shared/logger');
 
-/**
- * Index definitions based on data-model.md
- */
-const indexes = [
-  // Text search on title
-  {
-    name: 'titulo_text',
-    spec: { titulo: 'text' },
-    options: { default_language: 'portuguese' }
-  },
+const TABLE = database.TABLE;
 
-  // Status filter for curation context
-  {
-    name: 'status_1',
-    spec: { status: 1 },
-    options: {}
-  },
-
-  // Recent references for curation list
-  {
-    name: 'createdAt_-1',
-    spec: { createdAt: -1 },
-    options: {}
-  },
-
-  // State filter for presentation search
-  {
-    name: 'comunidades.estado_1',
-    spec: { 'comunidades.estado': 1 },
-    options: {}
-  },
-
-  // Municipality filter for presentation search
-  {
-    name: 'comunidades.municipio_1',
-    spec: { 'comunidades.municipio': 1 },
-    options: {}
-  },
-
-  // Community name text search
-  {
-    name: 'comunidades.nome_text',
-    spec: { 'comunidades.nome': 'text' },
-    options: { default_language: 'portuguese' }
-  },
-
-  // Plant names text search (scientific and vernacular)
-  {
-    name: 'plantas_text',
-    spec: {
-      'comunidades.plantas.nomeCientifico': 'text',
-      'comunidades.plantas.nomeVernacular': 'text'
-    },
-    options: { default_language: 'portuguese' }
-  }
+const GENERATED_COLUMNS = ['status', 'ano', 'fonte', 'titulo', 'created_at_idx'];
+const INDEXES = [
+  `idx_${TABLE}_status`,
+  `idx_${TABLE}_ano`,
+  `idx_${TABLE}_fonte`,
+  `idx_${TABLE}_status_ano`,
+  `idx_${TABLE}_created_at`
 ];
 
 /**
- * Create all indexes
+ * Ensure the schema exists (idempotent). Delegates entirely to
+ * database.connect(), which already ran `_ensureSchema()` internally.
  */
-async function createIndexes() {
-  try {
-    logger.info('Starting index creation...');
+function createIndexes() {
+  logger.info('Ensuring SQLite schema (table, generated columns, indexes, FTS5)...');
 
-    // Connect to database
-    await database.connect();
-    const collection = database.getCollection(config.database.collection);
+  database.connect();
+  const db = database.getConnection();
 
-    // Create each index
-    for (const index of indexes) {
-      try {
-        logger.info(`Creating index: ${index.name}`);
+  const existingIndexes = db
+    .prepare("SELECT name FROM sqlite_master WHERE type='index' AND tbl_name=?")
+    .all(TABLE)
+    .map((row) => row.name);
 
-        await collection.createIndex(index.spec, {
-          ...index.options,
-          name: index.name
-        });
+  logger.info(`\nTotal indexes on table "${TABLE}": ${existingIndexes.length}`);
+  existingIndexes.forEach((name) => logger.info(`  - ${name}`));
 
-        logger.info(`✓ Index created: ${index.name}`);
-      } catch (error) {
-        // Index might already exist
-        if (error.code === 85 || error.codeName === 'IndexOptionsConflict') {
-          logger.info(`Index already exists: ${index.name}`);
-        } else {
-          throw error;
-        }
-      }
-    }
+  const ftsExists = db
+    .prepare("SELECT name FROM sqlite_master WHERE type='table' AND name=?")
+    .get(`${TABLE}_fts`);
+  logger.info(`FTS5 table "${TABLE}_fts": ${ftsExists ? 'present' : 'MISSING'}`);
 
-    // List all indexes
-    const existingIndexes = await collection.indexes();
-    logger.info(`\nTotal indexes on collection "${config.database.collection}": ${existingIndexes.length}`);
-
-    existingIndexes.forEach(idx => {
-      logger.info(`  - ${idx.name}`);
-    });
-
-    logger.info('\n✓ Index creation complete');
-
-  } catch (error) {
-    logger.error('Failed to create indexes:', error.message);
-    throw error;
-  } finally {
-    // Close database connection
-    await database.close();
-  }
+  logger.info('\n✓ Schema ensured');
 }
 
 /**
- * Drop all custom indexes (useful for testing)
+ * Drop the generated-column indexes and the FTS5 table, then recreate them
+ * by re-running connect()'s idempotent schema logic. The generated columns
+ * themselves are not dropped (SQLite has no DROP COLUMN for VIRTUAL columns
+ * pre-3.35 semantics used here safely, and the columns are harmless/reused
+ * by _ensureSchema on reconnect) — only the indexes and FTS table, which is
+ * what the historical Mongo `dropIndexes()` equivalent covered.
  */
-async function dropIndexes() {
-  try {
-    logger.info('Dropping all custom indexes...');
+function dropIndexes() {
+  logger.info('Dropping indexes and FTS table...');
 
-    await database.connect();
-    const collection = database.getCollection(config.database.collection);
+  database.connect();
+  const db = database.getConnection();
 
-    // Drop all indexes except _id
-    await collection.dropIndexes();
-
-    logger.info('✓ All custom indexes dropped');
-
-  } catch (error) {
-    logger.error('Failed to drop indexes:', error.message);
-    throw error;
-  } finally {
-    await database.close();
+  for (const name of INDEXES) {
+    db.exec(`DROP INDEX IF EXISTS ${name};`);
+    logger.info(`  - dropped index ${name}`);
   }
+
+  db.exec(`DROP TABLE IF EXISTS ${TABLE}_fts;`);
+  logger.info(`  - dropped table ${TABLE}_fts`);
+
+  logger.info('Recreating indexes and FTS table...');
+  // _ensureSchema is idempotent and re-creates everything it owns, including
+  // the indexes and FTS table just dropped. Generated columns are left as-is
+  // (still declared on the table) — GENERATED_COLUMNS listed above for reference.
+  database._ensureSchema();
+
+  logger.info('✓ Indexes and FTS table dropped and recreated');
 }
 
 // Run script if executed directly
 if (require.main === module) {
-  const command = process.argv[2];
+  const dropFlag = process.argv.includes('--drop') || process.argv[2] === 'drop';
 
-  if (command === 'drop') {
-    dropIndexes()
-      .then(() => process.exit(0))
-      .catch(() => process.exit(1));
-  } else {
-    createIndexes()
-      .then(() => process.exit(0))
-      .catch(() => process.exit(1));
+  try {
+    if (dropFlag) {
+      dropIndexes();
+    } else {
+      createIndexes();
+    }
+    database.close();
+    process.exit(0);
+  } catch (error) {
+    logger.error('Schema bootstrap failed:', error.message);
+    database.close();
+    process.exit(1);
   }
 }
 
-module.exports = { createIndexes, dropIndexes };
+module.exports = { createIndexes, dropIndexes, GENERATED_COLUMNS, INDEXES };

@@ -172,7 +172,7 @@ router.post('/reference/submit', async (req, res) => {
     // Insert reference into database
     const inserted = await insertReference(referenceData);
 
-    logger.acquisition(`Reference inserted successfully: ${inserted._id}`);
+    logger.acquisition(`Reference inserted successfully: ${inserted.id}`);
 
     // Render success page
     res.render('success', {
@@ -180,7 +180,7 @@ router.post('/reference/submit', async (req, res) => {
       contextName: 'Entrada de Dados Etnobotânicos',
       contextDescription: 'Cadastro de referências científicas',
       showNavigation: true,
-      referenceId: inserted._id
+      referenceId: inserted.id
     });
 
   } catch (error) {

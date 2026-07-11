@@ -58,7 +58,7 @@ router.get('/', async (req, res) => {
 
     logger.curation(`Listing ${references.length} references (status: ${status || 'all'}, sort: ${sortField} ${order})`);
     if (references.length > 0) {
-      logger.curation(`First reference ID: ${references[0]._id}, title: ${references[0].titulo}`);
+      logger.curation(`First reference ID: ${references[0].id}, title: ${references[0].titulo}`);
     }
 
     res.render('index', {
@@ -110,7 +110,7 @@ router.get('/reference/edit/:id', async (req, res) => {
       });
     }
 
-    logger.curation(`Reference found: ${reference._id}`);
+    logger.curation(`Reference found: ${reference.id}`);
     logger.curation(`Reference has ${reference.comunidades.length} communities`);
     logger.curation(`Reference title: ${reference.titulo}`);
 
@@ -188,7 +188,7 @@ async function handleReferenceUpdate(req, res) {
         comunidades: (referenceData.comunidades && referenceData.comunidades.length > 0)
           ? referenceData.comunidades
           : reference.comunidades,
-        _id: reference._id
+        id: reference.id
       };
 
       return res.render('edit', {
@@ -216,7 +216,7 @@ async function handleReferenceUpdate(req, res) {
     if (!updated) {
       logger.error(`updateReferenceById returned null/undefined for ${req.params.id}`);
     } else {
-      logger.curation(`Reference updated successfully: ${updated._id}`);
+      logger.curation(`Reference updated successfully: ${updated.id}`);
     }
 
     // Redirect to list with success message
@@ -266,7 +266,7 @@ router.post('/reference/status/:id', async (req, res) => {
 
     const updated = await updateReferenceStatus(req.params.id, status, justificativa);
 
-    logger.curation(`Reference status updated to "${status}": ${updated._id}`);
+    logger.curation(`Reference status updated to "${status}": ${updated.id}`);
 
     // Redirect back to edit page
     res.redirect(`/reference/edit/${req.params.id}`);

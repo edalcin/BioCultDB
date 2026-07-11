@@ -23,7 +23,7 @@ A etnobotânica é uma disciplina que investiga as interações e relações com
 
 ## Sobre o Projeto
 
-O **BioCultDB** é uma interface baseada na web para um banco de dados MongoDB que centraliza **dados secundários** sobre conhecimento tradicional de comunidades brasileiras em relação ao uso de plantas.
+O **BioCultDB** é uma interface baseada na web para um banco de dados SQLite (JSON1) que centraliza **dados secundários** sobre conhecimento tradicional de comunidades brasileiras em relação ao uso de plantas.
 
 ### O que são Dados Secundários?
 
@@ -109,7 +109,7 @@ Interface de conversação com IA para interagir com o banco de dados em linguag
 
 ## Estrutura de Dados
 
-O banco de dados utiliza uma estrutura hierárquica em MongoDB, conforme definido em [`/docs/dataStructure.json`](./docs/dataStructure.json):
+O banco de dados utiliza uma estrutura hierárquica em JSON, conforme definido em [`/docs/dataStructure.json`](./docs/dataStructure.json):
 
 ```
 Referência (Publicação Científica)
@@ -142,6 +142,7 @@ Referência (Publicação Científica)
   "ano": number,
   "resumo": "string em português",
   "DOI": "string | null",
+  "fonte": "string",
   "comunidades": [
     {
       "nome": "string",
@@ -167,10 +168,10 @@ Referência (Publicação Científica)
 
 - **Backend**: Node.js 20 LTS + Express.js
 - **Frontend**: HTMX + Alpine.js + Tailwind CSS
-- **Banco de Dados**: MongoDB 7.0+
+- **Banco de Dados**: SQLite (better-sqlite3, JSON1)
 - **Containerização**: Docker (Alpine Linux)
 - **Template Engine**: EJS
-- **Testes**: Jest + mongodb-memory-server
+- **Testes**: Jest (SQLite :memory:)
 
 ## Arquitetura Técnica
 
@@ -204,7 +205,7 @@ A documentação técnica completa está disponível em:
 ```mermaid
 flowchart TD
     A[Pesquisador] -->|Acessa porta 3001| B[Interface de Aquisição]
-    B -->|Insere referência + comunidades + plantas| C[MongoDB]
+    B -->|Insere referência + comunidades + plantas| C[SQLite]
     C -->|Status: pending| D[Dados Pendentes]
 
     E[Curador] -->|Acessa porta 3002| F[Interface de Curadoria]
@@ -263,14 +264,14 @@ Projeto principal que define a arquitetura de referência para sistemas etnobot�
 Sistema de aquisição automatizada de dados secundários com auxílio de Inteligência Artificial. Permite a extração e inclusão de novos registros na base de dados do BioCultDB a partir de artigos científicos de forma assistida por IA, agilizando o processo de entrada de dados.
 
 ### [BioCultTermos](https://github.com/edalcin/BioCultTermos) 🆕 v2.0
-Sistema de curadoria de vocabulário controlado etnobotânico sob o padrão **[SKOS-XL](https://www.w3.org/TR/skos-reference/skos-xl.html)** (W3C). **Visualmente integrado** ao BioCultDB, o BioCultTermos compartilha a mesma identidade visual, banco de dados MongoDB (`etnodb`) e gerencia o vocabulário controlado dos campos:
+Sistema de curadoria de vocabulário controlado etnobotânico sob o padrão **[SKOS-XL](https://www.w3.org/TR/skos-reference/skos-xl.html)** (W3C). **Visualmente integrado** ao BioCultDB, o BioCultTermos compartilha a mesma identidade visual, banco de dados SQLite compartilhado (arquivo único da unidade) e gerencia o vocabulário controlado dos campos:
 - **`comunidades.tipo`**: As 29 categorias de comunidades tradicionais (Decreto 8.750/2016)
 - **`comunidades.plantas.nomeVernacular`**: Nomes vernaculares de plantas
 - **`comunidades.plantas.tipoUso`**: Tipos de uso de plantas (medicinal, alimentício, ritualístico, etc.)
 - **`comunidades.atividadesEconomicas`**: Atividades econômicas reportadas
 
 O BioCultTermos v2.0 opera em três contextos (C4 Model):
-1. **Aquisição** — lê automaticamente os valores brutos da coleção `etnodb` e os transforma em conceitos SKOS-XL candidatos
+1. **Aquisição** — lê automaticamente os valores brutos da tabela `biocultdb_records` (mesmo arquivo SQLite da unidade) e os transforma em conceitos SKOS-XL candidatos
 2. **Apresentação** (porta 4000) — interface pública para consulta e navegação dos termos curados
 3. **Curadoria** (porta 4001) — interface autenticada para categorizar, relacionar e validar conceitos segundo SKOS-XL
 
@@ -308,8 +309,8 @@ O BioCultDB é o componente central de uma **Iniciativa de Fontes Secundárias**
 graph TD
     subgraph I1["Iniciativa de Fontes Secundárias (BioCultDB)"]
         EP(BioCultPapers) -->|extrai de PDFs| EDB
-        EDB(BioCultDB\nAquisição · Curadoria · Apresentação) <--> MDB[(MongoDB)]
-        ET(BioCultTermos\nSKOS-XL) <--> MDB
+        EDB(BioCultDB\nAquisição · Curadoria · Apresentação) <--> UDB[(SQLite+JSON)]
+        ET(BioCultTermos\nSKOS-XL) <--> UDB
     end
 
     PL{{"Pluriverso\nMiddleware de Federação"}}
@@ -318,7 +319,7 @@ graph TD
     U((Usuário)) <-->|API| PL
 ```
 
-O MongoDB do BioCultDB **pertence à Iniciativa #1** — não é mais um recurso compartilhado da arquitetura. Outras iniciativas e comunidades operam seus próprios bancos de dados.
+O SQLite do BioCultDB **pertence à Iniciativa #1** — não é mais um recurso compartilhado da arquitetura. Outras iniciativas e comunidades operam seus próprios bancos de dados.
 
 ### Mudanças Necessárias para v3.0
 
@@ -329,7 +330,7 @@ O MongoDB do BioCultDB **pertence à Iniciativa #1** — não é mais um recurso
 | **Endpoint de harvest** | Implementar `GET /api/federation/records` paginado, retornando apenas registros `status: approved` e `visibility: public`, com suporte a filtro `updated_since` para coletas incrementais |
 | **Campo `member_id`** | Cada registro deve carregar identificador único do membro (`member_id`) para rastreabilidade no índice federado do Pluriverso |
 | **Campo `visibility`** | Adicionar campo de visibilidade por registro (`public`, `restricted`, `private`) para controle granular do que é publicado na federação |
-| **Remoção de pressuposto de MongoDB compartilhado** | Remover qualquer configuração ou código que pressuponha coexistência com BioCultRelatos no mesmo banco |
+| **Remoção de pressuposto de SQLite compartilhado com outras unidades além do BioCultTermos** | Remover qualquer configuração ou código que pressuponha coexistência com BioCultRelatos no mesmo banco |
 
 ### Componentes Relacionados
 

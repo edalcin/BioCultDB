@@ -82,7 +82,7 @@
 **Description**: Renders edit form for a specific reference, pre-populated with existing data
 
 **Path Parameters**:
-- `id`: MongoDB ObjectId of the reference
+- `id`: id (string UUID v4) of the reference
 
 **Response**: HTML page with editable form (same structure as acquisition form, but pre-filled)
 
@@ -111,7 +111,7 @@
 **Description**: Updates reference data (metadata, communities, plants) without changing status
 
 **Path Parameters**:
-- `id`: MongoDB ObjectId of the reference
+- `id`: id (string UUID v4) of the reference
 
 **Request Body** (application/x-www-form-urlencoded):
 Same format as acquisition submit, with all fields editable
@@ -122,7 +122,7 @@ Same format as acquisition submit, with all fields editable
 3. If valid:
    - Update all fields except status
    - Set `updatedAt` timestamp
-   - Update document in MongoDB
+   - Update `doc` in `biocultdb_records` (SQLite)
    - Redirect to edit form with success message
 4. If invalid:
    - Re-render form with errors and preserve data
@@ -145,7 +145,7 @@ Same format as acquisition submit, with all fields editable
 **Description**: Changes only the status field of a reference (approve or reject)
 
 **Path Parameters**:
-- `id`: MongoDB ObjectId of the reference
+- `id`: id (string UUID v4) of the reference
 
 **Request Body** (application/x-www-form-urlencoded):
 ```
@@ -179,7 +179,7 @@ status=approved
 **Description**: HTMX endpoint that returns HTML fragment for adding a community to existing reference during editing
 
 **Path Parameters**:
-- `id`: MongoDB ObjectId of the reference being edited
+- `id`: id (string UUID v4) of the reference being edited
 
 **Request Body**: Current community count (for indexing)
 
@@ -196,7 +196,7 @@ status=approved
 **Description**: HTMX endpoint that returns HTML fragment for adding a plant to a community during editing
 
 **Path Parameters**:
-- `id`: MongoDB ObjectId of the reference being edited
+- `id`: id (string UUID v4) of the reference being edited
 - `communityIndex`: Index of the community (0-based)
 
 **Response**: Same plant form fragment as acquisition context
@@ -205,71 +205,55 @@ status=approved
 
 ---
 
-## MongoDB Queries
+## SQL Queries
 
 ### List References with Filters
 
 **Query** (all references):
-```javascript
-db.etnodb.find()
-  .project({
-    titulo: 1,
-    autores: 1,
-    ano: 1,
-    status: 1,
-    createdAt: 1
-  })
-  .sort({ createdAt: -1 })
-  .skip((page - 1) * limit)
-  .limit(limit);
+```sql
+SELECT id, titulo, autores, ano, status, created_at
+FROM biocultdb_records
+ORDER BY created_at DESC
+LIMIT ? OFFSET ?;
+-- params: [limit, (page - 1) * limit]
 ```
 
 **Query** (filtered by status):
-```javascript
-db.etnodb.find({ status: "pending" })
-  .project({ titulo: 1, autores: 1, ano: 1, status: 1, createdAt: 1 })
-  .sort({ createdAt: -1 })
-  .skip((page - 1) * limit)
-  .limit(limit);
+```sql
+SELECT id, titulo, autores, ano, status, created_at
+FROM biocultdb_records
+WHERE status = ?
+ORDER BY created_at DESC
+LIMIT ? OFFSET ?;
+-- params: ["pending", limit, (page - 1) * limit]
 ```
 
 ### Get Single Reference for Editing
 
-```javascript
-db.etnodb.findOne({ _id: ObjectId(id) });
+```sql
+SELECT id, doc, created_at, updated_at FROM biocultdb_records WHERE id = ?;
 ```
 
 ### Update Reference Content
 
 ```javascript
-db.etnodb.updateOne(
-  { _id: ObjectId(id) },
-  {
-    $set: {
-      titulo: "...",
-      autores: ["...", "..."],
-      ano: 2000,
-      resumo: "...",
-      DOI: "",
-      comunidades: [...], // Complete nested array
-      updatedAt: new Date()
-    }
-  }
-);
+// doc is fetched, merged with edited fields in JS (comunidades[] replaced wholesale),
+// updatedAt set, then rewritten in one statement
+const updated = { ...existingReference, titulo, autores, ano, resumo, DOI, comunidades, updatedAt: new Date().toISOString() };
+```
+```sql
+UPDATE biocultdb_records SET doc = ?, updated_at = ? WHERE id = ?;
+-- params: [JSON.stringify(updated), updated.updatedAt, id]
 ```
 
 ### Update Reference Status Only
 
 ```javascript
-db.etnodb.updateOne(
-  { _id: ObjectId(id) },
-  {
-    $set: {
-      status: "approved",
-      updatedAt: new Date()
-    }
-  }
-);
+const updated = { ...existingReference, status: "approved", updatedAt: new Date().toISOString() };
+```
+```sql
+UPDATE biocultdb_records SET doc = ?, updated_at = ? WHERE id = ?;
+-- params: [JSON.stringify(updated), updated.updatedAt, id]
 ```
 
 ---
@@ -332,7 +316,7 @@ db.etnodb.updateOne(
 ### Input Validation
 
 - Same validation rules as acquisition context
-- MongoDB ObjectId validation for :id parameters
+- UUID v4 format validation for :id parameters
 - Status enum validation
 
 ### Audit Trail (Out of Scope)
@@ -396,7 +380,7 @@ db.etnodb.updateOne(
 
 ### Edit Form Pre-population
 
-- Single MongoDB query fetches complete reference document
+- Single SQLite query fetches complete reference document
 - No lazy loading needed for nested communities/plants
 - Typical reference size: 5-50KB
 

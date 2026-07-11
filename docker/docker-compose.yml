@@ -1,25 +1,6 @@
 version: '3.8'
 
 services:
-  # MongoDB Database
-  mongodb:
-    image: mongo:7.0-jammy
-    container_name: etnodb-mongodb
-    restart: unless-stopped
-    environment:
-      MONGO_INITDB_DATABASE: etnodb
-    ports:
-      - "27017:27017"
-    volumes:
-      - mongodb_data:/data/db
-    networks:
-      - etnodb-network
-    healthcheck:
-      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/etnodb --quiet
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
   # BioCultDB Application
   app:
     build:
@@ -27,11 +8,8 @@ services:
       dockerfile: docker/Dockerfile
     container_name: etnodb-app
     restart: unless-stopped
-    depends_on:
-      mongodb:
-        condition: service_healthy
     environment:
-      MONGO_URI: mongodb://mongodb:27017/etnodb
+      SQLITE_DB_PATH: /data/unidade.sqlite
       PORT_ACQUISITION: 3001
       PORT_CURATION: 3002
       PORT_PRESENTATION: 3003
@@ -44,12 +22,13 @@ services:
       - ../backend:/app/backend
       - ../frontend:/app/frontend
       - /app/node_modules
+      - sqlite_data:/data
     networks:
       - etnodb-network
     command: npm run dev
 
 volumes:
-  mongodb_data:
+  sqlite_data:
     driver: local
 
 networks:

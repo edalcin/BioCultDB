@@ -77,7 +77,7 @@ Curators need to review, edit, and approve references submitted through the acqu
 ### Functional Requirements
 
 - **FR-001**: System MUST provide a web-based interface accessible via standard browsers
-- **FR-002**: System MUST connect to the existing MongoDB database "etnodb" with collection "etnodb"
+- **FR-002**: System MUST persist data in the shared SQLite file (SQLITE_DB_PATH) in the biocultdb_records table (JSON1 document store)
 - **FR-003**: System MUST implement three distinct interface contexts running on separate ports: acquisition (data entry), curation (data editing and approval), and presentation (public search and display)
 - **FR-004**: System MUST enforce the hierarchical data structure: reference → communities → plants as defined in /docs/dataStructure.json
 - **FR-005**: System MUST accept and store reference metadata including title, authors (array), year, abstract, and DOI
@@ -120,10 +120,10 @@ Curators need to review, edit, and approve references submitted through the acqu
 
 ## Assumptions
 
-- The MongoDB database "etnodb" with collection "etnodb" is already operational and accessible from the application container
-- MongoDB connection credentials and host information will be provided via environment variables or configuration
+- The SQLite file at SQLITE_DB_PATH (biocultdb_records table) is already operational and accessible from the application container
+- SQLite is embedded (no network host/port or credentials); the file path is provided via the SQLITE_DB_PATH environment variable
 - The data structure in /docs/dataStructure.json represents the canonical schema and will not change during initial development
-- The application will run on the same server as MongoDB, enabling low-latency local network connections
+- The application accesses the SQLite file directly on local disk, avoiding network latency entirely
 - Continuous deployment to ghcr.io/edalcin/ will be configured via GitHub Actions or similar CI/CD pipeline
 - All commits will be made directly to the main branch as specified (no feature branches for code changes)
 - Initial deployment will support Portuguese language interface (based on field names and example data)
@@ -135,15 +135,14 @@ Curators need to review, edit, and approve references submitted through the acqu
 
 ## Dependencies
 
-- Existing MongoDB instance with "etnodb" database and collection
+- Existing SQLite file at SQLITE_DB_PATH
 - Container runtime environment on Unraid server
 - GitHub Container Registry (ghcr.io) access for image hosting
-- Network connectivity between application container and MongoDB container
 - Data structure specification in /docs/dataStructure.json
 
 ## Out of Scope
 
-- Migration or transformation of existing data in the MongoDB collection
+- Migration or transformation of existing data in the SQLite table
 - User authentication and access control (handled at network/infrastructure level)
 - Audit trail and change history tracking
 - Taxonomic validation at acquisition stage (deferred to future curation enhancements)

@@ -88,19 +88,18 @@ function sanitizeArray(arr, options = {}) {
 }
 
 /**
- * Validate and sanitize MongoDB ObjectId
+ * Validate and sanitize a record id (UUID v4 string).
  * @param {string} id - Input ID
- * @returns {string|null} Valid ObjectId string or null
+ * @returns {string|null} Valid id string or null
  */
-function sanitizeObjectId(id) {
+function sanitizeId(id) {
   if (!id || typeof id !== 'string') return null;
 
-  // MongoDB ObjectId is 24 hex characters
-  const objectIdRegex = /^[0-9a-fA-F]{24}$/;
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
   const trimmed = trimWhitespace(id);
 
-  if (!objectIdRegex.test(trimmed)) return null;
+  if (!uuidRegex.test(trimmed)) return null;
 
   return trimmed;
 }
@@ -148,7 +147,7 @@ module.exports = {
   trimWhitespace,
   sanitizeString,
   sanitizeArray,
-  sanitizeObjectId,
+  sanitizeId,
   sanitizeNumber,
   sanitizeFilename
 };

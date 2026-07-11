@@ -1,61 +1,111 @@
 /**
- * MongoDB Connection Module
+ * SQLite Connection Module (JSON1 document store)
  *
- * Manages MongoDB connection lifecycle with automatic reconnection
+ * Opens the shared unit SQLite file (SQLITE_DB_PATH), applies WAL/foreign_keys/
+ * busy_timeout PRAGMAs, and idempotently ensures the `biocultdb_records` table,
+ * its generated-column indexes, and the `biocultdb_fts` FTS5 virtual table.
+ *
+ * ADR-005 (Arquitetura-BioCultural): each federated unit shares ONE SQLite file
+ * across its tools (distinct tables). BioCultTermos opens the same file and only
+ * reads `biocultdb_records` (never re-creates it).
  */
 
-const { MongoClient } = require('mongodb');
+const path = require('path');
+const fs = require('fs');
+const SqliteDb = require('better-sqlite3');
 const config = require('./config');
 const logger = require('./logger');
 
+const TABLE = 'biocultdb_records';
+
 class Database {
   constructor() {
-    this.client = null;
     this.db = null;
     this.isConnected = false;
   }
 
   /**
-   * Connect to MongoDB
-   * @returns {Promise<MongoClient>}
+   * Open the SQLite file and ensure schema.
+   * @returns {import('better-sqlite3').Database}
    */
-  async connect() {
-    if (this.isConnected && this.client) {
-      logger.database('Already connected to MongoDB');
-      return this.client;
+  connect() {
+    if (this.isConnected && this.db) {
+      logger.database('Already connected to SQLite');
+      return this.db;
     }
 
     try {
-      logger.database(`Connecting to MongoDB at ${config.mongoUri}`);
+      logger.database(`Opening SQLite database at ${config.sqlitePath}`);
 
-      this.client = new MongoClient(config.mongoUri, {
-        maxPoolSize: 10,
-        minPoolSize: 2,
-        serverSelectionTimeoutMS: 5000,
-        socketTimeoutMS: 45000,
-      });
+      fs.mkdirSync(path.dirname(config.sqlitePath), { recursive: true });
 
-      await this.client.connect();
+      this.db = new SqliteDb(config.sqlitePath);
+      this.db.pragma('journal_mode = WAL');
+      this.db.pragma('foreign_keys = ON');
+      this.db.pragma('busy_timeout = 5000');
 
-      // Verify connection
-      await this.client.db('admin').command({ ping: 1 });
+      this._ensureSchema();
 
-      this.db = this.client.db(config.database.name);
       this.isConnected = true;
-
-      logger.database('Successfully connected to MongoDB');
-      return this.client;
+      logger.database('Successfully connected to SQLite');
+      return this.db;
     } catch (error) {
-      logger.error('MongoDB connection failed:', error.message);
-      throw new Error(`Failed to connect to MongoDB: ${error.message}`);
+      logger.error('SQLite connection failed:', error.message);
+      throw new Error(`Failed to connect to SQLite: ${error.message}`);
     }
   }
 
   /**
-   * Get database instance
-   * @returns {Db}
+   * Idempotently create the records table, generated-column indexes and FTS5 table.
+   * Safe to call on every boot.
    */
-  getDb() {
+  _ensureSchema() {
+    this.db.exec(`
+      CREATE TABLE IF NOT EXISTS ${TABLE} (
+        id         TEXT PRIMARY KEY,
+        doc        TEXT NOT NULL CHECK (json_valid(doc)),
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL
+      );
+    `);
+
+    this._ensureGeneratedColumn('status', "json_extract(doc,'$.status')");
+    this._ensureGeneratedColumn('ano', "CAST(json_extract(doc,'$.ano') AS INTEGER)");
+    this._ensureGeneratedColumn('fonte', "json_extract(doc,'$.fonte')");
+    this._ensureGeneratedColumn('titulo', "json_extract(doc,'$.titulo')");
+    this._ensureGeneratedColumn('created_at_idx', 'created_at');
+
+    this.db.exec(`CREATE INDEX IF NOT EXISTS idx_${TABLE}_status ON ${TABLE}(status);`);
+    this.db.exec(`CREATE INDEX IF NOT EXISTS idx_${TABLE}_ano ON ${TABLE}(ano);`);
+    this.db.exec(`CREATE INDEX IF NOT EXISTS idx_${TABLE}_fonte ON ${TABLE}(fonte);`);
+    this.db.exec(`CREATE INDEX IF NOT EXISTS idx_${TABLE}_status_ano ON ${TABLE}(status, ano);`);
+    this.db.exec(`CREATE INDEX IF NOT EXISTS idx_${TABLE}_created_at ON ${TABLE}(created_at_idx);`);
+
+    this.db.exec(`
+      CREATE VIRTUAL TABLE IF NOT EXISTS ${TABLE}_fts USING fts5(
+        id UNINDEXED,
+        titulo,
+        autores,
+        resumo,
+        doi,
+        comunidades,
+        tokenize='unicode61 remove_diacritics 2'
+      );
+    `);
+  }
+
+  _ensureGeneratedColumn(name, expression) {
+    const columns = this.db.prepare(`PRAGMA table_info(${TABLE})`).all();
+    if (!columns.some((c) => c.name === name)) {
+      this.db.exec(`ALTER TABLE ${TABLE} ADD COLUMN ${name} GENERATED ALWAYS AS (${expression}) VIRTUAL;`);
+    }
+  }
+
+  /**
+   * Get the raw better-sqlite3 connection. Call connect() first.
+   * @returns {import('better-sqlite3').Database}
+   */
+  getConnection() {
     if (!this.isConnected || !this.db) {
       throw new Error('Database not connected. Call connect() first.');
     }
@@ -63,55 +113,19 @@ class Database {
   }
 
   /**
-   * Get collection instance
-   * @param {string} collectionName
-   * @returns {Collection}
+   * Close the SQLite connection.
    */
-  getCollection(collectionName = config.database.collection) {
-    return this.getDb().collection(collectionName);
-  }
-
-  /**
-   * Close MongoDB connection
-   * @returns {Promise<void>}
-   */
-  async close() {
-    if (this.client && this.isConnected) {
-      logger.database('Closing MongoDB connection');
-      await this.client.close();
+  close() {
+    if (this.db && this.isConnected) {
+      logger.database('Closing SQLite connection');
+      this.db.close();
       this.isConnected = false;
-      this.client = null;
       this.db = null;
-      logger.database('MongoDB connection closed');
-    }
-  }
-
-  /**
-   * Reconnect to MongoDB with retry logic
-   * @param {number} maxRetries
-   * @param {number} retryDelayMs
-   * @returns {Promise<MongoClient>}
-   */
-  async reconnect(maxRetries = 5, retryDelayMs = 3000) {
-    let retries = 0;
-
-    while (retries < maxRetries) {
-      try {
-        logger.database(`Reconnection attempt ${retries + 1}/${maxRetries}`);
-        await this.connect();
-        return this.client;
-      } catch (error) {
-        retries++;
-        if (retries >= maxRetries) {
-          logger.error(`Failed to reconnect after ${maxRetries} attempts`);
-          throw error;
-        }
-        logger.database(`Retry in ${retryDelayMs}ms...`);
-        await new Promise(resolve => setTimeout(resolve, retryDelayMs));
-      }
+      logger.database('SQLite connection closed');
     }
   }
 }
 
 // Export singleton instance
 module.exports = new Database();
+module.exports.TABLE = TABLE;

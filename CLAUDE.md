@@ -7,10 +7,10 @@ Auto-generated from all feature plans. Last updated: 2026-01-06
 O **BioCultDB** está integrado com o sistema **BioCultTermos** de vocabulário controlado:
 
 ### Banco de Dados Compartilhado
-- **Database**: MongoDB "etnodb" (compartilhado entre BioCultDB e BioCultTermos)
-- **Collections**:
-  - "etnodb" - dados de referências etnobotânicas (BioCultDB)
-  - "etnotermos" - vocabulário controlado (BioCultTermos)
+- **Database**: SQLite `unidade.sqlite` (arquivo único, compartilhado entre BioCultDB e BioCultTermos via `SQLITE_DB_PATH`)
+- **Tabelas**:
+  - `biocultdb_records` - dados de referências etnobotânicas (BioCultDB)
+  - `etnotermos` - vocabulário controlado (BioCultTermos)
 
 ### Vocabulário Controlado
 Os campos abaixo do BioCultDB são gerenciados como vocabulário controlado pelo BioCultTermos:
@@ -30,7 +30,7 @@ O BioCultTermos usa exatamente a mesma identidade visual do BioCultDB:
 
 ## Active Technologies
 
-- Node.js 20 LTS (Alpine Linux base) + Express.js (web framework), MongoDB Driver (official), EJS (templates), HTMX + Alpine.js (frontend), Tailwind CSS (001-web-interface)
+- Node.js 20 LTS (Alpine Linux base) + Express.js (web framework), better-sqlite3 (SQLite + JSON1), EJS (templates), HTMX + Alpine.js (frontend), Tailwind CSS (001-web-interface)
 
 ## Project Structure
 
@@ -76,13 +76,13 @@ docker-compose up -d
 - **JavaScript**: ES2022+, Node.js 20 LTS
 - **Templates**: EJS with semantic HTML
 - **CSS**: Tailwind CSS utility classes (forest theme)
-- **Testing**: Jest + mongodb-memory-server
+- **Testing**: Jest (SQLite `:memory:`)
 
 ## Recent Changes
 
 - 2026-01-06: Integrated with BioCultTermos - shared database and visual identity
 - 2026-01-06: Documented controlled vocabulary management (comunidades.tipo, plantas.tipoUso)
-- 2025-12-25: Added Node.js 20 LTS (Alpine Linux base) + Express.js (web framework), MongoDB Driver (official), EJS (templates), HTMX + Alpine.js (frontend), Tailwind CSS
+- 2025-12-25: Added Node.js 20 LTS (Alpine Linux base) + Express.js (web framework), better-sqlite3 (SQLite + JSON1), EJS (templates), HTMX + Alpine.js (frontend), Tailwind CSS
 
 <!-- MANUAL ADDITIONS START -->
 <!-- MANUAL ADDITIONS END -->
@@ -96,3 +96,7 @@ Rules:
 - If graphify-out/wiki/index.md exists, use it for broad navigation instead of raw source browsing.
 - Read graphify-out/GRAPH_REPORT.md only for broad architecture review or when query/path/explain do not surface enough context.
 - After modifying code, run `graphify update .` to keep the graph current (AST-only, no API cost).
+
+## Arquitetura v3.1 — Persistência
+Persistência = SQLite com JSON (JSON1), **um arquivo por unidade federada** compartilhado pelas ferramentas (tabelas distintas), WAL, `SQLITE_DB_PATH`. Um container por unidade. Sem MongoDB.
+Ref.: Arquitetura-BioCultural/docs/architecture-decisions/ADR-005.

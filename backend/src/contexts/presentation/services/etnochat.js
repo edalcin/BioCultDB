@@ -11,7 +11,7 @@ const { GoogleGenAI } = require('@google/genai');
 const fs = require('fs');
 const path = require('path');
 const database = require('../../../shared/database');
-const config = require('../../../shared/config');
+const { Status } = require('../../../models/Reference');
 const logger = require('../../../shared/logger');
 
 // Load system prompt
@@ -136,39 +136,27 @@ function getProviders() {
 }
 
 /**
- * Extract MongoDB query from AI response (hidden format)
+ * Extract the restricted filter DSL emitted by the LLM (hidden format).
+ * The LLM never emits SQL or a query language — only a whitelisted JSON
+ * filter array (see FIELD_WHITELIST/executeQuery below), which is the sole
+ * input translated into parameterized SQL.
  * @param {string} text - AI response text
- * @returns {{query: Object|null, cleanText: string}} Parsed query and cleaned text
+ * @returns {{query: Array|null, cleanText: string}} Parsed filter conditions and cleaned text
  */
-function extractMongoQuery(text) {
-  // New hidden format: <!--QUERY ... QUERY-->
+function extractFilterQuery(text) {
   const hiddenRegex = /<!--QUERY\s*([\s\S]*?)QUERY-->/g;
-  // Legacy format: ```mongodb ... ```
-  const legacyRegex = /```mongodb\s*([\s\S]*?)```/g;
 
-  let match = hiddenRegex.exec(text);
+  const match = hiddenRegex.exec(text);
   let query = null;
   let cleanText = text;
 
   if (match) {
     try {
-      query = JSON.parse(match[1].trim());
-      // Remove the query block from visible text
+      const parsed = JSON.parse(match[1].trim());
+      query = Array.isArray(parsed) ? parsed : [parsed];
       cleanText = text.replace(hiddenRegex, '').trim();
     } catch (e) {
-      logger.error('Failed to parse hidden MongoDB query:', e.message);
-    }
-  } else {
-    // Try legacy format
-    match = legacyRegex.exec(text);
-    if (match) {
-      try {
-        query = JSON.parse(match[1].trim());
-        // Remove the query block from visible text
-        cleanText = text.replace(legacyRegex, '').trim();
-      } catch (e) {
-        logger.error('Failed to parse legacy MongoDB query:', e.message);
-      }
+      logger.error('Failed to parse hidden filter query:', e.message);
     }
   }
 
@@ -177,7 +165,7 @@ function extractMongoQuery(text) {
 
 /**
  * Safely convert any value to a displayable string
- * Handles arrays, objects, ObjectIds, and primitives
+ * Handles arrays, objects, and primitives
  * @param {*} value - Value to convert
  * @returns {string} String representation
  */
@@ -197,10 +185,6 @@ function safeStringify(value) {
     return flattened.map(v => safeStringify(v)).join(', ');
   }
   if (typeof value === 'object') {
-    // Handle MongoDB ObjectId
-    if (value._bsontype === 'ObjectId' || value.constructor?.name === 'ObjectId') {
-      return value.toString();
-    }
     // Handle Date objects
     if (value instanceof Date) {
       return value.toLocaleDateString('pt-BR');
@@ -232,32 +216,7 @@ function formatQueryResults(data) {
     return 'Nenhum resultado encontrado.';
   }
 
-  // Check if it's a count result
-  if (data.length === 1 && data[0].total !== undefined) {
-    return `**Total:** ${data[0].total} registros`;
-  }
-
-  // Check if it's a grouped count result (e.g., tipos de uso)
-  if (data[0]._id !== undefined && data[0].count !== undefined) {
-    const lines = data.map((item, i) => {
-      const name = safeStringify(item._id) || 'Não especificado';
-      return `${i + 1}. **${name}**: ${item.count} ocorrências`;
-    });
-    return lines.join('\n');
-  }
-
-  // Check if it's a community list
-  if (data[0]._id !== undefined && (data[0].estado !== undefined || data[0].municipio !== undefined)) {
-    const lines = data.map((item, i) => {
-      const parts = [safeStringify(item._id)];
-      if (item.municipio) parts.push(safeStringify(item.municipio));
-      if (item.estado) parts.push(safeStringify(item.estado));
-      return `${i + 1}. **${parts.join('** - ')}`;
-    });
-    return `**Comunidades encontradas (${data.length}):**\n\n` + lines.join('\n');
-  }
-
-  // Check if it's a reference list
+  // The filter DSL only ever returns Reference documents (titulo, autores, ano, ...)
   if (data[0].titulo !== undefined) {
     const lines = data.map((item, i) => {
       const autores = Array.isArray(item.autores) ? item.autores.join(', ') : safeStringify(item.autores);
@@ -269,14 +228,11 @@ function formatQueryResults(data) {
     return `**Referências encontradas (${data.length}):**\n\n` + lines.join('\n');
   }
 
-  // Generic formatting for other results
+  // Generic fallback formatting for any other result shape
   const lines = data.slice(0, 20).map((item, i) => {
-    // Try to find a meaningful display value
     const displayValue = safeStringify(item.nome) ||
-                         safeStringify(item._id) ||
+                         safeStringify(item.id) ||
                          safeStringify(item.titulo) ||
-                         safeStringify(item.nomeCientifico) ||
-                         safeStringify(item.nomeVernacular) ||
                          JSON.stringify(item);
     return `${i + 1}. ${displayValue}`;
   });
@@ -290,61 +246,152 @@ function formatQueryResults(data) {
 }
 
 /**
- * Execute MongoDB query safely (read-only)
- * @param {Object} querySpec - Query specification
+ * Restricted filter DSL (DA8) — whitelisted queryable fields for etnoChat.
+ * Each entry describes how to reach the compared value inside the stored
+ * `doc` JSON: `arrays` are json paths walked through EXISTS(json_each(...))
+ * joins (relative to the previous hop's `.value`, or `doc` for the first
+ * hop); `leaf` is the json path of the scalar/array compared at the end
+ * (relative to the last join, or `doc` when `arrays` is empty); `leafIsArray`
+ * means the leaf itself is a JSON array of strings needing one more
+ * json_each hop before comparing.
+ */
+const FIELD_WHITELIST = {
+  titulo:  { leaf: "$.titulo" },
+  ano:     { leaf: "$.ano", numeric: true },
+  status:  { leaf: "$.status" },
+  fonte:   { leaf: "$.fonte" },
+  autores: { leaf: "$.autores", leafIsArray: true },
+  'comunidades.nome':      { arrays: ["$.comunidades"], leaf: "$.nome" },
+  'comunidades.municipio': { arrays: ["$.comunidades"], leaf: "$.municipio" },
+  'comunidades.estado':    { arrays: ["$.comunidades"], leaf: "$.estado" },
+  'comunidades.plantas.nomeVernacular': { arrays: ["$.comunidades", "$.plantas"], leaf: "$.nomeVernacular", leafIsArray: true },
+  'comunidades.plantas.tipoUso':        { arrays: ["$.comunidades", "$.plantas"], leaf: "$.tipoUso", leafIsArray: true }
+};
+
+const SUPPORTED_OPERATORS = new Set(['eq', 'contains', 'in', 'gte', 'lte']);
+
+/**
+ * Resolve a whitelisted field definition into its EXISTS(json_each(...))
+ * join clauses (if any) and the final value expression to compare.
+ */
+function resolveValueExpr(fieldDef) {
+  const arrays = fieldDef.arrays || [];
+  const joins = [];
+  let prevAlias = null;
+
+  arrays.forEach((arrayPath, i) => {
+    const alias = `j${i}`;
+    joins.push(
+      prevAlias
+        ? `json_each(json_extract(${prevAlias}.value, '${arrayPath}')) ${alias}`
+        : `json_each(doc, '${arrayPath}') ${alias}`
+    );
+    prevAlias = alias;
+  });
+
+  if (fieldDef.leafIsArray) {
+    const leafSource = prevAlias
+      ? `json_extract(${prevAlias}.value, '${fieldDef.leaf}')`
+      : `json_extract(doc, '${fieldDef.leaf}')`;
+    joins.push(`json_each(${leafSource}) jleaf`);
+    return { joins, leafExpr: 'jleaf.value' };
+  }
+
+  const leafExpr = prevAlias
+    ? `json_extract(${prevAlias}.value, '${fieldDef.leaf}')`
+    : `json_extract(doc, '${fieldDef.leaf}')`;
+  return { joins, leafExpr };
+}
+
+/**
+ * Build the parameterized comparison SQL for one condition. `valor` is
+ * NEVER concatenated into the SQL string — it is only ever pushed onto
+ * `params` and bound through `?` placeholders.
+ */
+function buildComparison(leafExpr, operador, valor, numeric, params) {
+  switch (operador) {
+    case 'eq':
+      params.push(valor);
+      return numeric ? `${leafExpr} = ?` : `LOWER(${leafExpr}) = LOWER(?)`;
+    case 'contains':
+      params.push(valor);
+      return `LOWER(${leafExpr}) LIKE '%' || LOWER(?) || '%'`;
+    case 'gte':
+      params.push(valor);
+      return `${leafExpr} >= ?`;
+    case 'lte':
+      params.push(valor);
+      return `${leafExpr} <= ?`;
+    case 'in': {
+      if (!Array.isArray(valor) || valor.length === 0) {
+        throw new Error('Operador "in" requer um array de valores não vazio');
+      }
+      valor.forEach((v) => params.push(v));
+      const placeholders = valor.map(() => (numeric ? '?' : 'LOWER(?)')).join(', ');
+      return numeric ? `${leafExpr} IN (${placeholders})` : `LOWER(${leafExpr}) IN (${placeholders})`;
+    }
+    default:
+      throw new Error(`Operador não permitido no filtro etnoChat: "${operador}"`);
+  }
+}
+
+/**
+ * Translate one `{ campo, operador, valor }` condition into parameterized
+ * SQL. Throws if `campo`/`operador` are not in the whitelist — this check
+ * runs BEFORE any database access, so a rejected field never reaches SQLite.
+ */
+function buildConditionSql(condition, params) {
+  const { campo, operador, valor } = condition || {};
+  const fieldDef = FIELD_WHITELIST[campo];
+  if (!fieldDef) {
+    throw new Error(
+      `Campo não permitido no filtro etnoChat: "${campo}". Campos disponíveis: ${Object.keys(FIELD_WHITELIST).join(', ')}`
+    );
+  }
+  if (!SUPPORTED_OPERATORS.has(operador)) {
+    throw new Error(`Operador não permitido no filtro etnoChat: "${operador}"`);
+  }
+
+  const { joins, leafExpr } = resolveValueExpr(fieldDef);
+  const comparison = buildComparison(leafExpr, operador, valor, fieldDef.numeric, params);
+
+  return joins.length > 0 ? `EXISTS (SELECT 1 FROM ${joins.join(', ')} WHERE ${comparison})` : comparison;
+}
+
+/**
+ * Execute the restricted filter DSL (DA8) as parameterized SQL — read-only.
+ * `conditions` is an array of `{ campo, operador, valor }` combined with AND.
+ * Every `campo`/`operador` is validated against FIELD_WHITELIST/SUPPORTED_OPERATORS
+ * before any SQL runs; an invalid one throws and is caught below without ever
+ * touching the database. Values are always bound via `?` parameters, never
+ * concatenated. This function only ever builds and runs a single SELECT — there
+ * is no code path here that can emit INSERT/UPDATE/DELETE.
+ * @param {Array<{campo: string, operador: string, valor: *}>} conditions
  * @returns {Promise<Object>} Query results
  */
-async function executeQuery(querySpec) {
-  // Security: Always enforce approved status
-  const ensureApproved = (query) => {
-    if (!query.status) {
-      query.status = 'approved';
-    }
-    return query;
-  };
-
+async function executeQuery(conditions) {
   try {
-    // Ensure database connection
+    if (!Array.isArray(conditions)) {
+      return { success: false, error: 'Filtro inválido: esperado um array de condições.' };
+    }
+
     if (!database.isConnected) {
-      await database.connect();
+      database.connect();
     }
 
-    const collection = database.getCollection(config.database.collection);
-    if (querySpec.operation === 'find') {
-      const query = ensureApproved(querySpec.query || {});
-      const options = querySpec.options || {};
+    const params = [];
+    const clauses = conditions.map((condition) => buildConditionSql(condition, params));
 
-      let cursor = collection.find(query);
+    // Always force approved-only results and cap the result set.
+    clauses.push(`json_extract(doc, '$.status') = ?`);
+    params.push(Status.APPROVED);
 
-      if (options.sort) cursor = cursor.sort(options.sort);
-      if (options.limit) cursor = cursor.limit(options.limit);
-      else cursor = cursor.limit(20); // Default limit
+    const sql = `SELECT doc FROM ${database.TABLE} WHERE ${clauses.join(' AND ')} LIMIT 50`;
 
-      const results = await cursor.toArray();
-      return { success: true, data: results, count: results.length };
-    }
+    const rows = database.getConnection().prepare(sql).all(...params);
+    const results = rows.map((row) => JSON.parse(row.doc));
 
-    if (querySpec.operation === 'aggregate') {
-      let pipeline = querySpec.pipeline || [];
-
-      // Ensure $match with approved status at the start
-      if (pipeline.length === 0 || !pipeline[0].$match) {
-        pipeline = [{ $match: { status: 'approved' } }, ...pipeline];
-      } else if (!pipeline[0].$match.status) {
-        pipeline[0].$match.status = 'approved';
-      }
-
-      // Add limit if not present
-      const hasLimit = pipeline.some(stage => stage.$limit);
-      if (!hasLimit) {
-        pipeline.push({ $limit: 50 });
-      }
-
-      const results = await collection.aggregate(pipeline).toArray();
-      return { success: true, data: results, count: results.length };
-    }
-
-    return { success: false, error: 'Operacao nao permitida. Use apenas find ou aggregate.' };
+    return { success: true, data: results, count: results.length };
   } catch (error) {
     logger.error('Query execution failed:', error.message);
     return { success: false, error: error.message };
@@ -455,8 +502,8 @@ async function streamChat({ provider, apiKey, model, messages, onText, onEnd, on
         throw new Error('Provedor desconhecido');
     }
 
-    // Check for MongoDB query in response and execute if found
-    let { query: querySpec, cleanText } = extractMongoQuery(fullResponse);
+    // Check for a hidden filter query in the response and execute it (DA8)
+    let { query: querySpec, cleanText } = extractFilterQuery(fullResponse);
 
     // Clean any patterns that shouldn't appear in the response
     cleanText = cleanText
@@ -520,6 +567,8 @@ module.exports = {
   getProviders,
   streamChat,
   chat,
+  extractFilterQuery,
   executeQuery,
+  FIELD_WHITELIST,
   PROVIDERS
 };

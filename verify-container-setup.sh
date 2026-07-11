@@ -39,7 +39,17 @@ netstat -tuln | grep -E "3001|3002|3003" || echo "❌ Ports not listening"
 echo ""
 
 echo "7. Environment Variables:"
-env | grep -E "MONGO_URI|NODE_ENV|PORT"
+env | grep -E "SQLITE_DB_PATH|NODE_ENV|PORT"
+echo ""
+
+echo "7b. SQLite Data Directory:"
+SQLITE_DIR=$(dirname "${SQLITE_DB_PATH:-/data/unidade.sqlite}")
+if [ -d "$SQLITE_DIR" ] && [ -w "$SQLITE_DIR" ]; then
+  echo "✅ Directory exists and is writable: $SQLITE_DIR"
+  ls -la "$SQLITE_DIR"
+else
+  echo "❌ Directory missing or not writable: $SQLITE_DIR"
+fi
 echo ""
 
 echo "8. Test API Response:"

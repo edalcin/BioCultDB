@@ -10,50 +10,8 @@ Antes de começar, certifique-se de que:
 
 - ✅ Unraid server está instalado e executando
 - ✅ Docker está habilitado no Unraid (padrão)
-- ✅ MongoDB está rodando em um container Docker no Unraid
-  - Se não tiver MongoDB, siga a [Seção 1: Instalar MongoDB](#seção-1-instalar-mongodb)
 - ✅ Conectividade de rede entre containers está configurada
 - ✅ Você tem acesso à interface web do Unraid (porta 80/443)
-
----
-
-## Seção 1: Instalar MongoDB (se necessário)
-
-Se você já tem MongoDB rodando, **pule para a Seção 2**.
-
-### Passo 1.1: Acessar a Interface Docker do Unraid
-
-1. Abra o navegador e acesse: `http://<ip-do-unraid>/`
-2. No menu superior, clique em **"Docker"**
-3. Clique em **"Docker Containers"** na seção esquerda
-
-### Passo 1.2: Adicionar Container MongoDB
-
-1. Clique no botão **"Add Container"** (ou o ícone `+`)
-2. No campo **"Template"**, selecione `mongodb`
-   - Se não aparecer, pesquise por "mongo" ou "mongodb"
-3. Preencha os campos:
-   - **Name**: `mongodb`
-   - **Repository**: `library/mongo:latest` (ou versão específica como `mongo:7.0`)
-   - **Network Type**: `bridge`
-
-4. Na seção **"Show docker allocations..."**, clique para expandir:
-   - Mapeie a porta MongoDB:
-     - **Container Port**: `27017`
-     - **Host Port**: `27017`
-
-5. Clique em **"Apply"** para criar o container
-6. Aguarde até ver o status **"running"** (em verde)
-
-### Passo 1.3: Verificar Conexão MongoDB
-
-```bash
-# Do Unraid console ou via SSH:
-docker exec mongodb mongosh --eval "db.version()"
-
-# Você deve ver algo como:
-# 7.0.0
-```
 
 ---
 
@@ -147,23 +105,28 @@ Clique novamente em **"Add another Path, Port, Variable, Label or Device"** para
 3. Preencha `Key` e `Value`
 4. Clique em **"Add another..."** para a próxima variável
 
-#### Variável 1: MongoDB URI (OBRIGATÓRIA)
+#### Variável 1: SQLITE_DB_PATH (OBRIGATÓRIA)
 ```
-Key: MONGO_URI
-Value: mongodb://mongodb:27017/etnodb
+Key: SQLITE_DB_PATH
+Value: /data/unidade.sqlite
 ```
 
 **Explicação**:
-- Define como a aplicação se conecta ao MongoDB
-- Valor padrão assume MongoDB rodando localmente em container Docker
-- `mongodb` = nome do container MongoDB (descoberta de DNS automática)
-- `27017` = porta padrão MongoDB
-- `etnodb` = nome do banco de dados
+- Define o caminho do arquivo de banco de dados SQLite dentro do container
+- Valor padrão: `/data/unidade.sqlite`
+- O arquivo é criado automaticamente na primeira execução, se ainda não existir
 
-**Variações**:
-- Se MongoDB em outro host: `mongodb://[OUTRO_HOST]:27017/etnodb`
-- Se usando MongoDB Atlas (cloud): `mongodb+srv://user:pass@cluster.mongodb.net/etnodb`
-- Se com autenticação: `mongodb://user:password@mongodb:27017/etnodb`
+**Importante — Armazenamento Persistente**: Para não perder os dados ao recriar o container, mapeie também um **Path** (não uma Variable) apontando para o diretório `/data`:
+1. Clique em **"Add another Path, Port, Variable, Label or Device"**
+2. Selecione o tipo **"Path"**
+3. Preencha:
+   ```
+   Container Path: /data
+   Host Path: /mnt/user/appdata/etnodb/data
+   Read Only: No
+   ```
+
+Veja também a [Seção 8: Armazenamento Persistente](#armazenamento-persistente) para o formato completo.
 
 #### Variável 2: Node Environment (OBRIGATÓRIA)
 ```
@@ -244,7 +207,7 @@ Port Mappings:
 └── 3003 → 3003 (Apresentação)
 
 Environment Variables (Obrigatórias):
-├── MONGO_URI: mongodb://mongodb:27017/etnodb
+├── SQLITE_DB_PATH: /data/unidade.sqlite
 └── NODE_ENV: production
 
 Environment Variables (Opcionais - apenas se usar portas diferentes):
@@ -257,7 +220,7 @@ Environment Variables (Opcionais - apenas se usar portas diferentes):
 
 | Variável | Obrigatória? | Padrão | Descrição |
 |----------|--------------|--------|-----------|
-| `MONGO_URI` | ✅ Sim | `mongodb://mongodb:27017/etnodb` | Conexão ao MongoDB |
+| `SQLITE_DB_PATH` | ✅ Sim | `/data/unidade.sqlite` | Caminho do arquivo de banco de dados SQLite (requer volume persistente) |
 | `NODE_ENV` | ✅ Sim | `production` | Modo de execução |
 | `PORT_ACQUISITION` | ❌ Não | `3001` | Porta de entrada de dados |
 | `PORT_CURATION` | ❌ Não | `3002` | Porta de edição/aprovação |
@@ -390,44 +353,45 @@ Para verificar se tudo está funcionando:
 2. Clique em **"View Logs"** (ícone de documento/logs)
 3. Procure por mensagens como:
    ```
-   Connected to MongoDB
+   Opening SQLite database at /data/unidade.sqlite
+   Successfully connected to SQLite
    Acquisition server listening on port 3001
    Curation server listening on port 3002
    Presentation server listening on port 3003
    ```
 
-### Teste de Conectividade
+### Verificar Armazenamento SQLite
 
-Se os logs mostrarem erros de MongoDB:
+Se os logs mostrarem erros ao abrir o banco de dados:
 
-1. Verifique se container `mongodb` está **running**
-2. Teste a conexão:
+1. Verifique se o volume/path `/data` foi mapeado corretamente (Seção 2.5)
+2. Confirme que o diretório existe e é gravável dentro do container:
    ```bash
-   docker exec etnodb ping mongodb
-   # Deve responder com sucesso
+   docker exec etnodb ls -la /data
+   docker exec etnodb touch /data/.write-test && echo "OK: gravável" && docker exec etnodb rm /data/.write-test
    ```
-
-3. Teste a porta MongoDB:
+3. Rode o script de verificação incluído na imagem, que já checa `SQLITE_DB_PATH` e a gravabilidade do diretório:
    ```bash
-   docker exec etnodb nc -zv mongodb 27017
-   # Deve mostrar: Connection successful
+   docker exec etnodb bash -c 'bash /app/verify-container-setup.sh'
    ```
 
 ---
 
 ## Seção 6: Backup e Manutenção
 
-### Backup de Dados MongoDB
+### Backup de Dados SQLite
 
-Antes de fazer atualizações, faça backup do banco de dados:
+O BioCultDB usa SQLite em modo WAL (Write-Ahead Log). Para um backup consistente sem precisar parar o container, use `.backup` (via `sqlite3`), que captura um snapshot íntegro mesmo com o banco em uso — copiar o arquivo `.sqlite` diretamente enquanto a aplicação escreve nele arrisca corromper o backup.
 
 ```bash
-# Backup completo
-docker exec mongodb mongodump --out /backup/etnodb-$(date +%Y%m%d)
+# Opção 1 (recomendada): snapshot consistente com a aplicação rodando
+docker exec etnodb sqlite3 /data/unidade.sqlite ".backup '/data/unidade-$(date +%Y%m%d).sqlite'"
+docker cp etnodb:/data/unidade-$(date +%Y%m%d).sqlite /mnt/user/backups/
 
-# Ou via Unraid:
-# Settings → Scheduled Tasks → Add new script:
-/usr/bin/docker exec mongodb mongodump --out /mnt/user/backups/etnodb-$(date +%Y%m%d)
+# Opção 2: copiar o arquivo diretamente com a aplicação parada
+docker stop etnodb
+cp /mnt/user/appdata/etnodb/data/unidade.sqlite /mnt/user/backups/unidade-$(date +%Y%m%d).sqlite
+docker start etnodb
 ```
 
 ### Atualizar BioCultDB
@@ -456,7 +420,7 @@ docker logs etnodb
 ```
 
 **Causas comuns:**
-- ❌ MongoDB não está rodando
+- ❌ Volume `/data` não está montado ou `SQLITE_DB_PATH` incorreto
 - ❌ Porta já está em uso (altere Host Port)
 - ❌ Variáveis de ambiente incorretas
 
@@ -467,14 +431,15 @@ docker logs etnodb
 2. Vá para **"Stats"** para ver CPU e memória
 3. Se necessário, aumente limits (Seção 2.6)
 
-### Problema: Não consegue conectar ao MongoDB
+### Problema: Erro ao abrir o banco de dados SQLite
 
-**Verificar variável MONGO_URI:**
+**Verificar variável SQLITE_DB_PATH e o volume `/data`:**
 
 1. Clique em `etnodb` → **"Edit"**
-2. Procure por variável `MONGO_URI`
-3. Confirme que está como: `mongodb://mongodb:27017/etnodb`
-4. Clique **"Apply"** e reinicie o container
+2. Procure por variável `SQLITE_DB_PATH`
+3. Confirme que está como: `/data/unidade.sqlite`
+4. Procure pela seção **Path** e confirme que `Container Path: /data` está mapeado para um `Host Path` válido e gravável
+5. Clique **"Apply"** e reinicie o container
 
 ### Problema: Conexão recusada
 
@@ -495,14 +460,14 @@ docker logs etnodb
 
 ### Customizar Portas e Variáveis de Ambiente
 
-**Cenário**: Você quer usar portas diferentes das padrões ou conectar a MongoDB em outro host.
+**Cenário**: Você quer usar portas diferentes das padrões.
 
 #### Editar Variáveis Existentes
 
 1. Em **Docker Containers**, clique no container **`etnodb`**
 2. Clique em **"Edit"**
 3. Procure por **"Environment Variables"** (seção com seus KEY=VALUE)
-4. Clique na variável que quer alterar (ex: `MONGO_URI`)
+4. Clique na variável que quer alterar (ex: `SQLITE_DB_PATH`)
 5. Atualize o valor conforme necessário
 6. Clique em **"Apply"** para salvar
 
@@ -518,31 +483,6 @@ Se a porta 3003 está sendo usada por outra aplicação:
    - Adicione/altere: `PORT_PRESENTATION = 4003`
 4. Clique em **Apply**
 5. Acesse: `http://<ip-unraid>:4003/` (nova porta)
-
-#### Exemplo: Usar MongoDB Atlas (Cloud)
-
-Se preferir usar MongoDB em nuvem em vez de container local:
-
-1. Crie conta em [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
-2. Crie um cluster (Free tier disponível)
-3. Copie a connection string: `mongodb+srv://user:pass@cluster.mongodb.net/etnodb`
-4. Na edição do container `etnodb`:
-   - Clique em **Edit**
-   - Procure por variável `MONGO_URI`
-   - Atualize o valor para: `mongodb+srv://user:pass@cluster.mongodb.net/etnodb`
-   - Clique em **Apply**
-
-**Nota**: Se MongoDB Atlas requer autenticação, inclua na URL: `mongodb+srv://username:password@cluster.mongodb.net/etnodb`
-
-#### Exemplo: Customizar Porta MongoDB
-
-Se MongoDB não está na porta padrão 27017:
-
-1. Na edição do container `etnodb`:
-   - Procure por variável `MONGO_URI`
-   - Atualize de: `mongodb://mongodb:27017/etnodb`
-   - Para: `mongodb://mongodb:27777/etnodb` (ou sua porta customizada)
-   - Clique em **Apply**
 
 ### Armazenamento Persistente
 

@@ -156,69 +156,73 @@ GET /?estado=São+Paulo&municipio=Ubatuba&planta=palmito
 
 ---
 
-## MongoDB Queries
+## SQL Queries
 
 ### Search with No Filters (All Approved)
 
-```javascript
-db.etnodb.find({ status: "approved" })
-  .sort({ ano: -1, titulo: 1 })
-  .skip((page - 1) * limit)
-  .limit(limit);
+```sql
+SELECT id, doc FROM biocultdb_records
+WHERE status = 'approved'
+ORDER BY ano DESC, titulo ASC
+LIMIT ? OFFSET ?;
+-- params: [limit, (page - 1) * limit]
 ```
 
 ### Search by Community Name
 
-```javascript
-db.etnodb.find({
-  status: "approved",
-  "comunidades.nome": { $regex: /searchTerm/i }
-});
+```sql
+SELECT r.id, r.doc FROM biocultdb_records r
+JOIN biocultdb_records_fts f ON f.id = r.id
+WHERE r.status = 'approved' AND biocultdb_records_fts MATCH ?;
+-- param: 'comunidades:searchTerm*'
 ```
 
 ### Search by Plant Name (Scientific or Vernacular)
 
-```javascript
-db.etnodb.find({
-  status: "approved",
-  $or: [
-    { "comunidades.plantas.nomeCientifico": { $regex: /searchTerm/i } },
-    { "comunidades.plantas.nomeVernacular": { $regex: /searchTerm/i } }
-  ]
-});
+```sql
+SELECT r.id, r.doc FROM biocultdb_records r
+JOIN biocultdb_records_fts f ON f.id = r.id
+WHERE r.status = 'approved' AND biocultdb_records_fts MATCH ?;
+-- comunidades column aggregates both nomeCientifico and nomeVernacular at write time
+-- param: 'comunidades:searchTerm*'
 ```
 
 ### Search by State
 
-```javascript
-db.etnodb.find({
-  status: "approved",
-  "comunidades.estado": "São Paulo"  // Exact match
-});
+```sql
+SELECT r.id, r.doc FROM biocultdb_records r
+WHERE r.status = 'approved'
+  AND EXISTS (
+    SELECT 1 FROM json_each(r.doc, '$.comunidades') c
+    WHERE json_extract(c.value, '$.estado') = ?  -- Exact match
+  );
 ```
 
 ### Search by Municipality
 
-```javascript
-db.etnodb.find({
-  status: "approved",
-  "comunidades.municipio": "Ubatuba"  // Exact match
-});
+```sql
+SELECT r.id, r.doc FROM biocultdb_records r
+WHERE r.status = 'approved'
+  AND EXISTS (
+    SELECT 1 FROM json_each(r.doc, '$.comunidades') c
+    WHERE json_extract(c.value, '$.municipio') = ?  -- Exact match
+  );
 ```
 
 ### Combined Filters (Multiple Criteria)
 
-```javascript
-// Example: State AND Municipality AND Plant
-db.etnodb.find({
-  status: "approved",
-  "comunidades.estado": "São Paulo",
-  "comunidades.municipio": "Ubatuba",
-  $or: [
-    { "comunidades.plantas.nomeCientifico": { $regex: /palmito/i } },
-    { "comunidades.plantas.nomeVernacular": { $regex: /palmito/i } }
-  ]
-});
+```sql
+-- Example: State AND Municipality AND Plant
+SELECT r.id, r.doc FROM biocultdb_records r
+JOIN biocultdb_records_fts f ON f.id = r.id
+WHERE r.status = 'approved'
+  AND EXISTS (
+    SELECT 1 FROM json_each(r.doc, '$.comunidades') c
+    WHERE json_extract(c.value, '$.estado') = ?
+      AND json_extract(c.value, '$.municipio') = ?
+  )
+  AND biocultdb_records_fts MATCH ?;
+-- last param: 'comunidades:palmito*'
 ```
 
 **Filter Logic**: All filters combined with AND (all conditions must match)
@@ -300,12 +304,15 @@ db.etnodb.find({
 const limit = parseInt(req.query.limit) || 20;
 const page = parseInt(req.query.page) || 1;
 
-const totalResults = await db.etnodb.countDocuments(query);
+const totalRow = db.prepare(
+  `SELECT COUNT(*) AS total FROM biocultdb_records WHERE status = ?`
+).get('approved');
+const totalResults = totalRow.total;
 const totalPages = Math.ceil(totalResults / limit);
 
-const results = await db.etnodb.find(query)
-  .skip((page - 1) * limit)
-  .limit(limit);
+const results = db.prepare(
+  `SELECT id, doc FROM biocultdb_records WHERE status = ? ORDER BY ano DESC, titulo ASC LIMIT ? OFFSET ?`
+).all('approved', limit, (page - 1) * limit);
 ```
 
 ---
@@ -348,16 +355,15 @@ const results = await db.etnodb.find(query)
 ### Query Optimization
 
 **Indexes Required**:
-```javascript
-db.etnodb.createIndex({ status: 1 });
-db.etnodb.createIndex({ ano: -1 });
-db.etnodb.createIndex({ "comunidades.nome": "text" });
-db.etnodb.createIndex({ "comunidades.estado": 1 });
-db.etnodb.createIndex({ "comunidades.municipio": 1 });
-db.etnodb.createIndex({
-  "comunidades.plantas.nomeCientifico": "text",
-  "comunidades.plantas.nomeVernacular": "text"
-});
+```sql
+CREATE INDEX idx_biocultdb_records_status ON biocultdb_records(status);
+CREATE INDEX idx_biocultdb_records_ano ON biocultdb_records(ano DESC);
+CREATE VIRTUAL TABLE biocultdb_records_fts USING fts5(
+  id UNINDEXED, titulo, autores, resumo, doi, comunidades,
+  tokenize = 'unicode61 remove_diacritics 2'
+);
+-- comunidades column aggregates community names + plant nomeCientifico/nomeVernacular;
+-- estado/municipio filters use json_each(doc,'$.comunidades') (see SQL Queries above)
 ```
 
 **Expected Performance** (with indexes):
@@ -417,18 +423,18 @@ db.etnodb.createIndex({
 
 ### Input Sanitization
 
-- Escape all user input before MongoDB query (prevent NoSQL injection)
+- Use prepared statements (parâmetros posicionados) para todo input do usuário (prevenir SQL injection)
 - Escape all output in HTML (prevent XSS)
 - Limit query parameter lengths
 
-**NoSQL Injection Prevention**:
+**SQL Injection Prevention**:
 ```javascript
-// BAD (vulnerable)
-db.etnodb.find({ "comunidades.nome": req.query.comunidade });
+// BAD (vulnerable - string concatenation)
+db.prepare(`SELECT * FROM biocultdb_records WHERE json_extract(doc,'$.comunidades') LIKE '%${req.query.comunidade}%'`).all();
 
-// GOOD (sanitized)
+// GOOD (prepared statement, positional parameter)
 const sanitizedInput = String(req.query.comunidade).substring(0, 200);
-db.etnodb.find({ "comunidades.nome": { $regex: sanitizedInput, $options: 'i' } });
+db.prepare(`SELECT r.* FROM biocultdb_records r JOIN biocultdb_records_fts f ON f.id = r.id WHERE biocultdb_records_fts MATCH ?`).all(`comunidades:${sanitizedInput}*`);
 ```
 
 ---
@@ -437,14 +443,14 @@ db.etnodb.find({ "comunidades.nome": { $regex: sanitizedInput, $options: 'i' } }
 
 ### Data Source
 
-- **Database**: MongoDB `etnodb.etnodb` collection
+- **Database**: SQLite `biocultdb_records` table (arquivo compartilhado da unidade)
 - **Filter**: Only `status: "approved"` references
 - **Real-time**: Changes in curation context (approvals/rejections) immediately affect search results
 
 ### Shared Services
 
 - Uses `models/Reference.js` for data structure
-- Uses `services/database.js` for MongoDB queries
+- Uses `services/database.js` for SQLite queries
 - No dependency on acquisition or curation contexts
 
 ---
@@ -483,16 +489,16 @@ db.etnodb.find({ "comunidades.nome": { $regex: sanitizedInput, $options: 'i' } }
 
 **Expected**: References with communities in São Paulo state AND plants named "palmito"
 
-**MongoDB Query**:
-```javascript
-{
-  status: "approved",
-  "comunidades.estado": "São Paulo",
-  $or: [
-    { "comunidades.plantas.nomeCientifico": /palmito/i },
-    { "comunidades.plantas.nomeVernacular": /palmito/i }
-  ]
-}
+**SQL Query**:
+```sql
+SELECT r.id, r.doc FROM biocultdb_records r
+JOIN biocultdb_records_fts f ON f.id = r.id
+WHERE r.status = 'approved'
+  AND EXISTS (
+    SELECT 1 FROM json_each(r.doc, '$.comunidades') c
+    WHERE json_extract(c.value, '$.estado') = 'São Paulo'
+  )
+  AND biocultdb_records_fts MATCH 'comunidades:palmito*';
 ```
 
 ---
@@ -544,4 +550,4 @@ db.etnodb.find({ "comunidades.nome": { $regex: sanitizedInput, $options: 'i' } }
 
 ## Summary
 
-The presentation API provides a read-only public interface for searching approved ethnobotanical references. It supports filtering by community, plant, state, and municipality with responsive card-based results display. Performance targets are well within requirements (<2s) with proper MongoDB indexing.
+The presentation API provides a read-only public interface for searching approved ethnobotanical references. It supports filtering by community, plant, state, and municipality with responsive card-based results display. Performance targets are well within requirements (<2s) with proper SQLite generated-column indexing.

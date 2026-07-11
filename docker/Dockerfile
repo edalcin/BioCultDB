@@ -9,6 +9,9 @@ FROM node:20-alpine AS builder
 # Set working directory
 WORKDIR /app
 
+# Toolchain to compile better-sqlite3 (native addon) — discarded with this stage
+RUN apk add --no-cache python3 make g++
+
 # Copy package files
 COPY package*.json ./
 
@@ -36,17 +39,19 @@ LABEL build.date="${BUILD_DATE}"
 LABEL build.commit="${GIT_COMMIT}"
 LABEL build.version="1.0.0-debug"
 
-# Install curl for health checks
-RUN apk add --no-cache curl
-
 # Set working directory
 WORKDIR /app
 
 # Copy package files
 COPY package*.json ./
 
-# Install ONLY production dependencies
-RUN npm ci --omit=dev
+# Install curl for health checks, plus a build toolchain to compile
+# better-sqlite3 (native addon). Toolchain install, use, and removal are a
+# single RUN so the intermediate ~300MB of build tools never lands in a
+# layer — only their net effect (curl + compiled prod node_modules) does.
+RUN apk add --no-cache curl python3 make g++ && \
+    npm ci --omit=dev && \
+    apk del python3 make g++
 
 # Copy application code
 COPY backend ./backend
@@ -56,10 +61,14 @@ COPY --from=builder /app/frontend/dist ./frontend/dist
 COPY frontend/src/presentation/styles ./frontend/src/presentation/styles
 COPY frontend/src/presentation/scripts ./frontend/src/presentation/scripts
 
-# Create non-root user for security
+# Create non-root user for security, and the SQLite data directory owned by
+# it (the docker-compose volume mounted at /data inherits this ownership on
+# first mount — otherwise database.connect()'s mkdirSync('/data') fails with
+# EACCES since Docker creates volume mount points owned by root by default)
 RUN addgroup -g 1001 -S nodejs && \
     adduser -S nodejs -u 1001 && \
-    chown -R nodejs:nodejs /app
+    mkdir -p /data && \
+    chown -R nodejs:nodejs /app /data
 
 # Switch to non-root user
 USER nodejs

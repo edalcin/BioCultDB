@@ -6,7 +6,7 @@
 
 ## Overview
 
-This document defines the data model for the ethnobotanical database interface, based on the existing MongoDB schema and functional requirements from spec.md.
+This document defines the data model for the ethnobotanical database interface, based on the SQLite JSON1 document store (`biocultdb_records` table, ADR-005) and functional requirements from spec.md.
 
 ## Entity Definitions
 
@@ -16,17 +16,19 @@ This document defines the data model for the ethnobotanical database interface, 
 
 **Schema**:
 ```javascript
+// Stored as JSON in biocultdb_records.doc (TEXT column, id/created_at/updated_at are sibling columns)
 {
-  _id: ObjectId,                    // MongoDB-generated unique identifier
+  id: String,                       // UUID v4, application-generated (crypto.randomUUID())
   titulo: String,                   // Publication title (required)
   autores: [String],                // List of author names (required, min: 1)
   ano: Number,                      // Publication year (required, 4-digit integer)
   resumo: String,                   // Abstract/summary (optional)
   DOI: String,                      // Digital Object Identifier (optional, empty string if none)
   status: String,                   // Workflow status (required, enum: "pending" | "approved" | "rejected")
+  fonte: String,                    // Origin system (required, enum: "etnodb" | "biocultpapers")
   comunidades: [Community],         // Nested array of communities (required, min: 1)
-  createdAt: Date,                  // Creation timestamp (auto-generated)
-  updatedAt: Date                   // Last update timestamp (auto-generated)
+  createdAt: String,                // Creation timestamp, ISO-8601 (auto-generated)
+  updatedAt: String                 // Last update timestamp, ISO-8601 (auto-generated)
 }
 ```
 
@@ -37,6 +39,7 @@ This document defines the data model for the ethnobotanical database interface, 
 - `resumo`: Optional string, max 5000 characters
 - `DOI`: Optional string, max 100 characters, empty string if not available
 - `status`: Must be one of: "pending", "approved", "rejected"
+- `fonte`: Must be one of: "etnodb", "biocultpapers" (identifies the originating acquisition source)
 - `comunidades`: Array with at least 1 community object
 
 **State Transitions**:
@@ -53,15 +56,27 @@ approved  rejected
 ```
 
 **Indexes**:
-```javascript
-// Text search on title
-db.etnodb.createIndex({ titulo: "text" });
+```sql
+-- Generated columns projected from doc via json_extract (see ADR-005)
+ALTER TABLE biocultdb_records ADD COLUMN status TEXT GENERATED ALWAYS AS (json_extract(doc, '$.status')) VIRTUAL;
+ALTER TABLE biocultdb_records ADD COLUMN ano INTEGER GENERATED ALWAYS AS (json_extract(doc, '$.ano')) VIRTUAL;
+ALTER TABLE biocultdb_records ADD COLUMN fonte TEXT GENERATED ALWAYS AS (json_extract(doc, '$.fonte')) VIRTUAL;
+ALTER TABLE biocultdb_records ADD COLUMN titulo TEXT GENERATED ALWAYS AS (json_extract(doc, '$.titulo')) VIRTUAL;
 
-// Status filter for curation context
-db.etnodb.createIndex({ status: 1 });
+-- Status filter for curation context
+CREATE INDEX idx_biocultdb_records_status ON biocultdb_records(status);
 
-// Recent references for curation list
-db.etnodb.createIndex({ createdAt: -1 });
+-- Recent references for curation list (created_at is a native column, not generated)
+CREATE INDEX idx_biocultdb_records_created_at ON biocultdb_records(created_at DESC);
+
+-- Composite index for status + year filters (presentation/curation)
+CREATE INDEX idx_biocultdb_records_status_ano ON biocultdb_records(status, ano);
+
+-- Full-text search on title (see FTS5 virtual table, biocultdb_records_fts)
+CREATE VIRTUAL TABLE biocultdb_records_fts USING fts5(
+  id UNINDEXED, titulo, autores, resumo, doi, comunidades,
+  tokenize = 'unicode61 remove_diacritics 2'
+);
 ```
 
 ---
@@ -74,6 +89,7 @@ db.etnodb.createIndex({ createdAt: -1 });
 ```javascript
 {
   nome: String,                     // Community name (required)
+  tipo: String,                     // Community type taxonomy (required, e.g. "indigena", "quilombola", "ribeirinha", "tradicional")
   municipio: String,                // Municipality (required)
   estado: String,                   // State/province (required)
   local: String,                    // Detailed location description (optional)
@@ -85,6 +101,7 @@ db.etnodb.createIndex({ createdAt: -1 });
 
 **Validation Rules**:
 - `nome`: Non-empty string, max 200 characters
+- `tipo`: Non-empty string, max 100 characters (community type taxonomy)
 - `municipio`: Non-empty string, max 100 characters
 - `estado`: Non-empty string, max 100 characters (should match Brazilian state names)
 - `local`: Optional string, max 500 characters
@@ -94,14 +111,26 @@ db.etnodb.createIndex({ createdAt: -1 });
 
 **Nested Within**: Reference (comunidades array)
 
-**Indexes** (on Reference collection):
-```javascript
-// State/municipality filters for presentation search
-db.etnodb.createIndex({ "comunidades.estado": 1 });
-db.etnodb.createIndex({ "comunidades.municipio": 1 });
+**Indexes** (queried via JSON1 table-valued functions over `biocultdb_records.doc`):
+```sql
+-- State/municipality filters for presentation search
+-- (no direct column index possible on nested array elements; json_each scans doc per row)
+SELECT r.id FROM biocultdb_records r
+WHERE EXISTS (
+  SELECT 1 FROM json_each(r.doc, '$.comunidades') c
+  WHERE json_extract(c.value, '$.estado') = ?
+);
 
-// Community name search
-db.etnodb.createIndex({ "comunidades.nome": "text" });
+SELECT r.id FROM biocultdb_records r
+WHERE EXISTS (
+  SELECT 1 FROM json_each(r.doc, '$.comunidades') c
+  WHERE json_extract(c.value, '$.municipio') = ?
+);
+
+-- Community name search delegated to FTS5 (comunidades column aggregates community names)
+SELECT r.* FROM biocultdb_records r
+JOIN biocultdb_records_fts f ON f.id = r.id
+WHERE biocultdb_records_fts MATCH ?;
 ```
 
 ---
@@ -130,13 +159,14 @@ db.etnodb.createIndex({ "comunidades.nome": "text" });
 
 **Nested Within**: Community (plantas array)
 
-**Indexes** (on Reference collection):
-```javascript
-// Plant name searches (scientific and vernacular)
-db.etnodb.createIndex({
-  "comunidades.plantas.nomeCientifico": "text",
-  "comunidades.plantas.nomeVernacular": "text"
-});
+**Indexes** (via FTS5, `biocultdb_records_fts`):
+```sql
+-- Plant name searches (scientific and vernacular) piggyback on the FTS5 `comunidades`
+-- column, which aggregates every nested community/plant name into the indexed text
+-- at write time (application-level sync, same transaction as the doc write).
+SELECT r.* FROM biocultdb_records r
+JOIN biocultdb_records_fts f ON f.id = r.id
+WHERE biocultdb_records_fts MATCH ?;
 ```
 
 ---
@@ -151,8 +181,10 @@ Reference (1)
   ├── resumo
   ├── DOI
   ├── status
+  ├── fonte
   └── comunidades[] (1..n)
         ├── nome
+        ├── tipo
         ├── municipio
         ├── estado
         ├── local
@@ -177,16 +209,20 @@ Reference (1)
 
 **Insert New Reference**:
 ```javascript
-db.etnodb.insertOne({
+// Application builds the JS object, then serializes it for the doc column
+const reference = {
+  id: crypto.randomUUID(),
   titulo: "...",
   autores: ["...", "..."],
   ano: 2024,
   resumo: "...",
   DOI: "",
   status: "pending",  // Always "pending" on creation
+  fonte: "etnodb",    // or "biocultpapers", identifies the originating acquisition source
   comunidades: [
     {
       nome: "...",
+      tipo: "...",
       municipio: "...",
       estado: "...",
       local: "...",
@@ -201,9 +237,15 @@ db.etnodb.insertOne({
       ]
     }
   ],
-  createdAt: new Date(),
-  updatedAt: new Date()
-});
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString()
+};
+```
+```sql
+INSERT INTO biocultdb_records (id, doc, created_at, updated_at)
+VALUES (?, ?, ?, ?);
+-- params: [reference.id, JSON.stringify(reference), reference.createdAt, reference.updatedAt]
+-- and the same transaction inserts/updates the matching biocultdb_records_fts row.
 ```
 
 ---
@@ -211,53 +253,37 @@ db.etnodb.insertOne({
 ### Curation Context
 
 **List All References with Status**:
-```javascript
-db.etnodb.find(
-  {},
-  {
-    projection: {
-      titulo: 1,
-      autores: 1,
-      ano: 1,
-      status: 1,
-      createdAt: 1
-    }
-  }
-).sort({ createdAt: -1 });
+```sql
+SELECT id, titulo, autores, ano, status, created_at
+FROM biocultdb_records
+ORDER BY created_at DESC;
+-- titulo/autores/ano/status are generated columns (json_extract); autores stays JSON text
+-- and is parsed in the application layer after the row is read.
 ```
 
 **Get Single Reference for Editing**:
-```javascript
-db.etnodb.findOne({ _id: ObjectId("...") });
+```sql
+SELECT id, doc, created_at, updated_at FROM biocultdb_records WHERE id = ?;
 ```
 
 **Update Reference Content**:
 ```javascript
-db.etnodb.updateOne(
-  { _id: ObjectId("...") },
-  {
-    $set: {
-      titulo: "...",
-      autores: ["...", "..."],
-      // ... other fields
-      comunidades: [...], // Complete replacement of nested arrays
-      updatedAt: new Date()
-    }
-  }
-);
+// The doc object is fetched, merged with the incoming edits in JS
+// (comunidades[] is replaced wholesale), then rewritten.
+const updated = { ...existingReference, ...edits, updatedAt: new Date().toISOString() };
+```
+```sql
+UPDATE biocultdb_records SET doc = ?, updated_at = ? WHERE id = ?;
+-- params: [JSON.stringify(updated), updated.updatedAt, updated.id]
 ```
 
 **Change Reference Status**:
 ```javascript
-db.etnodb.updateOne(
-  { _id: ObjectId("...") },
-  {
-    $set: {
-      status: "approved", // or "rejected"
-      updatedAt: new Date()
-    }
-  }
-);
+const updated = { ...existingReference, status: "approved", updatedAt: new Date().toISOString() };
+```
+```sql
+UPDATE biocultdb_records SET doc = ?, updated_at = ? WHERE id = ?;
+-- params: [JSON.stringify(updated), updated.updatedAt, updated.id]
 ```
 
 ---
@@ -265,66 +291,55 @@ db.etnodb.updateOne(
 ### Presentation Context
 
 **Search by Community Name**:
-```javascript
-db.etnodb.find(
-  {
-    status: "approved",
-    "comunidades.nome": { $regex: /searchTerm/i }
-  },
-  {
-    projection: {
-      titulo: 1,
-      autores: 1,
-      ano: 1,
-      comunidades: 1
-    }
-  }
-);
+```sql
+SELECT r.id, r.titulo, r.autores, r.ano, r.doc
+FROM biocultdb_records r
+JOIN biocultdb_records_fts f ON f.id = r.id
+WHERE r.status = 'approved' AND biocultdb_records_fts MATCH ?;
+-- MATCH query targets the fts `comunidades` column; app scopes the query, e.g. 'comunidades:searchTerm*'
 ```
 
 **Search by Plant Name (Scientific or Vernacular)**:
-```javascript
-db.etnodb.find(
-  {
-    status: "approved",
-    $or: [
-      { "comunidades.plantas.nomeCientifico": { $regex: /searchTerm/i } },
-      { "comunidades.plantas.nomeVernacular": { $regex: /searchTerm/i } }
-    ]
-  }
-);
+```sql
+SELECT r.* FROM biocultdb_records r
+JOIN biocultdb_records_fts f ON f.id = r.id
+WHERE r.status = 'approved' AND biocultdb_records_fts MATCH ?;
+-- Scientific and vernacular plant names are both folded into the fts `comunidades`
+-- column at write time, so one MATCH covers both.
 ```
 
 **Filter by State**:
-```javascript
-db.etnodb.find(
-  {
-    status: "approved",
-    "comunidades.estado": "São Paulo"
-  }
-);
+```sql
+SELECT r.* FROM biocultdb_records r
+WHERE r.status = 'approved'
+  AND EXISTS (
+    SELECT 1 FROM json_each(r.doc, '$.comunidades') c
+    WHERE json_extract(c.value, '$.estado') = ?
+  );
 ```
 
 **Filter by Municipality**:
-```javascript
-db.etnodb.find(
-  {
-    status: "approved",
-    "comunidades.municipio": "Ubatuba"
-  }
-);
+```sql
+SELECT r.* FROM biocultdb_records r
+WHERE r.status = 'approved'
+  AND EXISTS (
+    SELECT 1 FROM json_each(r.doc, '$.comunidades') c
+    WHERE json_extract(c.value, '$.municipio') = ?
+  );
 ```
 
 **Combined Filters (AND logic)**:
-```javascript
-db.etnodb.find(
-  {
-    status: "approved",
-    "comunidades.estado": "São Paulo",
-    "comunidades.municipio": "Ubatuba",
-    "comunidades.plantas.nomeVernacular": { $regex: /erva/i }
-  }
-);
+```sql
+SELECT r.* FROM biocultdb_records r
+JOIN biocultdb_records_fts f ON f.id = r.id
+WHERE r.status = 'approved'
+  AND EXISTS (
+    SELECT 1 FROM json_each(r.doc, '$.comunidades') c
+    WHERE json_extract(c.value, '$.estado') = ?
+      AND json_extract(c.value, '$.municipio') = ?
+  )
+  AND biocultdb_records_fts MATCH ?;
+-- last param targets the fts `comunidades` column, e.g. 'comunidades:erva*'
 ```
 
 ---
@@ -364,6 +379,9 @@ function validateReference(data) {
     data.comunidades.forEach((comunidade, idx) => {
       if (!comunidade.nome || comunidade.nome.trim().length === 0) {
         errors.push(`Comunidade ${idx + 1}: Nome é obrigatório`);
+      }
+      if (!comunidade.tipo || comunidade.tipo.trim().length === 0) {
+        errors.push(`Comunidade ${idx + 1}: Tipo é obrigatório`);
       }
       if (!comunidade.municipio || comunidade.municipio.trim().length === 0) {
         errors.push(`Comunidade ${idx + 1}: Município é obrigatório`);
@@ -419,8 +437,8 @@ function validateReference(data) {
 - **Validation**: Warning message but not blocking
 
 **Reference Duplicates**: Same publication entered twice
-- **Handling**: Check title + authors + year before insert
-- **Query**: `db.etnodb.findOne({ titulo: "...", autores: [...], ano: 2024 })`
+- **Handling**: Check title + year before insert (case-insensitive)
+- **Query**: `SELECT id FROM biocultdb_records WHERE titulo = ? COLLATE NOCASE AND ano = ?`
 
 ### Special Characters
 
@@ -430,7 +448,8 @@ function validateReference(data) {
 
 **Portuguese Characters**: Accents and special letters in vernacular names
 - Examples: "erva-doce", "jiçara", "brejaúva"
-- **Handling**: Full UTF-8 support, case-insensitive search with collation
+- **Handling**: Full UTF-8 support; case/diacritic-insensitive search via the FTS5
+  `unicode61 remove_diacritics 2` tokenizer
 
 ### Inconsistent Geographic Names
 
@@ -447,19 +466,22 @@ function validateReference(data) {
 
 **Status**: No migration needed - database already exists with structure matching /docs/dataStructure.json
 
-**Index Creation**: Execute index creation commands on existing collection:
-```javascript
-// Run once during deployment
-db.etnodb.createIndex({ titulo: "text" });
-db.etnodb.createIndex({ status: 1 });
-db.etnodb.createIndex({ createdAt: -1 });
-db.etnodb.createIndex({ "comunidades.estado": 1 });
-db.etnodb.createIndex({ "comunidades.municipio": 1 });
-db.etnodb.createIndex({ "comunidades.nome": "text" });
-db.etnodb.createIndex({
-  "comunidades.plantas.nomeCientifico": "text",
-  "comunidades.plantas.nomeVernacular": "text"
-});
+**Index Creation**: Execute index/generated-column creation commands once on deployment:
+```sql
+-- Run once during deployment
+ALTER TABLE biocultdb_records ADD COLUMN status TEXT GENERATED ALWAYS AS (json_extract(doc, '$.status')) VIRTUAL;
+ALTER TABLE biocultdb_records ADD COLUMN ano INTEGER GENERATED ALWAYS AS (json_extract(doc, '$.ano')) VIRTUAL;
+ALTER TABLE biocultdb_records ADD COLUMN fonte TEXT GENERATED ALWAYS AS (json_extract(doc, '$.fonte')) VIRTUAL;
+ALTER TABLE biocultdb_records ADD COLUMN titulo TEXT GENERATED ALWAYS AS (json_extract(doc, '$.titulo')) VIRTUAL;
+
+CREATE INDEX idx_biocultdb_records_status ON biocultdb_records(status);
+CREATE INDEX idx_biocultdb_records_created_at ON biocultdb_records(created_at DESC);
+CREATE INDEX idx_biocultdb_records_status_ano ON biocultdb_records(status, ano);
+
+CREATE VIRTUAL TABLE biocultdb_records_fts USING fts5(
+  id UNINDEXED, titulo, autores, resumo, doi, comunidades,
+  tokenize = 'unicode61 remove_diacritics 2'
+);
 ```
 
 ---
@@ -468,32 +490,43 @@ db.etnodb.createIndex({
 
 ### Index Strategy
 
-**Text Indexes**: Full-text search on titulo, comunidades.nome, plantas.nomeCientifico, plantas.nomeVernacular
-- **Tradeoff**: Slower writes, faster reads (acceptable for read-heavy presentation context)
+**FTS5 Index**: Full-text search on titulo, autores, resumo, DOI, and the aggregated
+`comunidades` text (community names + plant scientific/vernacular names)
+- **Tradeoff**: Slightly slower writes (application must sync `biocultdb_records_fts`
+  in the same transaction as `doc`), faster reads (acceptable for read-heavy
+  presentation context)
 
-**Compound Indexes**: Not needed initially - simple field indexes sufficient for current scale
+**Compound Indexes**: `(status, ano)` covers the common curation/presentation filter
+combination; no further compound indexes needed at current scale
 
 ### Query Optimization
 
-**Projection**: Limit returned fields in presentation context
-```javascript
-// Only return necessary fields for card display
-{ projection: { titulo: 1, autores: 1, ano: 1, "comunidades.nome": 1, "comunidades.plantas": 1 } }
+**Column Selection**: Limit returned columns in presentation context
+```sql
+-- Only return necessary columns for card display
+SELECT id, titulo, autores, ano, doc FROM biocultdb_records WHERE status = 'approved';
+-- comunidades.nome / comunidades.plantas are extracted from `doc` in the application layer
 ```
 
 **Pagination**: Limit results to prevent large result sets
-```javascript
-db.etnodb.find(...).limit(50).skip(page * 50);
+```sql
+SELECT id, doc, created_at FROM biocultdb_records
+WHERE status = 'approved'
+ORDER BY created_at DESC
+LIMIT ? OFFSET ?;
+-- params: [50, page * 50]
 ```
 
 ### Denormalization Considerations
 
-**Current**: Fully nested structure (reference → communities → plants)
-- **Pros**: Matches domain model, atomic operations, consistency
-- **Cons**: Deep nesting in queries, potential duplication of plant data across communities
+**Current**: Fully nested structure (reference → communities → plants), stored as one
+JSON document per row
+- **Pros**: Matches domain model, atomic single-row writes, consistency
+- **Cons**: Deep nesting in queries (`json_each`/`json_tree` for nested filters),
+  potential duplication of plant data across communities
 
 **Future**: If performance degrades, consider:
-- Separate collections for normalized data
+- Separate normalized tables (communities, plants) with foreign keys
 - Caching layer for frequent searches
 - **Decision**: Defer until proven necessary (YAGNI principle)
 
@@ -501,11 +534,12 @@ db.etnodb.find(...).limit(50).skip(page * 50);
 
 ## Summary
 
-The data model directly reflects the existing MongoDB schema defined in /docs/dataStructure.json with added:
+The data model directly reflects the SQLite JSON1 document store defined in /docs/dataStructure.json with added:
 - Status field for curation workflow
+- Fonte field identifying the originating acquisition source
 - Timestamps for tracking
 - Validation rules for data integrity
-- Indexes for search performance
+- Generated-column and FTS5 indexes for search performance
 - Query patterns for three contexts
 
 All entities and relationships align with functional requirements from spec.md.

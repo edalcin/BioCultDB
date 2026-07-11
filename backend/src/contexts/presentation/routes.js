@@ -25,6 +25,7 @@ const {
   getSankeyData
 } = require('../../services/statistics');
 const database = require('../../shared/database');
+const config = require('../../shared/config');
 
 /**
  * GET /health - Health check endpoint
@@ -32,21 +33,23 @@ const database = require('../../shared/database');
  */
 router.get('/health', async (req, res) => {
   try {
-    const collection = database.getCollection(config.database.collection);
+    const conn = database.getConnection();
+    const countByStatus = (status) =>
+      conn.prepare(`SELECT COUNT(*) as n FROM ${database.TABLE} WHERE status = ?`).get(status).n;
 
     const stats = {
       status: 'ok',
       timestamp: new Date().toISOString(),
       database: {
         connected: true,
-        name: config.database.name,
-        collection: config.database.collection
+        path: config.sqlitePath,
+        table: database.TABLE
       },
       references: {
-        total: await collection.countDocuments(),
-        approved: await collection.countDocuments({ status: 'approved' }),
-        pending: await collection.countDocuments({ status: 'pending' }),
-        rejected: await collection.countDocuments({ status: 'rejected' })
+        total: conn.prepare(`SELECT COUNT(*) as n FROM ${database.TABLE}`).get().n,
+        approved: countByStatus(Status.APPROVED),
+        pending: countByStatus(Status.PENDING),
+        rejected: countByStatus(Status.REJECTED)
       }
     };
 
@@ -85,7 +88,7 @@ router.get('/', async (req, res) => {
       limit = 50
     } = req.query;
 
-    // Build MongoDB query
+    // Build structured search query (FTS5 free-text + whitelisted json_extract conditions)
     const query = buildSearchQuery({
       q,
       tipo,
@@ -163,125 +166,63 @@ router.get('/', async (req, res) => {
 });
 
 /**
- * Build MongoDB search query from filters
- * All filters use AND logic (all must match)
- * Only approved references are returned
+ * Build a structured search query consumed by searchReferences(query, page, limit)
+ * (see services/database.js). Free text (`filters.q`) becomes an FTS5 MATCH search
+ * against `biocultdb_records_fts`; every other filter becomes an AND-ed condition
+ * resolved by the data layer against a whitelisted json_extract/json_each path —
+ * this layer never builds raw SQL, it only names whitelisted fields and values.
  *
  * @param {Object} filters - Search filters
- * @returns {Object} MongoDB query
+ * @returns {Object} Structured query: { status, text?, conditions? }
  */
 function buildSearchQuery(filters) {
   const query = {
-    status: Status.APPROVED  // Only show approved references
+    status: Status.APPROVED // Only show approved references
   };
 
   const conditions = [];
 
-  // Google-like search (searches across all fields)
+  // Google-like search (full-text search across titulo/autores/resumo/DOI/comunidades via FTS5)
   if (filters.q && filters.q.trim().length > 0) {
-    const searchRegex = sanitizeRegex(filters.q);
-    conditions.push({
-      $or: [
-        { titulo: { $regex: searchRegex, $options: 'i' } },
-        { autores: { $regex: searchRegex, $options: 'i' } },
-        { resumo: { $regex: searchRegex, $options: 'i' } },
-        { DOI: { $regex: searchRegex, $options: 'i' } },
-        { 'comunidades.nome': { $regex: searchRegex, $options: 'i' } },
-        { 'comunidades.tipo': { $regex: searchRegex, $options: 'i' } },
-        { 'comunidades.estado': { $regex: searchRegex, $options: 'i' } },
-        { 'comunidades.municipio': { $regex: searchRegex, $options: 'i' } },
-        { 'comunidades.local': { $regex: searchRegex, $options: 'i' } },
-        { 'comunidades.atividadesEconomicas': { $regex: searchRegex, $options: 'i' } },
-        { 'comunidades.observacoes': { $regex: searchRegex, $options: 'i' } },
-        { 'comunidades.plantas.nomeCientifico': { $regex: searchRegex, $options: 'i' } },
-        { 'comunidades.plantas.nomeVernacular': { $regex: searchRegex, $options: 'i' } },
-        { 'comunidades.plantas.tipoUso': { $regex: searchRegex, $options: 'i' } }
-      ]
-    });
+    query.text = filters.q.trim();
   }
 
   // Community type filter (exact match, case-insensitive)
   if (filters.tipo && filters.tipo.trim().length > 0) {
-    conditions.push({
-      'comunidades.tipo': {
-        $regex: `^${sanitizeRegex(filters.tipo)}$`,
-        $options: 'i'
-      }
-    });
+    conditions.push({ fields: ['comunidades.tipo'], op: 'eq', value: filters.tipo.trim() });
   }
 
   // Community name filter (case-insensitive partial match)
   if (filters.comunidade && filters.comunidade.trim().length > 0) {
-    conditions.push({
-      'comunidades.nome': {
-        $regex: sanitizeRegex(filters.comunidade),
-        $options: 'i'
-      }
-    });
+    conditions.push({ fields: ['comunidades.nome'], op: 'contains', value: filters.comunidade.trim() });
   }
 
   // Plant name filter (scientific OR vernacular, case-insensitive partial match)
   if (filters.planta && filters.planta.trim().length > 0) {
-    const plantRegex = sanitizeRegex(filters.planta);
     conditions.push({
-      $or: [
-        {
-          'comunidades.plantas.nomeCientifico': {
-            $regex: plantRegex,
-            $options: 'i'
-          }
-        },
-        {
-          'comunidades.plantas.nomeVernacular': {
-            $regex: plantRegex,
-            $options: 'i'
-          }
-        }
-      ]
+      fields: ['comunidades.plantas.nomeCientifico', 'comunidades.plantas.nomeVernacular'],
+      op: 'contains',
+      value: filters.planta.trim()
     });
   }
 
   // State filter (exact match, case-insensitive)
   if (filters.estado && filters.estado.trim().length > 0) {
-    conditions.push({
-      'comunidades.estado': {
-        $regex: `^${sanitizeRegex(filters.estado)}$`,
-        $options: 'i'
-      }
-    });
+    conditions.push({ fields: ['comunidades.estado'], op: 'eq', value: filters.estado.trim() });
   }
 
   // Municipality filter (exact match, case-insensitive)
   if (filters.municipio && filters.municipio.trim().length > 0) {
-    conditions.push({
-      'comunidades.municipio': {
-        $regex: `^${sanitizeRegex(filters.municipio)}$`,
-        $options: 'i'
-      }
-    });
+    conditions.push({ fields: ['comunidades.municipio'], op: 'eq', value: filters.municipio.trim() });
   }
 
-  // Combine all conditions with AND
   if (conditions.length > 0) {
-    query.$and = conditions;
+    query.conditions = conditions;
   }
 
   return query;
 }
 
-/**
- * Sanitize regex input to prevent regex injection
- * Escapes special regex characters
- *
- * @param {string} str - Input string
- * @returns {string} Sanitized string
- */
-function sanitizeRegex(str) {
-  if (!str || typeof str !== 'string') return '';
-
-  // Escape special regex characters
-  return str.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
 
 /**
  * GET /painel - Dashboard page
@@ -306,7 +247,7 @@ router.get('/painel', (req, res) => {
 /**
  * Build filters object from query parameters
  * @param {Object} params - Query parameters
- * @returns {Object} MongoDB query filters
+ * @returns {Object} Query filters (consumed by services/statistics.js)
  */
 function buildFilters({ estado, tipo, anoInicio, anoFim }) {
   const filters = { status: Status.APPROVED };

@@ -91,7 +91,7 @@
 
 **Endpoint**: `POST /reference/submit`
 
-**Description**: Processes submitted reference form, validates data, inserts into MongoDB with status "pending"
+**Description**: Processes submitted reference form, validates data, inserts into `biocultdb_records` with status "pending"
 
 **Request Body** (application/x-www-form-urlencoded):
 ```
@@ -119,7 +119,7 @@ comunidades[0][plantas][0][tipoUso]=medicinal
 4. If valid:
    - Add `status: "pending"`
    - Add `createdAt` and `updatedAt` timestamps
-   - Insert into MongoDB
+   - Insert into `biocultdb_records`
    - Redirect to success page
 5. If invalid:
    - Re-render form with error messages
@@ -158,7 +158,7 @@ comunidades[0][plantas][0][tipoUso]=medicinal
 
 ## Data Transformation
 
-### Form Data → MongoDB Document
+### Form Data → SQLite Document
 
 **Input** (form data):
 ```
@@ -167,7 +167,7 @@ comunidades[0][atividadesEconomicas]=pesca,agricultura,turismo
 comunidades[0][plantas][0][nomeCientifico]=Foeniculum vulgare
 ```
 
-**Output** (MongoDB document):
+**Output** (`biocultdb_records.doc` JSON):
 ```json
 {
   "autores": ["HANAZAKI, N.", "TAMASHIRO, J. Y."],
@@ -304,17 +304,16 @@ Location: /success
 
 ## Integration Points
 
-### MongoDB Connection
+### SQLite Connection
 
-- Database: `etnodb`
-- Collection: `etnodb`
-- Connection string from environment variable: `MONGO_URI`
+- Database: `biocultdb_records` table (arquivo compartilhado da unidade)
+- File path from environment variable: `SQLITE_DB_PATH`
 
 ### Shared Services
 
 - Uses `models/Reference.js` for data structure
 - Uses `services/validation.js` for validation logic
-- Uses `services/database.js` for MongoDB operations
+- Uses `services/database.js` for SQLite operations
 
 ---
 

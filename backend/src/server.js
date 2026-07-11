@@ -25,7 +25,7 @@ async function startServer() {
   try {
     logger.server('Starting BioCultDB server...');
 
-    // Connect to MongoDB
+    // Connect to SQLite (shared unit file, ADR-005)
     logger.server('Connecting to database...');
     await database.connect();
     logger.server('Database connected successfully');

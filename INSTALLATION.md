@@ -5,7 +5,6 @@ Este documento contém instruções detalhadas para instalação, desenvolviment
 ## Requisitos
 
 - Node.js 20 LTS ou superior
-- MongoDB 7.0 ou superior
 - Docker 24.0+ (para deploy em container)
 - npm 10.0+
 
@@ -32,7 +31,7 @@ npm run dev
 ### Usando Docker Compose
 
 ```bash
-# Inicia aplicação + MongoDB
+# Inicia aplicação (SQLite embutido em volume)
 docker-compose up
 ```
 
@@ -67,9 +66,8 @@ Para instruções detalhadas de instalação via interface web do Unraid, consul
 
 **Resumo rápido (via interface web Unraid):**
 
-1. **Crie container MongoDB** (se necessário - Seção 1 do guia)
-2. **Adicione container BioCultDB** via interface Docker
-3. **Configure via interface Unraid**:
+1. **Adicione container BioCultDB** via interface Docker
+2. **Configure via interface Unraid**:
    - **Nome**: etnodb
    - **Repository**: ghcr.io/edalcin/etnodb:latest
    - **Network**: bridge
@@ -78,13 +76,13 @@ Para instruções detalhadas de instalação via interface web do Unraid, consul
      - 3002 → 3002 (Curadoria)
      - 3003 → 3003 (Apresentação)
    - **Variáveis de Ambiente** (obrigatórias):
-     - `MONGO_URI`: `mongodb://mongodb:27017/etnodb` (ou seu host/porta MongoDB)
+     - `SQLITE_DB_PATH`: `/data/unidade.sqlite` (mapeie um volume/path persistente para `/data` no Unraid)
      - `NODE_ENV`: `production`
    - **Variáveis Opcionais** (se usar portas diferentes):
      - `PORT_ACQUISITION`: `3001`
      - `PORT_CURATION`: `3002`
      - `PORT_PRESENTATION`: `3003`
-4. **Clique "Apply"** para criar o container
-5. **Configure segurança**: restrinja portas 3001 e 3002 a rede local
+3. **Clique "Apply"** para criar o container
+4. **Configure segurança**: restrinja portas 3001 e 3002 a rede local
 
-**Nota**: Todas as configurações (MongoDB, portas, variáveis) são passadas via interface web do Unraid - sem necessidade de linha de comando!
+**Nota**: Todas as configurações (portas, variáveis) são passadas via interface web do Unraid - sem necessidade de linha de comando!

@@ -24,7 +24,7 @@
     "traditional-knowledge",
     "botanical-database",
     "HTMX",
-    "MongoDB"
+    "SQLite"
   ],
   "author": "BioCultDB Contributors",
   "license": "MIT",
@@ -36,7 +36,7 @@
     "ejs": "^3.1.9",
     "express": "^4.18.2",
     "marked": "^15.0.12",
-    "mongodb": "^6.3.0",
+    "better-sqlite3": "^11.3.0",
     "openai": "^4.104.0"
   },
   "devDependencies": {
@@ -44,7 +44,6 @@
     "concurrently": "^8.2.2",
     "eslint": "^8.56.0",
     "jest": "^29.7.0",
-    "mongodb-memory-server": "^9.1.5",
     "nodemon": "^3.0.2",
     "postcss": "^8.4.33",
     "tailwindcss": "^3.4.1"

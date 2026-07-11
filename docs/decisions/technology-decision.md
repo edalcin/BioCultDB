@@ -1,6 +1,6 @@
 # Technology Stack Decision - BioCultDB Web Interface
 
-> **Nota de atualização (2026-07-11)**: A implementação real adotou **Express**, não Fastify, como framework backend (ver `package.json`). O restante deste documento preserva o raciocínio original da decisão de stack (dez/2025) como registro histórico — os benchmarks e comparações de Fastify abaixo NÃO refletem o código atual.
+> **Nota de atualização (2026-07-11)**: A implementação real adotou **Express**, não Fastify, como framework backend (ver `package.json`). A persistência também mudou de **MongoDB** para **SQLite + JSON1** (`better-sqlite3`, ver ADR-005 da Arquitetura-BioCultural). O restante deste documento preserva o raciocínio original da decisão de stack (dez/2025) como registro histórico — os benchmarks e comparações de Fastify e MongoDB abaixo NÃO refletem o código atual.
 
 **Date**: 2025-12-25
 **Status**: ✅ FINAL RECOMMENDATION
