@@ -48,13 +48,13 @@ Após iniciar a aplicação:
 ### Build do Container Docker
 
 ```bash
-docker build -f docker/Dockerfile -t ghcr.io/edalcin/etnodb:latest .
+docker build -f docker/Dockerfile -t ghcr.io/edalcin/biocultdb:latest .
 ```
 
 ### Publicação
 
 ```bash
-docker push ghcr.io/edalcin/etnodb:latest
+docker push ghcr.io/edalcin/biocultdb:latest
 ```
 
 O container é publicado automaticamente no GitHub Container Registry (ghcr.io/edalcin/) a cada modificação no código.
@@ -69,7 +69,7 @@ Para instruções detalhadas de instalação via interface web do Unraid, consul
 1. **Adicione container BioCultDB** via interface Docker
 2. **Configure via interface Unraid**:
    - **Nome**: etnodb
-   - **Repository**: ghcr.io/edalcin/etnodb:latest
+   - **Repository**: ghcr.io/edalcin/biocultdb:latest
    - **Network**: bridge
    - **Portas** (mapeie 3 portas):
      - 3001 → 3001 (Aquisição)

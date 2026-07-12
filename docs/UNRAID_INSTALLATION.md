@@ -40,11 +40,11 @@ Você verá a tela "Add Container" com os seguintes campos:
 #### Campo 3: Repository
 - **Descrição**: Imagem Docker a ser usada
 - **Ação**: Digite a URL completa do repositório
-- **Valor**: `ghcr.io/edalcin/etnodb:latest`
+- **Valor**: `ghcr.io/edalcin/biocultdb:latest`
 
 **Exemplo de preenchimento:**
 ```
-Repository: ghcr.io/edalcin/etnodb:latest
+Repository: ghcr.io/edalcin/biocultdb:latest
 ```
 
 ### Passo 2.3: Configuração de Rede
@@ -122,7 +122,7 @@ Value: /data/unidade.sqlite
 3. Preencha:
    ```
    Container Path: /data
-   Host Path: /mnt/user/appdata/etnodb/data
+   Host Path: /mnt/user/appdata/biocultdb/data
    Read Only: No
    ```
 
@@ -198,7 +198,7 @@ Antes de clicar em "Apply", sua configuração deve parecer com isto:
 
 ```
 Name: etnodb
-Repository: ghcr.io/edalcin/etnodb:latest
+Repository: ghcr.io/edalcin/biocultdb:latest
 Network Type: bridge
 
 Port Mappings:
@@ -245,7 +245,7 @@ Na página **"Docker Containers"**, procure por `etnodb`:
 ```
 Container: etnodb
 Status: ✅ running (verde)
-Repository: ghcr.io/edalcin/etnodb:latest
+Repository: ghcr.io/edalcin/biocultdb:latest
 Uptime: seconds ago
 ```
 
@@ -545,5 +545,5 @@ Para questões sobre instalação ou uso:
 
 ---
 
-**Última atualização**: 2025-12-25
+**Última atualização**: 2026-07-12
 **Versão**: BioCultDB 1.0
