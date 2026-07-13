@@ -1,4 +1,5 @@
-# Multi-stage build for BioCultDB application
+# DEV-ONLY: build rápido só do BioCultDB (sem submodule). NÃO é o caminho de
+# deploy — produção usa docker/Dockerfile.unidade (ver ADR-001 item 5).
 # Target: <500MB image size (estimated: 120-180MB)
 
 # ============================================

@@ -35,7 +35,7 @@ ps aux | grep node
 echo ""
 
 echo "6. Port Status:"
-netstat -tuln | grep -E "3001|3002|3003" || echo "❌ Ports not listening"
+netstat -tuln | grep -E "3001|3002|3003|4000|4001" || echo "❌ Ports not listening"
 echo ""
 
 echo "7. Environment Variables:"
@@ -43,7 +43,7 @@ env | grep -E "SQLITE_DB_PATH|NODE_ENV|PORT"
 echo ""
 
 echo "7b. SQLite Data Directory:"
-SQLITE_DIR=$(dirname "${SQLITE_DB_PATH:-/data/unidade.sqlite}")
+SQLITE_DIR=$(dirname "${SQLITE_DB_PATH:-/data/biocultdb.sqlite}")
 if [ -d "$SQLITE_DIR" ] && [ -w "$SQLITE_DIR" ]; then
   echo "✅ Directory exists and is writable: $SQLITE_DIR"
   ls -la "$SQLITE_DIR"
@@ -55,6 +55,15 @@ echo ""
 echo "8. Test API Response:"
 echo "Testing /health endpoint..."
 curl -s http://localhost:3003/health | head -20
+echo ""
+
+echo "9. BioCultTermos Endpoints:"
+echo "Testing :4000/health (public)..."
+curl -s http://localhost:4000/health
+echo ""
+echo "Testing :4001/health (admin — public health route, before requireAuth;"
+echo "see bioculttermos/backend/src/contexts/admin/server.js:51-53)..."
+curl -s -o /dev/null -w "%{http_code}\n" http://localhost:4001/health
 echo ""
 
 echo "=== End Verification ==="
