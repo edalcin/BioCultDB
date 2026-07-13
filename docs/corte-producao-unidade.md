@@ -121,10 +121,20 @@ correção executados via SSH (`192.168.1.10`):
 `:latest` já existir em cache local no host — sempre confirmar `docker pull` explícito antes de
 recriar, ou verificar `docker inspect --format='{{.Image}}'` contra o digest publicado no GHCR.
 
+## Atualizações posteriores a este corte
+
+Este corte foi o primeiro de uma série de redeploys da mesma sessão de estabilização (mesmo
+padrão: `docker pull` explícito + `docker rm`/`docker run` — repetido ~6 vezes sem incidente).
+Cada um corrigiu um bug de produção real encontrado depois do corte inicial (autenticação,
+cobertura de vocabulário, paginação do admin, bloqueio do processo de aquisição, botão de
+ativação, busca de relações) — histórico completo e resultado agregado (28 registros → 2536
+conceitos candidatos) em [`integracao.md`](../integracao.md) §11 "Consolidação pós-corte".
+
 ## Referências
 
 - `docs/decisions/ADR-001-integracao-bioculttermos.md` — decisão arquitetural completa
-- `integracao.md` §2 (estado atual de produção) e §4.2 (procedimento de corte, fonte deste
-  documento)
+- `integracao.md` §2 (estado de produção antes/depois do corte) e §4.2 (procedimento de corte,
+  fonte deste documento) e §11 (consolidação pós-corte, histórico completo dos redeploys
+  subsequentes)
 - `docker/Dockerfile.unidade` — Dockerfile de produção (dual-app)
 - `docker/docker-compose.unidade.yml` — compose de dev/exemplo equivalente

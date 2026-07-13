@@ -176,7 +176,7 @@ Referência (Publicação Científica)
 ## Arquitetura Técnica
 
 - **Tipo de Projeto**: Aplicação web com backend e frontend
-- **Organização**: Três aplicações Express rodando em portas separadas dentro de um único container Docker
+- **Organização**: Três aplicações Express do BioCultDB (Aquisição/Curadoria/Apresentação, 3001-3003) em processos separados; na **unidade dual-app de produção**, mais dois processos do BioCultTermos (4000-4001) sobre o mesmo container e o mesmo arquivo SQLite — ver "Empacotamento por Unidade Federada" abaixo
 - **Renderização**: Server-side rendering com HTMX para interatividade
 - **Responsividade**: Design responsivo de 320px (mobile) a 1920px+ (desktop)
 
@@ -188,7 +188,10 @@ Secundárias**: um único container Docker que roda BioCultDB (3001-3003) **e** 
 [Arquitetura-BioCultural](https://github.com/edalcin/Arquitetura-BioCultural)). Sem MongoDB, sem
 servidor de banco separado — soberania = arquivo único, portável, backup = copiar o arquivo.
 
-BioCultTermos entra como **git submodule** em `./bioculttermos`.
+BioCultTermos entra como **git submodule** em `./bioculttermos`. **Em produção desde julho de 2026**
+(container Unraid `BioCultDB`, imagem `ghcr.io/edalcin/biocultdb:latest`) — histórico completo da
+integração em [`integracao.md`](./integracao.md) e
+[`docs/decisions/ADR-001-integracao-bioculttermos.md`](./docs/decisions/ADR-001-integracao-bioculttermos.md).
 
 ### Subir a unidade
 
@@ -206,18 +209,24 @@ Isso builda `docker/Dockerfile.unidade` (multi-stage: compila Tailwind CSS + `be
 ambos os apps; runtime `node:20-alpine` não-root) e sobe UM container com `docker/start-unit.sh`
 (via `dumb-init`) iniciando os dois processos Node (BioCultDB e BioCultTermos) lado a lado. Ambos
 abrem o mesmo arquivo via `SQLITE_DB_PATH=/data/biocultdb.sqlite` (volume nomeado `sqlite_data`,
-persiste entre reinícios). Verificado (build real + run real): as 5 portas respondem, as tabelas
-`biocultdb_records` e `etnotermos*` coexistem no mesmo arquivo, e o `AcquisitionService` do
-BioCultTermos lê registros gravados pelo BioCultDB no mesmo banco (integração ponta a ponta
-testada).
+persiste entre reinícios).
 
 **BioCultTermos na unidade**: porta **4000** expõe o vocabulário público (sem autenticação);
 porta **4001** expõe a curadoria de termos, protegida por HTTP Basic Auth
-(`ADMIN_USERNAME`/`ADMIN_PASSWORD`). O `AcquisitionService` lê os registros gravados em
-`biocultdb_records` (via BioCultDB), extrai valores dos campos monitorados e cria conceitos
-SKOS-XL com `status: candidate`; um curador promove cada candidato a `active` pela interface
-4001. Disparado por cron (`ACQUISITION_CRON_SCHEDULE`, padrão `0 3 * * *`) ou sob demanda via
-`POST /acquisition/run`.
+(`ADMIN_USERNAME`/`ADMIN_PASSWORD`), com busca por nome (sugestões enquanto digita) para relacionar
+conceitos entre si. O `AcquisitionService` lê os registros gravados em `biocultdb_records` (via
+BioCultDB), extrai valores de **5 campos monitorados** — tipo de comunidade, nome científico, nome
+vernacular, tipo de uso e atividade econômica — e cria conceitos SKOS-XL com `status: candidate`;
+também semeia um vocabulário estático de referência de tipos de uso (`docs/tipoUso.txt`, ~450
+termos do domínio etnobotânico), cobrindo o vocabulário do domínio além do que já foi digitado em
+algum registro. Um curador promove cada candidato a `active` pela interface 4001. Disparado por
+cron (`ACQUISITION_CRON_SCHEDULE`, padrão `0 3 * * *`) ou sob demanda via `POST /acquisition/run`.
+
+**Status em produção**: corte realizado e validado — as 5 portas respondem, `biocultdb_records` e
+`etnotermos*` coexistem no mesmo arquivo, e o vocabulário candidato já foi gerado a partir dos
+dados publicados: **28 registros bibliográficos → 2536 conceitos candidatos** (844 nomes
+científicos, 981 nomes vernaculares, 668 tipos de uso, 34 atividades econômicas, 9 tipos de
+comunidade), aguardando curadoria.
 
 ### Unidade Comunidade Tradicional (mesmo padrão, ainda não materializado)
 
@@ -243,6 +252,7 @@ A documentação técnica completa está disponível em:
 - **Instalação e Desenvolvimento**: [`INSTALLATION.md`](./INSTALLATION.md)
 - **Especificação de Requisitos**: [`docs/decisions/spec.md`](./docs/decisions/spec.md)
 - **Modelo de Dados**: [`docs/decisions/data-model.md`](./docs/decisions/data-model.md)
+- **Integração com BioCultTermos**: [`docs/decisions/ADR-001-integracao-bioculttermos.md`](./docs/decisions/ADR-001-integracao-bioculttermos.md) (decisão) · [`integracao.md`](./integracao.md) (checklist executado e resultado) · [`docs/corte-producao-unidade.md`](./docs/corte-producao-unidade.md) (runbook de corte em produção)
 - **Contratos de API**: [`docs/decisions/contracts/`](./docs/decisions/contracts/)
 - **Decisão de Stack Tecnológica**: [`docs/decisions/technology-decision.md`](./docs/decisions/technology-decision.md)
 - **Arquitetura do etnoChat**: [`docs/decisions/etnochat-plan.md`](./docs/decisions/etnochat-plan.md)

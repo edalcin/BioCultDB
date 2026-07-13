@@ -2,7 +2,9 @@
 
 ## Status
 
-**Aceito** — Julho 2026
+**Aceito e Implementado** — Aceito em Julho 2026, corte em produção executado e verificado em
+2026-07-13 (checklist completo, 6 bugs de estabilização pós-corte corrigidos — ver
+`integracao.md` §11).
 
 ## Contexto
 
@@ -122,5 +124,6 @@ não têm auth alguma, controle é só por firewall/rede no Unraid.
 
 ## Data de Revisão
 
-Revisitar após o primeiro corte de produção bem-sucedido, e novamente se/quando BioCultRelatos precisar
-de um padrão análogo de unidade (comunidade tradicional + BioCultTermos).
+Corte de produção concluído com sucesso em 2026-07-13 (revisão original desta cláusula). Próxima
+revisão: se/quando BioCultRelatos precisar de um padrão análogo de unidade (comunidade tradicional
+ + BioCultTermos).

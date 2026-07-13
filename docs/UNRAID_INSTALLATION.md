@@ -35,7 +35,7 @@ Você verá a tela "Add Container" com os seguintes campos:
 #### Campo 2: Name
 - **Descrição**: Nome do container no Unraid
 - **Ação**: Digite o nome
-- **Valor**: `etnodb`
+- **Valor**: `BioCultDB`
 
 #### Campo 3: Repository
 - **Descrição**: Imagem Docker a ser usada
@@ -235,7 +235,7 @@ Memory: 512
 Antes de clicar em "Apply", sua configuração deve parecer com isto:
 
 ```
-Name: etnodb
+Name: BioCultDB
 Repository: ghcr.io/edalcin/biocultdb:latest
 Network Type: bridge
 
@@ -276,7 +276,7 @@ Environment Variables (Opcionais - apenas se usar portas diferentes):
 
 1. Clique no botão **"Apply"** (canto inferior direito)
 2. Aguarde o container ser criado e iniciado
-3. Você verá uma notificação: `"Container etnodb created successfully"`
+3. Você verá uma notificação: `"Container BioCultDB created successfully"`
 
 ---
 
@@ -284,10 +284,10 @@ Environment Variables (Opcionais - apenas se usar portas diferentes):
 
 ### Verificar Status
 
-Na página **"Docker Containers"**, procure por `etnodb`:
+Na página **"Docker Containers"**, procure por `BioCultDB`:
 
 ```
-Container: etnodb
+Container: BioCultDB
 Status: ✅ running (verde)
 Repository: ghcr.io/edalcin/biocultdb:latest
 Uptime: seconds ago
@@ -371,7 +371,7 @@ Se você usa um reverse proxy como **nginx** ou **Traefik** no Unraid:
 # Apresentação (público)
 server {
   listen 443 ssl;
-  server_name etnodb.example.com;
+  server_name biocultdb.example.com;
   location / {
     proxy_pass http://localhost:3003;
   }
@@ -380,7 +380,7 @@ server {
 # Aquisição (privado)
 server {
   listen 443 ssl;
-  server_name etnodb-acquisition.example.com;
+  server_name biocultdb-acquisition.example.com;
   auth_basic "Restricted";
   location / {
     proxy_pass http://localhost:3001;
@@ -390,7 +390,7 @@ server {
 # Curadoria (privado)
 server {
   listen 443 ssl;
-  server_name etnodb-curation.example.com;
+  server_name biocultdb-curation.example.com;
   auth_basic "Restricted";
   location / {
     proxy_pass http://localhost:3002;
@@ -412,11 +412,11 @@ Configure seu firewall para:
 
 Para verificar se tudo está funcionando:
 
-1. Na página **Docker Containers**, clique em **`etnodb`**
+1. Na página **Docker Containers**, clique em **`BioCultDB`**
 2. Clique em **"View Logs"** (ícone de documento/logs)
 3. Procure por mensagens como:
    ```
-   Opening SQLite database at /data/unidade.sqlite
+   Opening SQLite database at /data/biocultdb.sqlite
    Successfully connected to SQLite
    Acquisition server listening on port 3001
    Curation server listening on port 3002
@@ -430,12 +430,12 @@ Se os logs mostrarem erros ao abrir o banco de dados:
 1. Verifique se o volume/path `/data` foi mapeado corretamente (Seção 2.5)
 2. Confirme que o diretório existe e é gravável dentro do container:
    ```bash
-   docker exec etnodb ls -la /data
-   docker exec etnodb touch /data/.write-test && echo "OK: gravável" && docker exec etnodb rm /data/.write-test
+   docker exec BioCultDB ls -la /data
+   docker exec BioCultDB touch /data/.write-test && echo "OK: gravável" && docker exec BioCultDB rm /data/.write-test
    ```
 3. Rode o script de verificação incluído na imagem, que já checa `SQLITE_DB_PATH` e a gravabilidade do diretório:
    ```bash
-   docker exec etnodb bash -c 'bash /app/verify-container-setup.sh'
+   docker exec BioCultDB bash -c 'bash /app/verify-container-setup.sh'
    ```
 
 ---
@@ -448,25 +448,25 @@ O BioCultDB usa SQLite em modo WAL (Write-Ahead Log). Para um backup consistente
 
 ```bash
 # Opção 1 (recomendada): snapshot consistente com a aplicação rodando
-docker exec etnodb sqlite3 /data/unidade.sqlite ".backup '/data/unidade-$(date +%Y%m%d).sqlite'"
-docker cp etnodb:/data/unidade-$(date +%Y%m%d).sqlite /mnt/user/backups/
+docker exec BioCultDB sqlite3 /data/biocultdb.sqlite ".backup '/data/biocultdb-$(date +%Y%m%d).sqlite'"
+docker cp BioCultDB:/data/biocultdb-$(date +%Y%m%d).sqlite /mnt/user/backups/
 
 # Opção 2: copiar o arquivo diretamente com a aplicação parada
-docker stop etnodb
-cp /mnt/user/appdata/etnodb/data/unidade.sqlite /mnt/user/backups/unidade-$(date +%Y%m%d).sqlite
-docker start etnodb
+docker stop BioCultDB
+cp /mnt/user/Storage/appsdata/biocultdb/data/biocultdb.sqlite /mnt/user/backups/biocultdb-$(date +%Y%m%d).sqlite
+docker start BioCultDB
 ```
 
 ### Atualizar BioCultDB
 
 Para atualizar para nova versão:
 
-1. Remova o container `etnodb`:
-   - Em **Docker Containers**, clique em `etnodb` → **"Delete"**
+1. Remova o container `BioCultDB`:
+   - Em **Docker Containers**, clique em `BioCultDB` → **"Delete"**
 
 2. Puxe a nova imagem:
    - Clique em **"Docker Hub"**
-   - Pesquise `ghcr.io/edalcin/etnodb`
+   - Pesquise `ghcr.io/edalcin/biocultdb`
    - Clique em **"Pull"**
 
 3. Re-crie o container (repita Seção 2)
@@ -479,7 +479,7 @@ Para atualizar para nova versão:
 
 **Verificar logs:**
 ```bash
-docker logs etnodb
+docker logs BioCultDB
 ```
 
 **Causas comuns:**
@@ -490,7 +490,7 @@ docker logs etnodb
 ### Problema: Aplicação lenta
 
 **Verificar recursos:**
-1. Em **Docker Containers**, clique em `etnodb`
+1. Em **Docker Containers**, clique em `BioCultDB`
 2. Vá para **"Stats"** para ver CPU e memória
 3. Se necessário, aumente limits (Seção 2.6)
 
@@ -498,9 +498,9 @@ docker logs etnodb
 
 **Verificar variável SQLITE_DB_PATH e o volume `/data`:**
 
-1. Clique em `etnodb` → **"Edit"**
+1. Clique em `BioCultDB` → **"Edit"**
 2. Procure por variável `SQLITE_DB_PATH`
-3. Confirme que está como: `/data/unidade.sqlite`
+3. Confirme que está como: `/data/biocultdb.sqlite`
 4. Procure pela seção **Path** e confirme que `Container Path: /data` está mapeado para um `Host Path` válido e gravável
 5. Clique **"Apply"** e reinicie o container
 
@@ -527,7 +527,7 @@ docker logs etnodb
 
 #### Editar Variáveis Existentes
 
-1. Em **Docker Containers**, clique no container **`etnodb`**
+1. Em **Docker Containers**, clique no container **`BioCultDB`**
 2. Clique em **"Edit"**
 3. Procure por **"Environment Variables"** (seção com seus KEY=VALUE)
 4. Clique na variável que quer alterar (ex: `SQLITE_DB_PATH`)
@@ -538,7 +538,7 @@ docker logs etnodb
 
 Se a porta 3003 está sendo usada por outra aplicação:
 
-1. Clique em **Edit** no container `etnodb`
+1. Clique em **Edit** no container `BioCultDB`
 2. Na seção **Port Mappings**, altere:
    - De: `Container Port 3003 → Host Port 3003`
    - Para: `Container Port 3003 → Host Port 4003`
@@ -551,12 +551,12 @@ Se a porta 3003 está sendo usada por outra aplicação:
 
 Para persistir dados fora do container:
 
-1. Clique em etnodb → **"Edit"**
+1. Clique em BioCultDB → **"Edit"**
 2. Clique em **"Add another Path, Port, Variable..."**
 3. Selecione tipo **"Path"**:
    ```
    Container Path: /data
-   Host Path: /mnt/user/appdata/etnodb/data
+   Host Path: /mnt/user/Storage/appsdata/biocultdb/data
    Read Only: No
    ```
 
@@ -564,7 +564,7 @@ Para persistir dados fora do container:
 
 Se precisar adicionar outras variáveis no futuro:
 
-1. Clique em etnodb → **"Edit"**
+1. Clique em BioCultDB → **"Edit"**
 2. Clique em **"Add another Path, Port, Variable, Label or Device"**
 3. Selecione tipo **"Variable"**
 4. Preencha:
@@ -608,5 +608,5 @@ Para questões sobre instalação ou uso:
 
 ---
 
-**Última atualização**: 2026-07-12
+**Última atualização**: 2026-07-13
 **Versão**: BioCultDB 1.0

@@ -1,17 +1,49 @@
 # Integração BioCultTermos → BioCultDB (Unidade de Fontes Secundárias)
 
-> Documento de referência para o agente de IA (Claude) que implementará esta integração.
+> Documento de referência para o agente de IA (Claude) que implementou esta integração.
 > Produzido em sessão de `grill-with-docs` (grilling + domain modeling) em 2026-07-12.
-> **Nenhum código foi alterado ao produzir este documento** — é plano, não implementação.
+> **Nenhum código havia sido alterado ao produzir este documento** — era plano, não implementação,
+> no momento em que foi escrito. Desde então, todos os passos abaixo foram executados e
+> verificados em produção (ver "Status" logo a seguir).
 >
 > Decisão arquitetural de origem: `Arquitetura-BioCultural/docs/architecture-decisions/ADR-004` e `ADR-005`.
 > Decisão operacional desta integração: `BioCultDB/docs/decisions/ADR-001-integracao-bioculttermos.md`
 > (leia primeiro — este documento é o checklist executável dela).
 
-## 1. O que já existe (não reinventar)
+## Status: ✅ Implementado e verificado em produção (2026-07-13)
 
-Uma sessão anterior já construiu o scaffold técnico completo da unidade dual-app. **Isto já existe no
-repositório, testado localmente, mas nunca publicado/deployado em produção**:
+Todos os passos de §4 foram executados; a checklist de aceite de §5 está completa. Resumo do
+resultado — detalhes em §11:
+
+- **Corte em produção concluído**: container Unraid renomeado `etnoDB` → `BioCultDB`, imagem
+  dual-app publicada (`ghcr.io/edalcin/biocultdb:latest`), 5 portas ativas (3091-3093 BioCultDB,
+  4000-4001 BioCultTermos).
+- **CI/CD publicando a imagem dual-app** desde o commit `a5dbe47` — todo push em `main` builda
+  `docker/Dockerfile.unidade` com o submodule.
+- **Aquisição de vocabulário rodando de fato**: 28 registros em `biocultdb_records` →
+  **2536 conceitos candidatos** em `etnotermos` (844 nomes científicos, 981 nomes vernaculares,
+  668 tipos de uso, 34 atividades econômicas, 9 tipos de comunidade), aguardando curadoria em
+  `:4001`.
+- **Cobertura de campos ampliada além do plano original**: `AcquisitionService` passou a monitorar
+  também `comunidades.plantas.nomeCientifico` (ausente no scaffold original) e a semear um
+  vocabulário estático de referência (`docs/tipoUso.txt`, ~450 termos), garantindo que o
+  vocabulário candidato cubra o domínio completo, não só o que já foi digitado em registros
+  existentes.
+- **6 bugs de produção encontrados e corrigidos durante a estabilização pós-corte** (fora do
+  escopo original deste documento, mas parte do mesmo esforço de integração — detalhes em §11):
+  autenticação HTTP Basic com re-prompt quebrado, links de edição de conceito quebrados (`_id` vs
+  `id`, herança de MongoDB), paginação ausente na lista de termos admin, `AcquisitionService.run()`
+  bloqueando o processo admin em execuções longas, botão "Ativar Conceito" com confirmação dupla e
+  falha silenciosa (versão nunca enviada ao servidor), formulário de relacionamento semântico sem
+  busca por nome.
+
+Histórico completo: `9dcf4bf..369d4d8` em `BioCultDB` (12 commits), `2b4e377..a4805ee` em
+`BioCultTermos` (6 commits).
+
+## 1. O que já existia antes desta integração (não reinventar)
+
+Uma sessão anterior já havia construído o scaffold técnico completo da unidade dual-app. Isto já
+existia no repositório, testado localmente, mas nunca publicado/deployado em produção:
 
 | Arquivo | Papel |
 |---|---|
@@ -20,9 +52,10 @@ repositório, testado localmente, mas nunca publicado/deployado em produção**:
 | `docker/start-unit.sh` | Entrypoint: sobe `biocultdb/backend/src/server.js` e `bioculttermos/backend/src/start.js` como processos irmãos, forwarda `SIGTERM`, fail-fast (se um crash, derruba o outro) |
 | `bioculttermos/` (git submodule → `github.com/edalcin/BioCultTermos`) | Código real: SKOS-XL, servidor público (4000, sem auth) + admin (4001, HTTP Basic + bcrypt), `AcquisitionService` que lê `biocultdb_records` do mesmo arquivo SQLite |
 
-O que falta é **conectar esse scaffold à produção real** — é isso que este documento planeja.
+O que faltava era **conectar esse scaffold à produção real** — é isso que este documento planejou,
+e que §11 registra como foi de fato executado.
 
-## 2. Estado atual de produção (confirmado nesta sessão)
+## 2. Estado de produção ANTES do corte (confirmado no início desta sessão)
 
 Container Unraid `BioCultDB` (renomeado de `etnoDB`), rodando ao vivo em `192.168.1.10`:
 
@@ -40,12 +73,18 @@ docker run -d --name='BioCultDB' --net='bridge' --pids-limit 2048 \
   'ghcr.io/edalcin/biocultdb:latest'
 ```
 
-- Imagem `ghcr.io/edalcin/biocultdb:latest` publicada por `.github/workflows/docker-publish.yml` a partir de
-  `docker/Dockerfile` — **single-app, sem submodule, sem BioCultTermos**.
+- Imagem `ghcr.io/edalcin/biocultdb:latest`, **na época**, publicada por `.github/workflows/docker-publish.yml`
+  a partir de `docker/Dockerfile` — single-app, sem submodule, sem BioCultTermos.
 - `SQLITE_DB_PATH=/data/biocultdb.sqlite` — arquivo real, populado com referências, comunidades, plantas.
 - Zero autenticação em qualquer porta (3091/3092/3093). Controle só por firewall/rede do Unraid.
-- Volume bind mount `/mnt/user/Storage/appsdata/biocultdb/data/` → `/data` (**não** `/mnt/user/appdata/...`
-  como o `docs/UNRAID_INSTALLATION.md` genérico sugere — esse doc está desatualizado quanto ao path real).
+- Volume bind mount `/mnt/user/Storage/appsdata/biocultdb/data/` → `/data`.
+
+### Estado atual (pós-corte)
+
+Mesmo container/nome (`BioCultDB`), imagem trocada para dual-app, +2 portas (4000/4001) +2 env vars
+(`ADMIN_USERNAME`/`ADMIN_PASSWORD`). Bloco `docker run` completo, procedimento de corte executado e
+registro da execução real (digests, backup, resultados) em
+[`docs/corte-producao-unidade.md`](./docs/corte-producao-unidade.md).
 
 ## 3. Decisões tomadas (grilling 2026-07-12)
 
@@ -134,17 +173,18 @@ Pré-requisito: a imagem `ghcr.io/edalcin/biocultdb:latest` já publicada pelo C
 
 ## 5. Verificação pós-corte (checklist de aceite)
 
-- [ ] `docker logs BioCultDB` mostra ambos os processos subindo sem erro (`server.js` e `start.js`)
-- [ ] `GET :3093/` (Apresentação) continua respondendo normalmente — nenhuma regressão no BioCultDB
-- [ ] `GET :3091/` e `:3092/` (Aquisição/Curadoria) continuam respondendo normalmente
-- [ ] `GET :4000/health` responde `{"status":"ok","service":"public","port":4000}`
-- [ ] `GET :4001/health` sem credencial → `401`; com credencial correta → `200`
-- [ ] Após `POST :4001/acquisition/run`, existem linhas em `etnotermos` com `status='candidate'`
-      (verificável via dashboard admin `:4001/` ou consulta direta ao arquivo `biocultdb.sqlite`)
-- [ ] `PRAGMA table_info` / `sqlite_master` mostram `biocultdb_records*` e `etnotermos*` coexistindo no
-      mesmo arquivo (ver nota de bug conhecido em §8)
-- [ ] Reiniciar o container (`docker restart BioCultDB`) não gera `duplicate column name` nem qualquer erro
-      de schema (ver §8 — bug já corrigido, mas é o cenário que o expôs)
+- [x] `docker logs BioCultDB` mostra ambos os processos subindo sem erro (`[start-unit] Starting BioCultDB...` e `[start-unit] Starting BioCultTermos...`)
+- [x] `GET :3093/` (Apresentação) continua respondendo normalmente — `200`, nenhuma regressão no BioCultDB
+- [x] `GET :3091/` e `:3092/` (Aquisição/Curadoria) continuam respondendo normalmente — `200`/`200`
+- [x] `GET :4000/health` responde `{"status":"ok","sqlite":"connected"}`
+- [x] `GET :4001/health` sem credencial → `401`; com credencial correta → `200`
+- [x] Após `POST :4001/acquisition/run`, existem linhas em `etnotermos` com `status='candidate'`
+      — **2536 conceitos candidatos** gerados a partir dos 28 registros de `biocultdb_records`
+- [x] `sqlite_master` mostra `biocultdb_records*` e `etnotermos*` coexistindo no mesmo arquivo
+      (ver nota de bug conhecido em §8)
+- [x] Reiniciar/recriar o container (~6 vezes ao longo desta sessão, cada redeploy) não gerou
+      `duplicate column name` nem qualquer erro de schema (ver §8 — bug já corrigido, mas é o
+      cenário que o expôs)
 
 ## 6. Backup e recuperação operacional
 
@@ -230,3 +270,102 @@ originalmente.
 | **Submodule (git)** | Mecanismo do git para incluir um repositório dentro de outro, pinado a um commit específico. `BioCultDB/bioculttermos` é um submodule apontando para `github.com/edalcin/BioCultTermos`. |
 | **Corte / cutover** | Momento em que o container de produção é substituído pela nova versão (dual-app). Ver checklist §4.2. |
 | **Unidade de Fontes Secundárias** | Nome da unidade federada BioCultDB + BioCultTermos (dados extraídos de literatura científica — "fontes secundárias" — em oposição a "fontes primárias" registradas diretamente com comunidades, papel do futuro BioCultRelatos). |
+
+## 11. Consolidação pós-corte (correções encontradas em produção)
+
+O corte inicial (§4.2, commits `9dcf4bf..251e6df`) colocou a imagem dual-app no ar, mas expôs uma
+série de problemas reais — alguns na própria infraestrutura de deploy, outros no código do
+BioCultTermos (submodule) que só se manifestavam com dados de produção. Registrados aqui em ordem
+cronológica, cada um com causa raiz, correção e commits.
+
+### 11.1 Imagem `:latest` cacheada localmente no host (bloqueou o primeiro corte)
+
+O operador recriou o container com o `docker run` correto (nome, envs, portas), mas o Docker do
+host usou a imagem `:latest` **já em cache local** em vez de puxar a nova imagem dual-app do GHCR —
+`docker run` não força pull se a tag já existe localmente. Resultado: container com envs/portas
+dual-app corretas, mas rodando o binário single-app antigo (sem BioCultTermos).
+**Correção**: `docker pull` explícito antes de recriar — desde então, todo redeploy desta sessão
+seguiu esse padrão. Lição registrada em `docs/corte-producao-unidade.md`.
+
+### 11.2 Autenticação HTTP Basic sem re-prompt (403 em vez de 401)
+
+`bioculttermos/backend/src/lib/auth/basicAuth.js` retornava `403` (sem header `WWW-Authenticate`)
+em credenciais inválidas. Navegadores só reabrem o prompt nativo de login em resposta `401` com
+esse header — uma vez errada a senha, o usuário ficava preso vendo o JSON cru
+`{"error":"Invalid credentials"}` para sempre, sem conseguir tentar de novo sem limpar o cache do
+navegador. **Correção**: `401` + `WWW-Authenticate` em toda falha de autenticação, com página HTML
+amigável (botão "Tentar novamente") para clientes de navegador; contrato JSON preservado para
+clientes de API. `BioCultTermos@2b4e377` → `BioCultDB@f44ed30`.
+
+### 11.3 Links de edição de conceito quebrados (`_id` vs `id`, herança de MongoDB)
+
+Todas as views EJS (admin e público) referenciavam `._id` (convenção MongoDB pré-migração), mas o
+modelo SQLite usa `.id`. O link "Editar" apontava para uma rota inexistente
+(`/concepts/<id>/edit` — nunca existiu, só `GET /concepts/:id`) e, com `_id` undefined, virava
+`/concepts//edit`, que o Express roteava como `id='edit'` → `404 Conceito não encontrado`. Também
+afetava navegação entre conceitos relacionados e o banner de conceito depreciado no site público
+(rótulos em branco por usar `.prefLabel` singular em vez de `.prefLabels[]`). **Correção**: 6
+arquivos EJS corrigidos, sufixo `/edit` inexistente removido dos links. `BioCultTermos@23bb642` →
+`BioCultDB@2b33a98`.
+
+### 11.4 Cobertura de vocabulário incompleta (nome científico ausente, `tipoUso.txt` não usado)
+
+`AcquisitionService.MONITORED_FIELDS` nunca incluiu `comunidades.plantas.nomeCientifico`, apesar de
+ser um campo de primeira classe no BioCultDB (formulários, validação, estatísticas, FTS). Além
+disso, `docs/tipoUso.txt` (lista de referência de ~450 termos de uso de plantas, compilada da
+literatura etnobotânica) nunca era usado por nenhum código — só documentação de domínio.
+**Correção**: campo `nomeCientifico` adicionado à extração; `docs/tipoUso.txt` copiado para
+`bioculttermos/backend/src/data/referenceTerms.js` e semeado como conceitos `candidate` a cada
+ciclo de aquisição (idempotente), independente do que já existe em `biocultdb_records` — curador
+ainda revisa cada um antes de promover a `active`. `BioCultTermos@9c40c96` → `BioCultDB@36eed01`.
+
+### 11.5 `AcquisitionService.run()` travando o processo admin em execuções longas
+
+Com os ~454 termos de referência somados aos já minerados (~1400), um ciclo de aquisição passou a
+tocar linhas suficientes para que o loop de upsert síncrono do better-sqlite3 travasse o processo
+Node do admin (4001) pela duração inteira — a própria rota `POST /acquisition/run` (fire-and-forget
+por design) não conseguia responder seu próprio `202` até o ciclo inteiro terminar, e nenhuma outra
+requisição admin era atendida nesse meio tempo (confirmado com um `curl` que deu timeout logo após
+disparar um ciclo). O processo público (4000) é separado e não era afetado. **Correção**: yield
+periódico ao event loop (`setImmediate`) a cada 40 upserts nos dois loops de `run()`.
+`BioCultTermos@7c8453d` → `BioCultDB@b4d8c53`.
+
+### 11.6 Lista de termos admin sem paginação (2516 de 2536 termos inacessíveis)
+
+`ConceptService.findMany()` sempre paginou em `limit=20`, mas `concepts/list.ejs` nunca renderizou
+nenhuma navegação de página — a lista de termos do admin ficava presa nos primeiros 20 resultados,
+sem nenhum jeito de alcançar os outros 2516. Ao investigar, mais dois bugs adjacentes no mesmo
+arquivo: a resposta a requisições HTMX renderizava o **documento completo** (cabeçalho, nav, barra
+de filtros) dentro do próprio alvo de troca — cada interação duplicaria a UI aninhada dentro de si
+mesma; e os campos de filtro (Status/Campo semântico/Busca) nunca refletiam visualmente a seleção
+ativa (checavam uma variável nunca passada pela rota). **Correção**: paginação Anterior/Próxima
+adicionada, resposta HTMX corrigida para renderizar só o fragmento esperado, filtro "Campo
+semântico" ganhou a opção `nomeCientifico`, estado visual dos filtros corrigido.
+`BioCultTermos@ecb89d6` → `BioCultDB@d1c156b`.
+
+### 11.7 "Ativar Conceito": confirmação dupla e falha silenciosa
+
+O botão misturava um handler Alpine.js morto
+(`x-on:click="confirm(...) && $el.closest('form').submit()"` — o botão não está em `<form>`, então
+`.closest('form')` é sempre `null`) com o `hx-confirm` nativo do htmx no mesmo elemento — dois
+listeners de clique independentes, cada um com seu próprio diálogo nativo. Mais grave: por não
+estar em `<form>` e sem `hx-vals`/`hx-include`, a ativação nunca enviava o campo `version` ao
+servidor; `parseInt(undefined, 10)` é `NaN`, e o lock otimista (`concept.version !== version`)
+nunca é verdadeiro para `NaN` — **toda tentativa de ativação falhava com 409, silenciosamente**, em
+todo clique, sem nada na UI indicando o motivo. O formulário "Deprecar Conceito" tinha o bug
+idêntico (nenhum campo de versão no formulário). Ao corrigir, descoberto um terceiro bug
+independente na mesma área: adicionar/remover relações semânticas sempre devolvia o JSON cru do
+conceito, que o htmx despejava como texto na lista de "pills" a cada sucesso. **Correção**: handler
+Alpine quebrado removido, `hx-vals` com a versão atual adicionado a ambos os botões de status,
+resposta das rotas de relação corrigida para renderizar HTML consistente. Aproveitado para também
+trocar o campo de ID cru do formulário de relações por busca com sugestões por nome (pedido do
+operador). `BioCultTermos@a4805ee` → `BioCultDB@369d4d8`.
+
+### Resultado agregado
+
+28 registros em `biocultdb_records` → **2536 conceitos candidatos** em `etnotermos` (844 nomes
+científicos, 981 nomes vernaculares, 668 tipos de uso, 34 atividades econômicas, 9 tipos de
+comunidade). Todos os 193 testes automatizados do BioCultTermos passam
+(`bioculttermos/backend`, `npx jest`). Interface admin (`:4001/concepts`) navegável, editável e
+funcional ponta a ponta — verificado interativamente via Chromium real em servidor local
+descartável, além dos testes automatizados.
