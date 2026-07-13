@@ -24,12 +24,12 @@ O que falta é **conectar esse scaffold à produção real** — é isso que est
 
 ## 2. Estado atual de produção (confirmado nesta sessão)
 
-Container Unraid `etnoDB`, rodando ao vivo em `192.168.1.10`:
+Container Unraid `BioCultDB` (renomeado de `etnoDB`), rodando ao vivo em `192.168.1.10`:
 
 ```bash
-docker run -d --name='etnoDB' --net='bridge' --pids-limit 2048 \
+docker run -d --name='BioCultDB' --net='bridge' --pids-limit 2048 \
   -e TZ="America/Sao_Paulo" \
-  -e HOST_OS="Unraid" -e HOST_HOSTNAME="Asilo" -e HOST_CONTAINERNAME="etnoDB" \
+  -e HOST_OS="Unraid" -e HOST_HOSTNAME="Asilo" -e HOST_CONTAINERNAME="BioCultDB" \
   -e 'NODE_ENV'='production' \
   -e 'SQLITE_DB_PATH'='/data/biocultdb.sqlite' \
   -l net.unraid.docker.managed=dockerman \
@@ -60,7 +60,7 @@ Resumo executável — a justificativa completa de cada uma está na ADR-001. On
 | Mapeamento de portas existentes | `3091:3001`, `3092:3002`, `3093:3003` | Mantido, sem mudança. |
 | Mapeamento de portas novas | `4000:4000`, `4001:4001` | Sem offset — igual interno e externo. |
 | Publicação da imagem | `ghcr.io/edalcin/biocultdb:latest` passa a ser a imagem dual-app | Sem tag/imagem legada paralela. `docker/Dockerfile` (single-app) vira dev-only, não é mais usado para deploy. |
-| Estratégia de corte | Substituição in-place do container `etnoDB` | Backup do arquivo antes, indisponibilidade de segundos/minutos aceitável. |
+| Estratégia de corte | Substituição in-place do container `BioCultDB` | Backup do arquivo antes, indisponibilidade de segundos/minutos aceitável. |
 | Primeira aquisição de termos | Automática (cron 3h ou disparo manual pós-deploy) | `ACQUISITION_CRON_SCHEDULE` default `0 3 * * *`, não precisa setar. |
 | Auth do BioCultDB (3001/3002) | **Fora de escopo**, não muda | Decisão futura separada, se necessária. |
 | Repositório BioCultTermos standalone | Congelado como produto | Continua recebendo commits **via o submodule** (mecânica de git), mas não é mais desenvolvido/deployado isoladamente — ver §7. |
@@ -92,11 +92,11 @@ Pré-requisito: a imagem `ghcr.io/edalcin/biocultdb:latest` já publicada pelo C
    (WAL permite cópia a quente) ou parado (mais seguro, escolha do operador).
 2. **Registrar o digest da imagem atual** (ponto de rollback, já que `:latest` é uma tag flutuante):
    ```bash
-   docker inspect etnoDB --format='{{.Image}}'
+   docker inspect BioCultDB --format='{{.Image}}'
    ```
    Guardar esse digest. Se o corte falhar, o rollback é recriar o container apontando para ESSE digest
    específico, não para `:latest` (que já vai apontar para a imagem nova, ruim).
-3. **Parar e remover** o container `etnoDB` atual (o volume bind mount preserva os dados, intocado).
+3. **Parar e remover** o container `BioCultDB` atual (o volume bind mount preserva os dados, intocado).
 4. **Recriar** o container (via interface Unraid ou `docker run` equivalente) com:
    - Mesma imagem: `ghcr.io/edalcin/biocultdb:latest` (agora dual-app)
    - Mesmo nome, rede, volume, `TZ`, `HOST_*` labels
@@ -118,7 +118,7 @@ Pré-requisito: a imagem `ghcr.io/edalcin/biocultdb:latest` já publicada pelo C
    ```
    Confirmar em `GET /acquisition/status` (ou na dashboard admin) que termos `candidate` foram criados a
    partir dos registros já existentes em `biocultdb_records`.
-8. **Rollback** (se necessário, a qualquer ponto após o passo 3): recriar o container `etnoDB` com a
+8. **Rollback** (se necessário, a qualquer ponto após o passo 3): recriar o container `BioCultDB` com a
    imagem do digest registrado no passo 2, envs/portas antigas (sem as 2 novas), volume intocado — os
    dados do BioCultDB nunca foram tocados, só a imagem/portas/env mudam.
 
@@ -134,7 +134,7 @@ Pré-requisito: a imagem `ghcr.io/edalcin/biocultdb:latest` já publicada pelo C
 
 ## 5. Verificação pós-corte (checklist de aceite)
 
-- [ ] `docker logs etnoDB` mostra ambos os processos subindo sem erro (`server.js` e `start.js`)
+- [ ] `docker logs BioCultDB` mostra ambos os processos subindo sem erro (`server.js` e `start.js`)
 - [ ] `GET :3093/` (Apresentação) continua respondendo normalmente — nenhuma regressão no BioCultDB
 - [ ] `GET :3091/` e `:3092/` (Aquisição/Curadoria) continuam respondendo normalmente
 - [ ] `GET :4000/health` responde `{"status":"ok","service":"public","port":4000}`
@@ -143,7 +143,7 @@ Pré-requisito: a imagem `ghcr.io/edalcin/biocultdb:latest` já publicada pelo C
       (verificável via dashboard admin `:4001/` ou consulta direta ao arquivo `biocultdb.sqlite`)
 - [ ] `PRAGMA table_info` / `sqlite_master` mostram `biocultdb_records*` e `etnotermos*` coexistindo no
       mesmo arquivo (ver nota de bug conhecido em §8)
-- [ ] Reiniciar o container (`docker restart etnoDB`) não gera `duplicate column name` nem qualquer erro
+- [ ] Reiniciar o container (`docker restart BioCultDB`) não gera `duplicate column name` nem qualquer erro
       de schema (ver §8 — bug já corrigido, mas é o cenário que o expôs)
 
 ## 6. Backup e recuperação operacional
