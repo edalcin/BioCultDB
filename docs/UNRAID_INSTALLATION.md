@@ -60,9 +60,9 @@ Clique em **"Show more settings..."** para expandir opções adicionais.
 
 ### Passo 2.4: Mapeamento de Portas
 
-Você precisa mapear 3 portas (uma para cada contexto da aplicação).
+Você precisa mapear 5 portas (3 para o BioCultDB, 2 para o BioCultTermos).
 
-Clique em **"Add another Path, Port, Variable, Label or Device"** (botão azul com `+`) e repita este processo **3 vezes**:
+Clique em **"Add another Path, Port, Variable, Label or Device"** (botão azul com `+`) e repita este processo **5 vezes**:
 
 #### Porta 1: Aquisição (Data Entry)
 ```
@@ -88,6 +88,22 @@ Protocol: tcp
 Description: Apresentação - Busca pública (Home)
 ```
 
+#### Porta 4: BioCultTermos Público
+```
+Container Port: 4000
+Host Port: 4000
+Protocol: tcp
+Description: BioCultTermos - Vocabulário público (sem autenticação)
+```
+
+#### Porta 5: BioCultTermos Admin (Curadoria de Termos)
+```
+Container Port: 4001
+Host Port: 4001
+Protocol: tcp
+Description: BioCultTermos - Curadoria de termos (HTTP Basic Auth)
+```
+
 **Como adicionar cada porta:**
 1. Clique no botão azul **"+"**
 2. Preencha os valores acima
@@ -108,12 +124,12 @@ Clique novamente em **"Add another Path, Port, Variable, Label or Device"** para
 #### Variável 1: SQLITE_DB_PATH (OBRIGATÓRIA)
 ```
 Key: SQLITE_DB_PATH
-Value: /data/unidade.sqlite
+Value: /data/biocultdb.sqlite
 ```
 
 **Explicação**:
 - Define o caminho do arquivo de banco de dados SQLite dentro do container
-- Valor padrão: `/data/unidade.sqlite`
+- Valor padrão: `/data/biocultdb.sqlite`
 - O arquivo é criado automaticamente na primeira execução, se ainda não existir
 
 **Importante — Armazenamento Persistente**: Para não perder os dados ao recriar o container, mapeie também um **Path** (não uma Variable) apontando para o diretório `/data`:
@@ -122,7 +138,7 @@ Value: /data/unidade.sqlite
 3. Preencha:
    ```
    Container Path: /data
-   Host Path: /mnt/user/appdata/biocultdb/data
+   Host Path: /mnt/user/Storage/appsdata/biocultdb/data/
    Read Only: No
    ```
 
@@ -139,7 +155,29 @@ Value: production
 - Otimiza performance e segurança
 - Valores aceitos: `production` (padrão) ou `development`
 
-#### Variável 3: Porta Aquisição (OPCIONAL)
+#### Variável 3: BioCultTermos Admin Username (OBRIGATÓRIA)
+```
+Key: ADMIN_USERNAME
+Value: etnotermos
+```
+
+**Explicação**:
+- Usuário HTTP Basic Auth para a interface de curadoria do BioCultTermos (porta 4001)
+- Sugestão: `etnotermos`
+- Único usuário admin (sem múltiplos usuários)
+
+#### Variável 4: BioCultTermos Admin Password (OBRIGATÓRIA)
+```
+Key: ADMIN_PASSWORD
+Value: <defina uma senha forte>
+```
+
+**Explicação**:
+- Senha HTTP Basic Auth para a porta 4001 (curadoria de termos)
+- Hasheada em memória no boot da aplicação
+- **Nunca commitar a senha real** — defina-a apenas na interface do Unraid
+
+#### Variável 5: Porta Aquisição (OPCIONAL)
 ```
 Key: PORT_ACQUISITION
 Value: 3001
@@ -150,7 +188,7 @@ Value: 3001
 - Padrão: `3001`
 - Só alterar se conflitar com outra aplicação
 
-#### Variável 4: Porta Curadoria (OPCIONAL)
+#### Variável 6: Porta Curadoria (OPCIONAL)
 ```
 Key: PORT_CURATION
 Value: 3002
@@ -161,7 +199,7 @@ Value: 3002
 - Padrão: `3002`
 - Só alterar se conflitar com outra aplicação
 
-#### Variável 5: Porta Apresentação (OPCIONAL)
+#### Variável 7: Porta Apresentação (OPCIONAL)
 ```
 Key: PORT_PRESENTATION
 Value: 3003
@@ -204,11 +242,15 @@ Network Type: bridge
 Port Mappings:
 ├── 3001 → 3001 (Aquisição)
 ├── 3002 → 3002 (Curadoria)
-└── 3003 → 3003 (Apresentação)
+├── 3003 → 3003 (Apresentação)
+├── 4000 → 4000 (BioCultTermos público)
+└── 4001 → 4001 (BioCultTermos admin)
 
 Environment Variables (Obrigatórias):
-├── SQLITE_DB_PATH: /data/unidade.sqlite
-└── NODE_ENV: production
+├── SQLITE_DB_PATH: /data/biocultdb.sqlite
+├── NODE_ENV: production
+├── ADMIN_USERNAME: etnotermos
+└── ADMIN_PASSWORD: <senha real, definida no Unraid>
 
 Environment Variables (Opcionais - apenas se usar portas diferentes):
 ├── PORT_ACQUISITION: 3001
@@ -220,8 +262,10 @@ Environment Variables (Opcionais - apenas se usar portas diferentes):
 
 | Variável | Obrigatória? | Padrão | Descrição |
 |----------|--------------|--------|-----------|
-| `SQLITE_DB_PATH` | ✅ Sim | `/data/unidade.sqlite` | Caminho do arquivo de banco de dados SQLite (requer volume persistente) |
+| `SQLITE_DB_PATH` | ✅ Sim | `/data/biocultdb.sqlite` | Caminho do arquivo de banco de dados SQLite (requer volume persistente) |
 | `NODE_ENV` | ✅ Sim | `production` | Modo de execução |
+| `ADMIN_USERNAME` | ✅ Sim | — | Usuário HTTP Basic Auth do BioCultTermos admin (porta 4001) |
+| `ADMIN_PASSWORD` | ✅ Sim | — | Senha HTTP Basic Auth do BioCultTermos admin (porta 4001) — nunca committar |
 | `PORT_ACQUISITION` | ❌ Não | `3001` | Porta de entrada de dados |
 | `PORT_CURATION` | ❌ Não | `3002` | Porta de edição/aprovação |
 | `PORT_PRESENTATION` | ❌ Não | `3003` | Porta pública (home) |
@@ -285,13 +329,32 @@ http://<ip-do-unraid>:3002/
 - Aprovar/rejeitar referências
 - **Restringir a curadores**
 
+#### 📖 BioCultTermos — Vocabulário Público
+```
+http://<ip-do-unraid>:4000/
+```
+
+**Funcionalidade**:
+- Consulta pública ao vocabulário controlado SKOS-XL (termos ativos)
+- Sem autenticação
+
+#### 🔑 BioCultTermos — Curadoria de Termos (Admin)
+```
+http://<ip-do-unraid>:4001/
+```
+
+**Funcionalidade**:
+- Promove conceitos `candidate` (gerados pelo `AcquisitionService` a partir dos registros do BioCultDB) para `active`
+- Protegido por HTTP Basic Auth (`ADMIN_USERNAME`/`ADMIN_PASSWORD`)
+- **Restringir a curadores de vocabulário**
+
 ---
 
 ## Seção 4: Segurança e Acesso
 
 ### Controle de Acesso Recomendado
 
-Como a aplicação **não tem autenticação integrada**, configure acesso em nível de infraestrutura:
+A porta **4001** (BioCultTermos admin) é a única protegida por autenticação (HTTP Basic, via `ADMIN_USERNAME`/`ADMIN_PASSWORD`). As demais — 3001, 3002, 3003 (BioCultDB) e 4000 (BioCultTermos público) — **não têm autenticação integrada**; configure acesso em nível de infraestrutura:
 
 #### Opção A: Firewall do Unraid
 

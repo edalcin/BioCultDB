@@ -184,7 +184,7 @@ Referência (Publicação Científica)
 
 Na Arquitetura BioCultural v3.1, o BioCultDB é o repositório "anfitrião" da **Unidade de Fontes
 Secundárias**: um único container Docker que roda BioCultDB (3001-3003) **e** BioCultTermos
-(4000-4001) sobre o **mesmo arquivo SQLite compartilhado** (`/data/unidade.sqlite`, ADR-005 da
+(4000-4001) sobre o **mesmo arquivo SQLite compartilhado** (`/data/biocultdb.sqlite`, ADR-005 da
 [Arquitetura-BioCultural](https://github.com/edalcin/Arquitetura-BioCultural)). Sem MongoDB, sem
 servidor de banco separado — soberania = arquivo único, portável, backup = copiar o arquivo.
 
@@ -205,11 +205,19 @@ docker compose -f docker/docker-compose.unidade.yml up --build
 Isso builda `docker/Dockerfile.unidade` (multi-stage: compila Tailwind CSS + `better-sqlite3` de
 ambos os apps; runtime `node:20-alpine` não-root) e sobe UM container com `docker/start-unit.sh`
 (via `dumb-init`) iniciando os dois processos Node (BioCultDB e BioCultTermos) lado a lado. Ambos
-abrem o mesmo arquivo via `SQLITE_DB_PATH=/data/unidade.sqlite` (volume nomeado `sqlite_data`,
+abrem o mesmo arquivo via `SQLITE_DB_PATH=/data/biocultdb.sqlite` (volume nomeado `sqlite_data`,
 persiste entre reinícios). Verificado (build real + run real): as 5 portas respondem, as tabelas
 `biocultdb_records` e `etnotermos*` coexistem no mesmo arquivo, e o `AcquisitionService` do
 BioCultTermos lê registros gravados pelo BioCultDB no mesmo banco (integração ponta a ponta
 testada).
+
+**BioCultTermos na unidade**: porta **4000** expõe o vocabulário público (sem autenticação);
+porta **4001** expõe a curadoria de termos, protegida por HTTP Basic Auth
+(`ADMIN_USERNAME`/`ADMIN_PASSWORD`). O `AcquisitionService` lê os registros gravados em
+`biocultdb_records` (via BioCultDB), extrai valores dos campos monitorados e cria conceitos
+SKOS-XL com `status: candidate`; um curador promove cada candidato a `active` pela interface
+4001. Disparado por cron (`ACQUISITION_CRON_SCHEDULE`, padrão `0 3 * * *`) ou sob demanda via
+`POST /acquisition/run`.
 
 ### Unidade Comunidade Tradicional (mesmo padrão, ainda não materializado)
 
