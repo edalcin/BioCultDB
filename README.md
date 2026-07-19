@@ -182,7 +182,7 @@ Referência (Publicação Científica)
 
 ## Empacotamento por Unidade Federada (ADR-005)
 
-Na Arquitetura BioCultural v3.1, o BioCultDB é o repositório "anfitrião" da **Unidade de Fontes
+Na Arquitetura BioCultural v3.2, o BioCultDB é o repositório "anfitrião" da **Unidade de Fontes
 Secundárias**: um único container Docker que roda BioCultDB (3001-3003) **e** BioCultTermos
 (4000-4001) sobre o **mesmo arquivo SQLite compartilhado** (`/data/biocultdb.sqlite`, ADR-005 da
 [Arquitetura-BioCultural](https://github.com/edalcin/Arquitetura-BioCultural)). Sem MongoDB, sem
@@ -235,6 +235,8 @@ greenfield/só documentação) seguirá o MESMO padrão quando `BioCultRelatos` 
 = `BioCultRelatos`, `BioCultTermos` como submodule, `Dockerfile.unidade` + `start-unit.sh` +
 `docker-compose.unidade.yml` análogos (trocando as portas 3001-3003 do BioCultDB pela porta do
 BioCultRelatos), um único container, um único arquivo SQLite compartilhado.
+
+O mesmo padrão de empacotamento (container único + BioCultTermos embutido no mesmo arquivo SQLite) vale para os quatro tipos de membro da federação v3.2 — Fontes Secundárias (BioCultDB), Comunidade Tradicional (BioCultRelatos), Acervos Históricos/Museológicos (BioCultAcervos) e Obras de Naturalistas (BioCultNaturalistas). Em todos, a camada semântica é local e soberana; o Pluriverso a unifica via mapeamentos SKOS-XL entre os `ConceptScheme` de cada membro.
 
 ## Princípios C.A.R.E.
 
@@ -354,9 +356,9 @@ Para mais informações sobre o projeto:
 
 ---
 
-## Arquitetura BioCultural Federada — v3.0
+## Arquitetura BioCultural Federada — v3.2
 
-O **BioCultDB** faz parte da [Arquitetura BioCultural](https://github.com/edalcin/Arquitetura-BioCultural), um ecossistema federado para gestão de Conhecimento Tradicional Associado à Biodiversidade (CTA). Na versão 3.0, a arquitetura é explicitamente federada: cada iniciativa e comunidade é soberana na gestão de seus próprios dados.
+O **BioCultDB** faz parte da [Arquitetura BioCultural](https://github.com/edalcin/Arquitetura-BioCultural), um ecossistema federado para gestão de Conhecimento Tradicional Associado à Biodiversidade (CTA). Na arquitetura federada (v3.2), cada iniciativa e comunidade é soberana na gestão de seus próprios dados.
 
 ### Papel do BioCultDB na Federação
 
@@ -378,7 +380,7 @@ graph TD
 
 O SQLite do BioCultDB **pertence à Iniciativa #1** — não é mais um recurso compartilhado da arquitetura. Outras iniciativas e comunidades operam seus próprios bancos de dados.
 
-### Mudanças Necessárias para v3.0
+### Mudanças Necessárias para a Federação
 
 > **Nota**: Nenhuma implementação está sendo realizada agora. Este documento registra, em alto nível, o que precisará ser desenvolvido para que o BioCultDB participe plenamente da arquitetura federada.
 
