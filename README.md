@@ -254,7 +254,7 @@ A documentação técnica completa está disponível em:
 - **Instalação e Desenvolvimento**: [`INSTALLATION.md`](./INSTALLATION.md)
 - **Especificação de Requisitos**: [`docs/decisions/spec.md`](./docs/decisions/spec.md)
 - **Modelo de Dados**: [`docs/decisions/data-model.md`](./docs/decisions/data-model.md)
-- **Integração com BioCultTermos**: [`docs/decisions/ADR-001-integracao-bioculttermos.md`](./docs/decisions/ADR-001-integracao-bioculttermos.md) (decisão) · [`integracao.md`](./integracao.md) (checklist executado e resultado) · [`docs/corte-producao-unidade.md`](./docs/corte-producao-unidade.md) (runbook de corte em produção)
+- **Integração com BioCultTermos**: [`docs/decisions/ADR-001-integracao-bioculttermos.md`](./docs/decisions/ADR-001-integracao-bioculttermos.md) (decisão) · [`integracao.md`](./integracao.md) (checklist executado e resultado) · [`docs/corte-producao-unidade.md`](./docs/corte-producao-unidade.md) (runbook de corte em produção) · [ADR-007 da Arquitetura BioCultural](https://github.com/edalcin/Arquitetura-BioCultural/blob/main/docs/architecture-decisions/ADR-007-shared-bioculttermos-module.md) (decisão arquitetural do módulo compartilhado entre as 4 unidades)
 - **Contratos de API**: [`docs/decisions/contracts/`](./docs/decisions/contracts/)
 - **Decisão de Stack Tecnológica**: [`docs/decisions/technology-decision.md`](./docs/decisions/technology-decision.md)
 - **Arquitetura do etnoChat**: [`docs/decisions/etnochat-plan.md`](./docs/decisions/etnochat-plan.md)
