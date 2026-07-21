@@ -163,6 +163,37 @@ Estes campos são o que diferencia um vocabulário **descolonizador** de uma sim
 palavras: o nome tradicional deixa de ser um apêndice anônimo e passa a carregar sua origem e
 sua governança.
 
+### 3.5 Quando não há nome preferido: rótulos co-iguais
+
+Muitas vezes **não existe** um nome preferido: uma comunidade chama a mesma planta por dois ou três
+nomes igualmente válidos, e a academia e o público em geral também usam vernaculares sem preferência
+fixa. Além disso, os nomes que chegam da coleta entram todos como `pref` em português — o que é só
+**ordem de coleta**, não preferência real.
+
+Entenda o ponto central: **o tipo `preferencial` é um âncora de exibição, não um juízo de valor.**
+Ele diz apenas *"é este o nome que a tela mostra em destaque e pelo qual a busca ordena"* — nunca
+*"este nome vale mais que os outros"*. A regra "um preferencial por idioma" (§3.1) é **técnica**: a
+interface precisa de **uma** string estável por idioma.
+
+Então, quando não há preferência:
+
+1. Cadastre **todos** os nomes co-iguais do mesmo idioma como **alternativos**.
+2. Eleja **um** como preferencial, com "★ Tornar Preferencial", apenas como âncora de exibição.
+   Escolha por um critério neutro, nesta ordem:
+   - a convenção da própria comunidade, se ela tiver uma (Princípio CARE *Authority to Control*);
+   - senão, o nome mais frequente nas fontes;
+   - senão, ordem alfabética.
+3. Escreva na **Nota de Escopo** que a escolha do preferencial é **arbitrária, só para exibição**, e
+   que os alternativos são **igualmente válidos**. Assim o próximo curador não lê hierarquia onde
+   não há.
+
+> **Idiomas diferentes não competem.** Um `pref/por` e um `pref` numa língua indígena coexistem
+> (§3.2). O desempate acima só se aplica a nomes **do mesmo idioma**.
+
+> **Não deixe o conceito sem preferencial** para "representar" a ausência de preferência: isso faz
+> o nome aparecer como *(sem rótulo)* em listas, títulos e busca. A ausência de preferência se
+> registra **na Nota de Escopo** — não deixando o campo vazio.
+
 ---
 
 ## 4. Definição e Notas: descrevendo o significado
@@ -440,6 +471,7 @@ graph TD
 | Deixar o conceito como `candidate` "para depois". | Ative quando estiver revisado — candidatos não aparecem na consulta pública. |
 | Trocar o tipo do único preferencial para "alternativo". | Adicione o novo rótulo e use **"★ Tornar Preferencial"** (troca atômica). |
 | Deprecar sem indicar substituto. | A depreciação **exige** o conceito "Substituído por". |
+| Ler o `pref` de um nome vernacular como "o nome certo". | `pref` é só âncora de exibição; nomes co-iguais são **alternativos** e a escolha do preferencial vai anotada como arbitrária na Nota de Escopo (§3.5). |
 
 **Princípio geral:** na dúvida entre criar um conceito novo ou enriquecer um existente, prefira
 **enriquecer** — menos conceitos, mais rótulos e relações. Um vocabulário bem curado é raso em

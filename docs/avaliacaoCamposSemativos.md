@@ -106,3 +106,66 @@ pluralidade e a soberania dos nomes tradicionais.
 > [Darwin Core (TDWG)](https://dwc.tdwg.org/) ·
 > [Princípios CARE](https://www.gida-global.org/care) ·
 > [Protocolo de Nagoya](https://www.cbd.int/abs/)
+
+---
+
+# Avaliação 2 — Nomes vernaculares e o rótulo "preferencial" quando não há preferência
+
+> **Questão.** Como tratar o *tag* `pref` (preferencial) em nomes vernaculares? Muitas vezes uma
+> comunidade tradicional tem dois ou mais nomes para a mesma planta **sem nenhum preferido**; a
+> academia e a população em geral também usam vernaculares sem preferência definida; e o BioCultDB
+> entrega nomes vernaculares (associados ou não a nomes científicos) **sem sinalização de qual
+> seria o preferencial**.
+
+## Veredito
+
+O `pref` do SKOS/SKOS-XL é um **âncora de exibição e indexação**, não um juízo de valor cultural.
+"Preferencial" quer dizer *"o nome que a interface mostra em destaque e pelo qual o índice ordena
+e busca"* — **não** *"o nome que a comunidade considera superior"*. Quando não há preferência
+real, todos os nomes são **co-iguais** (entram como `alt`), e **um** é elevado a `pref` apenas
+como âncora de exibição, por um critério neutro e documentado.
+
+## Por que `pref` não é hierarquia cultural
+
+- No SKOS-XL, `pref`/`alt` qualificam o **vínculo** entre conceito e rótulo, não uma qualidade
+  intrínseca do nome. O mesmo literal pode ser `pref` de um conceito e `alt` de outro. Logo,
+  `pref` **não** afirma "melhor nome".
+- Definição W3C: `skos:prefLabel` = *"the preferred lexical label ... in a given language"*;
+  `skos:altLabel` = *"an alternative lexical label"*, isto é, um **nome igualmente aceitável**. A
+  distinção existe para dar às ferramentas **uma string estável de exibição por idioma** (título,
+  listas, *breadcrumbs*), ordenação determinística e uma entrada única no índice de busca.
+- Restrição **técnica** (não cultural): o BioCultTermos impõe **no máximo um `pref` por idioma**
+  (`lib/skosxl/validation.js` → `validateSinglePrefLabelPerLanguage`) — materialização da condição
+  de integridade S14 do SKOS-XL. Não há regra "um dos nomes é o certo"; há regra "só um âncora por
+  idioma".
+
+## A realidade da aquisição no BioCultDB
+
+O `AcquisitionService` grava **cada valor coletado como `pref/pt`** (`services/AcquisitionService.js`).
+Ou seja: o `pref` que chega da coleta é **artefato da ordem de coleta**, não sinal de preferência.
+Cabe ao curador rebaixar os demais a `alt`, escolher o âncora de exibição, e **não** ler o `pref`
+herdado como significativo.
+
+## Como tratar (regra prática)
+
+1. Todos os nomes co-iguais do **mesmo idioma** entram como `alt`; **um** vira `pref` (âncora de
+   exibição), via "★ Tornar Preferencial" (troca atômica).
+2. **Critério de desempate** para escolher o âncora, em ordem (neutro, documentado):
+   1. convenção da própria comunidade, se houver (CARE — *Authority to Control*);
+   2. senão, o mais frequente no corpus do BioCultDB;
+   3. senão, ordem alfabética (puramente mecânico).
+3. Registre na **Nota de Escopo** que a escolha do `pref` é **arbitrária / para exibição** e que os
+   `alt` são **co-iguais**. A hierarquia vive só na interface — e a nota diz isso.
+4. Nomes em **idiomas diferentes** não competem: um `pref/por` e um `pref` numa língua indígena
+   coexistem (§3.2 do Manual). O desempate só surge **dentro do mesmo idioma**.
+5. A presença/ausência de nome científico associado **não** muda o tratamento dos rótulos: o
+   conceito vernacular se sustenta sozinho, com seus `alt` co-iguais, ligado (ou não) ao científico
+   por mapeamento (ver Avaliação 1).
+
+## Por que não deixar "sem `pref`" para representar "sem preferência"
+
+O modelo aceita conceito sem `pref` (cai para *(sem rótulo)* / *slug* pelo `id`). Mas isso
+**degrada a exibição em toda parte** — título, listas, *pills* de relação e busca passam a mostrar
+*(sem rótulo)* — sem ganho semântico: o fato "são co-iguais" é melhor carregado **explicitamente na
+Nota de Escopo** do que por um `pref` vazio. Logo: **sempre** defina um `pref` de exibição; a
+co-igualdade fica na nota.
