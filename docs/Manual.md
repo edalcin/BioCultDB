@@ -392,7 +392,7 @@ aplicada a nomes populares: mesmo significado → **um conceito, vários rótulo
 **A exceção (etnotaxonomia).** O teste não é "mesma espécie científica" — é *"**mesma unidade de
 significado para quem usa o nome**"*. Às vezes a comunidade **distingue** dois nomes como plantas
 diferentes (por morfotipo, sexo, estágio ou uso), embora o botânico os agrupe numa só espécie
-(sobre-diferenciação — ver [avaliacaoCamposSemativos.md](avaliacaoCamposSemativos.md), Avaliação 1).
+(sobre-diferenciação — ver §7.3).
 Nesse caso são **dois etnotáxons distintos**:
 
 - ligue-os entre si por **Relacionado (RT)** (associados, mas distintos);
@@ -408,6 +408,52 @@ graph TD
 > **Compartilhar a espécie científica não basta** para ser o mesmo conceito. Co-referência não é
 > identidade conceitual: quem decide se é um ou dois conceitos é a distinção de significado na
 > comunidade, não a determinação taxonômica.
+
+### 7.3 Nome científico × nome vernacular: dois conceitos, não um
+
+Pergunta natural: se o nome científico e o nome vernacular apontam para "a mesma espécie", não
+deveriam ser **um só conceito** (o científico como `pref/lat`, o vernacular como `pref/por`)?
+**Não.** Eles **co-referem** — apontam para plantas sobrepostas no mundo real — mas **não são o
+mesmo conceito**. Co-referência não é identidade conceitual (§2). São **dois conceitos distintos**,
+cada um no seu campo, ligados por uma relação de **mapeamento** (na paleta atual da tela, o análogo
+é **Relacionado (RT)**). Três razões:
+
+**1. Etnotaxonomia ≠ taxonomia científica.** O nome vernacular denota um *etnotáxon* — uma unidade
+de classificação **cultural**, que raramente casa 1:1 com a espécie lineana:
+
+- **Sub-diferenciação:** um vernacular cobre **várias** espécies (ex.: `gervão` → várias
+  *Stachytarpheta*).
+- **Sobre-diferenciação:** **vários** vernaculares (por morfotipo, sexo, estágio, uso) para **uma**
+  espécie — é justamente a exceção de §7.2.
+- **Homonímia regional:** o mesmo vernacular para espécies não aparentadas em regiões diferentes; e
+  uma espécie com dezenas de vernaculares por povo/língua.
+
+**2. O nome científico tem estrutura própria.** Sob o **ICN** (código internacional de nomenclatura
+botânica), uma espécie carrega nome aceito, basiônimo, sinônimos e autoria — uma **rede de
+sinonímia** que o BioCultTermos modela com "Sinônimo de (aceito)" (§6.3) e depreciação (§5).
+Rebaixar o científico a um mero rótulo de um conceito fundido apagaria essa estrutura.
+
+**3. Governanças diferentes.** O científico é regido pelo ICN (objetivo, verificável em WFO/IPNI,
+público). O vernacular é regido pela **comunidade** (CARE, §3.3), com proveniência por povo (§3.4)
+e podendo ser `restricted`/`sacred`. Fundir os dois forçaria um binômio latino público e um nome
+tradicional (às vezes sagrado) a dividir o mesmo `accessLevel` e a mesma autoridade — o que é
+incorreto.
+
+Como fica na prática — dois conceitos, uma ponte de mapeamento:
+
+```mermaid
+graph LR
+    subgraph Cientifico["Campo: Nomes Científicos (ICN)"]
+        SCI["<i>Stachytarpheta cayennensis</i>"]
+    end
+    subgraph Vernacular["Campo: Nomes Vernaculares (etnotáxon, CARE)"]
+        VER["gervão<br/>(povo, accessLevel)"]
+    end
+    VER -. "Relacionado (RT) / mapeamento" .-> SCI
+```
+
+> **Alinha com o Darwin Core** (referência no rodapé): DwC trata `scientificName` como identidade
+> do táxon e `vernacularName` como atributo **associado** — associação, não identidade.
 
 ---
 
