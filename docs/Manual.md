@@ -377,6 +377,38 @@ diretamente (isso deixaria o conceito sem nenhum preferencial por um instante). 
 O sistema promove o novo a preferencial e rebaixa o antigo a alternativo **na mesma operação**,
 sem nunca passar por um estado inválido. Tudo continua sendo **um conceito só**.
 
+### 7.2 Nomes vernaculares do mesmo conceito: alternativo, não relacionado
+
+Dois ou mais nomes vernaculares para a **mesma planta** são, por padrão, **rótulos alternativos de
+um único conceito** — nunca conceitos separados ligados por "Relacionado". É a regra de ouro (§2)
+aplicada a nomes populares: mesmo significado → **um conceito, vários rótulos**.
+
+- Ex.: `gervão`, `gervão-roxo` e `rinchão` usados pela comunidade para a mesma planta → **um**
+  conceito, um `pref` (âncora de exibição, §3.5) e os demais como `alt`.
+- **"Relacionado (RT)" estaria errado** aqui: RT liga dois conceitos **distintos** (como
+  `gripe` ↔ `resfriado`, §6.2). Usá-lo para nomes da mesma planta fragmentaria a espécie em vários
+  conceitos e apagaria o fato de que são o mesmo.
+
+**A exceção (etnotaxonomia).** O teste não é "mesma espécie científica" — é *"**mesma unidade de
+significado para quem usa o nome**"*. Às vezes a comunidade **distingue** dois nomes como plantas
+diferentes (por morfotipo, sexo, estágio ou uso), embora o botânico os agrupe numa só espécie
+(sobre-diferenciação — ver [avaliacaoCamposSemativos.md](avaliacaoCamposSemativos.md), Avaliação 1).
+Nesse caso são **dois etnotáxons distintos**:
+
+- ligue-os entre si por **Relacionado (RT)** (associados, mas distintos);
+- e mapeie **cada um** ao mesmo nome científico.
+
+```mermaid
+graph TD
+    Q{"A comunidade trata os<br/>nomes como a MESMA planta?"}
+    Q -->|Sim| A["Um conceito<br/>· 1 pref + demais alt<br/>(rótulos alternativos)"]
+    Q -->|"Não, são plantas<br/>diferentes para ela"| R["Dois conceitos<br/>· ligados por Relacionado (RT)<br/>· cada um mapeado ao nome científico"]
+```
+
+> **Compartilhar a espécie científica não basta** para ser o mesmo conceito. Co-referência não é
+> identidade conceitual: quem decide se é um ou dois conceitos é a distinção de significado na
+> comunidade, não a determinação taxonômica.
+
 ---
 
 ## 8. Passo a passo na tela de edição
@@ -472,6 +504,7 @@ graph TD
 | Trocar o tipo do único preferencial para "alternativo". | Adicione o novo rótulo e use **"★ Tornar Preferencial"** (troca atômica). |
 | Deprecar sem indicar substituto. | A depreciação **exige** o conceito "Substituído por". |
 | Ler o `pref` de um nome vernacular como "o nome certo". | `pref` é só âncora de exibição; nomes co-iguais são **alternativos** e a escolha do preferencial vai anotada como arbitrária na Nota de Escopo (§3.5). |
+| Ligar dois nomes vernaculares da mesma planta por **Relacionado (RT)**. | Se nomeiam o mesmo conceito, são **rótulos alternativos** de um conceito (§7.2); RT só quando a comunidade os distingue como plantas diferentes. |
 
 **Princípio geral:** na dúvida entre criar um conceito novo ou enriquecer um existente, prefira
 **enriquecer** — menos conceitos, mais rótulos e relações. Um vocabulário bem curado é raso em

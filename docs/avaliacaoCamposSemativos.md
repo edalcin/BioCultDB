@@ -169,3 +169,50 @@ O modelo aceita conceito sem `pref` (cai para *(sem rótulo)* / *slug* pelo `id`
 *(sem rótulo)* — sem ganho semântico: o fato "são co-iguais" é melhor carregado **explicitamente na
 Nota de Escopo** do que por um `pref` vazio. Logo: **sempre** defina um `pref` de exibição; a
 co-igualdade fica na nota.
+
+---
+
+# Avaliação 3 — Nomes vernaculares do mesmo conceito: "alternativo" ou "relacionado"?
+
+> **Questão.** Nomes vernaculares usados para o mesmo conceito de espécie devem ser tratados como
+> **termo alternativo** (rótulo `alt`) ou como **termo relacionado** (relação RT)?
+
+## Veredito
+
+**Termo alternativo (rótulo `alt`), não relacionado** — por padrão. Vários nomes vernaculares para
+a **mesma planta** são **um único conceito com vários rótulos**, seguindo a regra de ouro (§2 do
+Manual) e o guia de decisão (§7): *mesmo significado → um conceito, muitos rótulos*. "Relacionado
+(RT)" liga conceitos **distintos**; usá-lo aqui fragmentaria a espécie em vários conceitos.
+
+## Por quê
+
+- **`alt` = mesmo conceito, outro nome.** É exatamente o caso: `gervão`, `gervão-roxo`, `rinchão`
+  (mesma planta) → um conceito, um `pref` (âncora de exibição, §3.5) + demais `alt`.
+- **RT = dois conceitos distintos que se associam** (`gripe` ↔ `resfriado`, §6.2). Aplicá-lo a
+  nomes da mesma planta afirma, erradamente, "são coisas diferentes" e espalha a informação por
+  conceitos duplicados.
+- **Sinônimo (aceito) também não.** Essa relação é a exceção para dois conceitos **já curados
+  separadamente** cuja fusão apagaria proveniência (§6.3). Para nomes vernaculares que chegam
+  juntos, o caminho é enriquecer um conceito só, não criar dois.
+
+## A exceção (etnotaxonomia)
+
+O teste **não** é "mesma espécie científica" — é *"**mesma unidade de significado para quem usa o
+nome**"*. Quando a comunidade **distingue** dois nomes como plantas diferentes (sobre-diferenciação:
+morfotipo, sexo, estágio, uso), embora o botânico os una numa só espécie (ver Avaliação 1), são
+**dois etnotáxons distintos**:
+
+- ligue-os entre si por **Relacionado (RT)**;
+- e mapeie **cada um** ao mesmo nome científico (`broad/narrow/closeMatch`).
+
+Ou seja: compartilhar a espécie científica **não basta** para serem o mesmo conceito —
+co-referência não é identidade conceitual (Avaliação 1). Quem decide "um ou dois conceitos" é a
+distinção de significado na comunidade.
+
+## Resumo
+
+| Situação | Mecanismo |
+|---|---|
+| Vários nomes, **mesma planta / mesmo etnotáxon** | **Rótulo alternativo** (`alt`) num só conceito; um `pref` de exibição |
+| Nomes que a **comunidade distingue** como plantas diferentes (mesma espécie científica) | **Dois conceitos** ligados por **Relacionado (RT)**, cada um mapeado ao nome científico |
+| Dois conceitos **já curados à parte**, cuja fusão apagaria proveniência | **Sinônimo de (aceito)** — exceção (§6.3) |
