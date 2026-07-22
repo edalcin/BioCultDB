@@ -42,8 +42,10 @@ FROM node:20-alpine
 
 ARG BUILD_DATE
 ARG GIT_COMMIT
+ARG BIOCULTTERMOS_COMMIT
 LABEL build.date="${BUILD_DATE}"
 LABEL build.commit="${GIT_COMMIT}"
+LABEL build.bioculttermos_commit="${BIOCULTTERMOS_COMMIT}"
 LABEL unit="fontes-secundarias"
 
 WORKDIR /app
@@ -72,6 +74,13 @@ COPY frontend/src/presentation/scripts ./biocultdb/frontend/src/presentation/scr
 
 COPY --from=builder /build/bioculttermos/backend ./bioculttermos/backend
 COPY docker/start-unit.sh /app/start-unit.sh
+
+# Self-reporting build provenance (readable inside the running container via
+# `docker exec ... cat /app/BUILD_INFO`, see verify-container-setup.sh) —
+# the LABELs above only help *before* the container is running; this file
+# answers "which commit is actually deployed?" from inside it.
+RUN printf 'biocultdb_commit=%s\nbioculttermos_commit=%s\nbuild_date=%s\n' \
+      "${GIT_COMMIT}" "${BIOCULTTERMOS_COMMIT}" "${BUILD_DATE}" > /app/BUILD_INFO
 
 # Non-root user + /data directory owned by it (the docker-compose named
 # volume mounted at /data inherits this ownership on first mount — a root-

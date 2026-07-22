@@ -5,6 +5,14 @@
 
 echo "=== BioCultDB Container Verification ==="
 echo ""
+echo "0. Build Provenance (which commit is actually deployed):"
+if [ -f "/app/BUILD_INFO" ]; then
+  cat /app/BUILD_INFO
+else
+  echo "⚠️  /app/BUILD_INFO not found — image built before this check existed, or built without docker/build-unidade.sh"
+fi
+echo ""
+
 
 echo "1. App Directory Structure:"
 ls -la /app/ | head -20
