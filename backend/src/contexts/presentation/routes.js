@@ -7,7 +7,7 @@
 
 const express = require('express');
 const router = express.Router();
-const { searchReferences } = require('../../services/database');
+const { searchReferences, findReferenceById } = require('../../services/database');
 const { Status } = require('../../models/Reference');
 const logger = require('../../shared/logger');
 const {
@@ -162,6 +162,36 @@ router.get('/', async (req, res) => {
       },
       error: 'Erro ao realizar busca: ' + error.message
     });
+  }
+});
+
+/**
+ * GET /referencia/:id - Standalone reference detail page (for BioCultTermos source links)
+ */
+router.get('/referencia/:id', async (req, res, next) => {
+  try {
+    const reference = await findReferenceById(req.params.id);
+    if (!reference || reference.status !== Status.APPROVED) {
+      return res.status(404).render('index', {
+        pageTitle: 'Busca Pública',
+        contextName: 'Busca de Dados Etnobotânicos',
+        contextDescription: 'Conheça a relação de comunidades tradicionais com suas plantas',
+        showNavigation: true,
+        filters: { q: '', tipo: '', comunidade: '', planta: '', estado: '', municipio: '' },
+        results: [],
+        pagination: { page: 1, limit: 50, total: 0, totalPages: 0, hasNext: false, hasPrev: false },
+        error: 'Referência não encontrada'
+      });
+    }
+    res.render('reference-detail', {
+      pageTitle: reference.titulo,
+      contextName: 'Detalhe da Referência',
+      contextDescription: '',
+      reference
+    });
+  } catch (error) {
+    logger.error('Failed to load reference detail:', error.message);
+    next(error);
   }
 });
 

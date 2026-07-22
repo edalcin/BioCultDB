@@ -1,4 +1,4 @@
-<article class="result-card" x-data="{ expanded: false }" @expand-all.window="expanded = true" @collapse-all.window="expanded = false">
+<article class="result-card" x-data="{ expanded: <%= (typeof startExpanded !== 'undefined' && startExpanded) ? 'true' : 'false' %> }" @expand-all.window="expanded = true" @collapse-all.window="expanded = false">
   <!-- Reference Header - Clickable -->
   <header
     class="border-b border-gray-200 pb-3 mb-3 cursor-pointer hover:bg-gray-50 -m-4 p-4 rounded-t-lg transition-colors"
