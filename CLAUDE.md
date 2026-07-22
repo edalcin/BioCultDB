@@ -85,6 +85,23 @@ docker-compose up -d
 - 2025-12-25: Added Node.js 20 LTS (Alpine Linux base) + Express.js (web framework), better-sqlite3 (SQLite + JSON1), EJS (templates), HTMX + Alpine.js (frontend), Tailwind CSS
 
 <!-- MANUAL ADDITIONS START -->
+## Regra: Mudanças no submódulo `bioculttermos`
+
+Toda alteração feita dentro de `bioculttermos/` (submódulo compartilhado, mesmo remoto de
+`github.com/edalcin/BioCultTermos` usado por todas as unidades federadas) segue este fluxo — ver
+ADR-007 e ADR-010 em `Arquitetura-BioCultural/docs/architecture-decisions/`:
+
+1. **Commit + push para o remoto compartilhado** (obrigatório): `cd bioculttermos && git push origin main`.
+2. **Documentar em `BioCultTermos/CHANGELOG.md`** (obrigatório) — data, unidade de origem (BioCultDB),
+   resumo, SHA. O BioCultTermos é a documentação central do módulo compartilhado (ADR-010 G2).
+3. **Bump do ponteiro + commit no BioCultDB** (obrigatório): `cd .. && git add bioculttermos && git commit`.
+4. **Bump nas outras unidades hospedeiras é opcional** (ADR-007 F3, reafirmado pelo ADR-010) — cada uma
+   decide quando incorporar.
+
+**Build Docker**: use sempre `docker/build-unidade.sh` (nunca `docker compose build` direto) — ele falha
+cedo se o submodule local não bater com o commit pinado, e carimba `/app/BUILD_INFO` com os SHAs do
+BioCultDB e do bioculttermos, verificável em runtime via `docker exec <container> cat /app/BUILD_INFO`
+(ADR-010 G3). Ver `docker/Dockerfile.unidade` e `verify-container-setup.sh`.
 <!-- MANUAL ADDITIONS END -->
 
 ## graphify
