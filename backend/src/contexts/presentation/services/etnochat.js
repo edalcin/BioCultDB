@@ -5,135 +5,16 @@
  * Handles API key validation, model listing, and chat streaming
  */
 
-const Anthropic = require('@anthropic-ai/sdk');
-const OpenAI = require('openai');
-const { GoogleGenAI } = require('@google/genai');
 const fs = require('fs');
 const path = require('path');
 const database = require('../../../shared/database');
 const { Status } = require('../../../models/Reference');
 const logger = require('../../../shared/logger');
+const { PROVIDERS, createClient, validateApiKey, getModels, getProviders } = require('../../../services/ai-providers');
 
 // Load system prompt
 const systemPromptPath = path.join(__dirname, '../prompts/etnochat-system.md');
 const systemPrompt = fs.readFileSync(systemPromptPath, 'utf-8');
-
-/**
- * Provider configurations
- */
-const PROVIDERS = {
-  claude: {
-    name: 'Claude (Anthropic)',
-    models: [
-      { id: 'claude-opus-4-5-20251101', name: 'Claude Opus 4.5' },
-      { id: 'claude-sonnet-4-5-20250929', name: 'Claude Sonnet 4.5' },
-      { id: 'claude-3-5-haiku-20241022', name: 'Claude Haiku 3.5' }
-    ]
-  },
-  openai: {
-    name: 'OpenAI',
-    models: [
-      { id: 'gpt-4o', name: 'GPT-4o' },
-      { id: 'gpt-4o-mini', name: 'GPT-4o Mini' },
-      { id: 'gpt-4-turbo', name: 'GPT-4 Turbo' }
-    ]
-  },
-  gemini: {
-    name: 'Google Gemini',
-    models: [
-      { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash' },
-      { id: 'gemini-2.5-pro', name: 'Gemini 2.5 Pro' },
-      { id: 'gemini-2.0-flash-thinking-exp-01-21', name: 'Gemini 2.0 Flash Thinking (Experimental)' }
-    ]
-  }
-};
-
-/**
- * Validate API key by making a minimal API call
- * @param {string} provider - Provider name (claude, openai, gemini)
- * @param {string} apiKey - API key to validate
- * @param {string} model - Model ID to test (optional, uses default if not provided)
- * @returns {Promise<{valid: boolean, error?: string}>}
- */
-async function validateApiKey(provider, apiKey, model = null) {
-  try {
-    // Get default model if not provided
-    if (!model) {
-      const providerConfig = PROVIDERS[provider];
-      if (!providerConfig || !providerConfig.models || providerConfig.models.length === 0) {
-        return { valid: false, error: 'Provedor desconhecido ou sem modelos' };
-      }
-      model = providerConfig.models[0].id;
-    }
-
-    // Verify model is available for this provider
-    const providerConfig = PROVIDERS[provider];
-    if (providerConfig) {
-      const modelExists = providerConfig.models.some(m => m.id === model);
-      if (!modelExists) {
-        return { valid: false, error: `Modelo ${model} não disponível para ${providerConfig.name}` };
-      }
-    }
-
-    switch (provider) {
-      case 'claude': {
-        const client = new Anthropic({ apiKey });
-        await client.messages.create({
-          model: model,
-          max_tokens: 1,
-          messages: [{ role: 'user', content: 'Hi' }]
-        });
-        return { valid: true };
-      }
-
-      case 'openai': {
-        const client = new OpenAI({ apiKey });
-        await client.chat.completions.create({
-          model: model,
-          max_tokens: 1,
-          messages: [{ role: 'user', content: 'Hi' }]
-        });
-        return { valid: true };
-      }
-
-      case 'gemini': {
-        const client = new GoogleGenAI({ apiKey });
-        await client.models.generateContent({
-          model: model,
-          contents: 'Hi'
-        });
-        return { valid: true };
-      }
-
-      default:
-        return { valid: false, error: 'Provedor desconhecido' };
-    }
-  } catch (error) {
-    logger.error(`API key validation failed for ${provider} with model ${model}:`, error.message);
-    return { valid: false, error: error.message };
-  }
-}
-
-/**
- * Get available models for a provider
- * @param {string} provider - Provider name
- * @returns {Array<{id: string, name: string}>}
- */
-function getModels(provider) {
-  const providerConfig = PROVIDERS[provider];
-  return providerConfig ? providerConfig.models : [];
-}
-
-/**
- * Get all available providers
- * @returns {Array<{id: string, name: string}>}
- */
-function getProviders() {
-  return Object.entries(PROVIDERS).map(([id, config]) => ({
-    id,
-    name: config.name
-  }));
-}
 
 /**
  * Extract the restricted filter DSL emitted by the LLM (hidden format).
@@ -423,7 +304,7 @@ async function streamChat({ provider, apiKey, model, messages, onText, onEnd, on
 
     switch (provider) {
       case 'claude': {
-        const client = new Anthropic({ apiKey });
+        const client = createClient(provider, apiKey);
         const stream = client.messages
           .stream({
             model,
@@ -446,7 +327,7 @@ async function streamChat({ provider, apiKey, model, messages, onText, onEnd, on
       }
 
       case 'openai': {
-        const client = new OpenAI({ apiKey });
+        const client = createClient(provider, apiKey);
         const stream = await client.chat.completions.create({
           model,
           max_tokens: 4096,
@@ -468,7 +349,7 @@ async function streamChat({ provider, apiKey, model, messages, onText, onEnd, on
       }
 
       case 'gemini': {
-        const client = new GoogleGenAI({ apiKey });
+        const client = createClient(provider, apiKey);
 
         // Convert messages to Gemini format
         const geminiContents = [
