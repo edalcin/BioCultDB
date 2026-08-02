@@ -40,10 +40,56 @@ function extracaoIA() {
 
     // Extraction
     texto: '',
-    phase: '', // '', 'consultando', 'salvando', 'sucesso', 'erro'
+    arquivoNome: '',
+    phase: '', // '', 'lendo-pdf', 'consultando', 'salvando', 'sucesso', 'erro'
     errorMessage: '',
     resultId: null,
     curadoriaUrl: '',
+
+    // PDF is read entirely in the browser (ADR-002 06) — the binary never
+    // leaves the machine, only the extracted text does. pdf.js comes from
+    // the CDN, same convention as Alpine/HTMX in this repo (no JS build
+    // step, no new server dependency).
+    async selecionarArquivo(event) {
+      const file = event.target.files[0];
+      event.target.value = ''; // allow re-selecting the same file after an error
+      if (!file) return;
+
+      if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) {
+        this.phase = 'erro';
+        this.errorMessage = 'Arquivo não é um PDF. Selecione um arquivo .pdf ou cole o texto diretamente.';
+        return;
+      }
+
+      this.phase = 'lendo-pdf';
+      this.errorMessage = '';
+
+      try {
+        const buffer = await file.arrayBuffer();
+        const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
+        let text = '';
+        for (let i = 1; i <= pdf.numPages; i++) {
+          const page = await pdf.getPage(i);
+          const content = await page.getTextContent();
+          text += content.items.map((item) => item.str).join(' ') + '\n';
+        }
+
+        if (isPdfTextEmpty(text)) {
+          this.phase = 'erro';
+          this.errorMessage = 'Este PDF não tem camada de texto (provavelmente digitalizado/escaneado). ' +
+            'Passe-o por OCR antes, ou cole o texto do artigo diretamente na caixa abaixo.';
+          return;
+        }
+
+        this.texto = text.trim();
+        this.arquivoNome = file.name;
+        this.phase = '';
+      } catch (e) {
+        console.error('PDF read error:', e);
+        this.phase = 'erro';
+        this.errorMessage = 'Falha ao ler o PDF. Tente novamente ou cole o texto diretamente.';
+      }
+    },
 
     async init() {
       this.providers = [
@@ -185,7 +231,7 @@ function extracaoIA() {
     },
 
     get isBusy() {
-      return this.phase === 'consultando' || this.phase === 'salvando';
+      return this.phase === 'lendo-pdf' || this.phase === 'consultando' || this.phase === 'salvando';
     },
 
     // Extraction — two round trips so progress can distinguish "consulting
@@ -248,6 +294,7 @@ function extracaoIA() {
 
     novaExtracao() {
       this.texto = '';
+      this.arquivoNome = '';
       this.phase = '';
       this.errorMessage = '';
       this.resultId = null;

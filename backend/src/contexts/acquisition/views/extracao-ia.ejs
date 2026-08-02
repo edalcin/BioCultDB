@@ -6,6 +6,10 @@
   <title><%= pageTitle %> - BioCultDB</title>
   <link rel="stylesheet" href="/styles/main.css">
   <script src="https://unpkg.com/alpinejs@3.13.3" defer></script>
+  <script src="https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
+  <script>
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
+  </script>
 </head>
 <body class="min-h-screen bg-gray-50" x-data="extracaoIA()">
 
@@ -74,9 +78,18 @@
       <section class="card">
         <h2 class="text-xl font-semibold text-gray-900 mb-2">Texto do Artigo</h2>
         <p class="text-sm text-gray-600 mb-4">
-          Cole o texto de um artigo científico. Ao final, uma Evidência <strong>pendente</strong> é
+          Selecione um PDF (lido inteiramente no navegador — o arquivo nunca é enviado ao servidor) ou
+          cole o texto de um artigo científico. Ao final, uma Evidência <strong>pendente</strong> é
           gravada e aparece na Curadoria — mesmo que a extração venha incompleta.
         </p>
+
+        <div class="flex items-center gap-3 mb-4">
+          <label class="btn btn-secondary cursor-pointer" :class="{ 'opacity-50 pointer-events-none': isBusy }">
+            Selecionar PDF
+            <input type="file" accept="application/pdf,.pdf" class="hidden" @change="selecionarArquivo($event)" :disabled="isBusy">
+          </label>
+          <span class="text-sm text-gray-600" x-show="arquivoNome" x-text="'Extraído de: ' + arquivoNome"></span>
+        </div>
 
         <textarea
           x-model="texto"
@@ -104,12 +117,13 @@
       </section>
 
       <!-- Progress -->
-      <section class="card bg-blue-50 border border-blue-200" x-show="phase === 'consultando' || phase === 'salvando'">
+      <section class="card bg-blue-50 border border-blue-200" x-show="phase === 'lendo-pdf' || phase === 'consultando' || phase === 'salvando'">
         <div class="flex items-center gap-3 text-blue-800">
           <svg class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
           </svg>
+          <span x-show="phase === 'lendo-pdf'">Lendo PDF...</span>
           <span x-show="phase === 'consultando'">Consultando a IA...</span>
           <span x-show="phase === 'salvando'">Salvando a Evidência...</span>
         </div>
@@ -153,6 +167,7 @@
   </footer>
 
   <!-- Extração por IA JavaScript -->
+  <script src="/scripts/pdf-text.js"></script>
   <script src="/scripts/extraction.js"></script>
 
 </body>
