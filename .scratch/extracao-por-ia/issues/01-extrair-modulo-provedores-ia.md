@@ -18,7 +18,7 @@ Contexto: `.scratch/extracao-por-ia/spec.md` e `docs/decisions/ADR-002-extracao-
 
 **Bloqueado por:** nada — pode começar imediatamente.
 
-**Status:** done-pending-manual (5/6 critérios verificados; falta checagem manual na interface com chaves reais — ver Comments)
+**Status:** done
 
 - [x] O registro de provedores, a validação de chave, a listagem de modelos e a criação de cliente
       vivem num módulo compartilhado no nível de serviços, fora do contexto de Apresentação
@@ -27,7 +27,7 @@ Contexto: `.scratch/extracao-por-ia/spec.md` e `docs/decisions/ADR-002-extracao-
 - [x] O serviço do etnoChat retém o prompt do chat, a DSL, o executor de consultas e o streaming
 - [x] **A suíte de testes existente passa sem nenhuma alteração nos testes** — este é o sinal de que o
       comportamento não mudou. Se um teste precisar ser editado, o refactor extrapolou o escopo
-- [ ] O etnoChat continua validando chave, listando modelos e respondendo com streaming para os três
+- [x] O etnoChat continua validando chave, listando modelos e respondendo com streaming para os três
       provedores atuais, verificado manualmente na interface
 - [x] Nenhuma dependência nova em `package.json`
 
@@ -62,3 +62,8 @@ Achados não aplicados (fora do escopo deste ticket, por design): manter `etnoch
 `validateApiKey/getModels/getProviders` (routes.js segue chamando via `etnochatService.*`; tocar
 `routes.js` não foi pedido e ampliaria o diff) e os três `switch(provider)` remanescentes (consolidar
 dispatch é trabalho do ticket 03, que já vai tocar esta função para adicionar o OpenRouter).
+
+Verificação manual concluída pelo usuário na interface (`localhost:3003/etnochat`): Google Gemini
+validado (chave válida, modelo Gemini 2.5 Flash) e os três provedores (Claude, OpenAI, Gemini)
+confirmados com validação de chave, listagem de modelos e conversa com streaming funcionando.
+Ticket fechado — todos os 6 critérios de aceite atendidos.
