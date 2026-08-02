@@ -1,12 +1,12 @@
 /**
  * Database Service
  *
- * CRUD operations for reference documents.
- * Persists the Reference document (JSON) in `biocultdb_records.doc` (SQLite+JSON1,
+ * CRUD operations for evidence documents.
+ * Persists the Evidence document (JSON) in `biocultdb_records.doc` (SQLite+JSON1,
  * ADR-005) and keeps the `biocultdb_records_fts` FTS5 table in sync inside the
  * same transaction as every write (insert/update/delete), per DA4.
  *
- * `query` contract accepted by findReferences/countReferences/searchReferences:
+ * `query` contract accepted by findEvidences/countEvidences/searchEvidences:
  *   {
  *     status?: string,   // exact match on the generated `status` column
  *     ano?: number,       // exact match on the generated `ano` column
@@ -20,7 +20,7 @@
 
 const database = require('../shared/database');
 const logger = require('../shared/logger');
-const { createReference, updateReference, Status } = require('../models/Reference');
+const { createEvidence, updateEvidence, Status } = require('../models/Evidence');
 
 /**
  * Whitelist of searchable JSON paths and how to reach them from `doc`.
@@ -207,11 +207,11 @@ function buildOrderClause(sort) {
 }
 
 /**
- * Parse a `biocultdb_records` row into the full Reference object.
+ * Parse a `biocultdb_records` row into the full Evidence object.
  * @param {{id: string, doc: string, created_at: string, updated_at: string}} row
  * @returns {Object}
  */
-function rowToReference(row) {
+function rowToEvidence(row) {
   const doc = JSON.parse(row.doc);
   return {
     ...doc,
@@ -222,32 +222,32 @@ function rowToReference(row) {
 }
 
 /**
- * Restrict a Reference object to the requested Mongo-style projection
+ * Restrict an Evidence object to the requested Mongo-style projection
  * ({ field: 1, ... }); `id` is always kept. No-op when projection is empty.
- * @param {Object} reference
+ * @param {Object} evidence
  * @param {Object} projection
  * @returns {Object}
  */
-function applyProjection(reference, projection) {
-  if (!projection || Object.keys(projection).length === 0) return reference;
+function applyProjection(evidence, projection) {
+  if (!projection || Object.keys(projection).length === 0) return evidence;
 
-  const result = { id: reference.id };
+  const result = { id: evidence.id };
   for (const [key, include] of Object.entries(projection)) {
-    if (include) result[key] = reference[key];
+    if (include) result[key] = evidence[key];
   }
   return result;
 }
 
 /**
- * Build the searchable text extracted from a Reference for the FTS5 row.
- * @param {Object} reference
+ * Build the searchable text extracted from an Evidence for the FTS5 row.
+ * @param {Object} evidence
  * @returns {{titulo: string, autores: string, resumo: string, doi: string, comunidades: string}}
  */
-function ftsRowFromReference(reference) {
-  const autores = Array.isArray(reference.autores) ? reference.autores.join(' ') : '';
+function ftsRowFromEvidence(evidence) {
+  const autores = Array.isArray(evidence.autores) ? evidence.autores.join(' ') : '';
 
-  const comunidadesText = Array.isArray(reference.comunidades)
-    ? reference.comunidades
+  const comunidadesText = Array.isArray(evidence.comunidades)
+    ? evidence.comunidades
         .map((com) => {
           const plantasText = Array.isArray(com.plantas)
             ? com.plantas
@@ -280,21 +280,21 @@ function ftsRowFromReference(reference) {
     : '';
 
   return {
-    titulo: reference.titulo || '',
+    titulo: evidence.titulo || '',
     autores,
-    resumo: reference.resumo || '',
-    doi: reference.DOI || '',
+    resumo: evidence.resumo || '',
+    doi: evidence.DOI || '',
     comunidades: comunidadesText
   };
 }
 
 /**
- * Check if a reference with the same title and year already exists
- * @param {string} titulo - Reference title
+ * Check if an evidence with the same title and year already exists
+ * @param {string} titulo - Evidence title
  * @param {number} ano - Publication year
- * @returns {Promise<Object|null>} Existing reference or null
+ * @returns {Promise<Object|null>} Existing evidence or null
  */
-async function checkDuplicateReference(titulo, ano) {
+async function checkDuplicateEvidence(titulo, ano) {
   try {
     const db = getDb();
 
@@ -304,25 +304,25 @@ async function checkDuplicateReference(titulo, ano) {
 
     if (!row) return null;
 
-    logger.database(`Duplicate reference found: "${titulo}" (${ano})`);
-    return rowToReference(row);
+    logger.database(`Duplicate evidence found: "${titulo}" (${ano})`);
+    return rowToEvidence(row);
   } catch (error) {
-    logger.error('Failed to check duplicate reference:', error.message);
+    logger.error('Failed to check duplicate evidence:', error.message);
     throw new Error(`Falha ao verificar duplicata: ${error.message}`);
   }
 }
 
 /**
- * Insert new reference
- * @param {Object} referenceData - Reference data
+ * Insert new evidence
+ * @param {Object} evidenceData - Evidence data
  * @returns {Promise<Object>} Inserted document with id
  */
-async function insertReference(referenceData) {
+async function insertEvidence(evidenceData) {
   try {
     const db = getDb();
-    const reference = createReference(referenceData);
-    const docJson = JSON.stringify(reference);
-    const fts = ftsRowFromReference(reference);
+    const evidence = createEvidence(evidenceData);
+    const docJson = JSON.stringify(evidence);
+    const fts = ftsRowFromEvidence(evidence);
 
     const insertRecord = db.prepare(
       `INSERT INTO ${database.TABLE} (id, doc, created_at, updated_at) VALUES (?, ?, ?, ?)`
@@ -332,27 +332,27 @@ async function insertReference(referenceData) {
     );
 
     const runInTransaction = db.transaction(() => {
-      insertRecord.run(reference.id, docJson, reference.createdAt, reference.updatedAt);
-      insertFts.run(reference.id, fts.titulo, fts.autores, fts.resumo, fts.doi, fts.comunidades);
+      insertRecord.run(evidence.id, docJson, evidence.createdAt, evidence.updatedAt);
+      insertFts.run(evidence.id, fts.titulo, fts.autores, fts.resumo, fts.doi, fts.comunidades);
     });
     runInTransaction();
 
-    logger.database(`Reference inserted with ID: ${reference.id}`);
+    logger.database(`Evidence inserted with ID: ${evidence.id}`);
 
-    return reference;
+    return evidence;
   } catch (error) {
-    logger.error('Failed to insert reference:', error.message);
-    throw new Error(`Falha ao salvar referência: ${error.message}`);
+    logger.error('Failed to insert evidence:', error.message);
+    throw new Error(`Falha ao salvar evidência: ${error.message}`);
   }
 }
 
 /**
- * Find references by query
+ * Find evidences by query
  * @param {Object} query - Structured query (see module doc)
  * @param {Object} options - Query options (projection, limit, skip, sort)
- * @returns {Promise<Array>} Array of references
+ * @returns {Promise<Array>} Array of evidences
  */
-async function findReferences(query = {}, options = {}) {
+async function findEvidences(query = {}, options = {}) {
   try {
     const db = getDb();
     const { projection = {}, limit = 0, skip = 0, sort = { createdAt: -1 } } = options;
@@ -376,23 +376,23 @@ async function findReferences(query = {}, options = {}) {
     }
 
     const rows = db.prepare(sql).all(...finalParams);
-    const references = rows.map((row) => applyProjection(rowToReference(row), projection));
+    const evidences = rows.map((row) => applyProjection(rowToEvidence(row), projection));
 
-    logger.database(`Found ${references.length} references`);
+    logger.database(`Found ${evidences.length} evidences`);
 
-    return references;
+    return evidences;
   } catch (error) {
-    logger.error('Failed to find references:', error.message);
-    throw new Error(`Falha ao buscar referências: ${error.message}`);
+    logger.error('Failed to find evidences:', error.message);
+    throw new Error(`Falha ao buscar evidências: ${error.message}`);
   }
 }
 
 /**
- * Find reference by ID
- * @param {string} id - Reference ID
- * @returns {Promise<Object|null>} Reference document or null
+ * Find evidence by ID
+ * @param {string} id - Evidence ID
+ * @returns {Promise<Object|null>} Evidence document or null
  */
-async function findReferenceById(id) {
+async function findEvidenceById(id) {
   try {
     const db = getDb();
     const row = db
@@ -400,40 +400,40 @@ async function findReferenceById(id) {
       .get(id);
 
     if (row) {
-      logger.database(`Found reference with ID: ${id}`);
+      logger.database(`Found evidence with ID: ${id}`);
     } else {
-      logger.database(`Reference not found with ID: ${id}`);
+      logger.database(`Evidence not found with ID: ${id}`);
     }
 
-    return row ? rowToReference(row) : null;
+    return row ? rowToEvidence(row) : null;
   } catch (error) {
-    logger.error('Failed to find reference by ID:', error.message);
-    throw new Error(`Falha ao buscar referência: ${error.message}`);
+    logger.error('Failed to find evidence by ID:', error.message);
+    throw new Error(`Falha ao buscar evidência: ${error.message}`);
   }
 }
 
 /**
- * Update reference by ID
- * @param {string} id - Reference ID
+ * Update evidence by ID
+ * @param {string} id - Evidence ID
  * @param {Object} updateData - Data to update
- * @returns {Promise<Object|null>} Updated reference, or null if not found
+ * @returns {Promise<Object|null>} Updated evidence, or null if not found
  */
-async function updateReferenceById(id, updateData) {
+async function updateEvidenceById(id, updateData) {
   try {
-    logger.database(`updateReferenceById called with ID: ${id}`);
+    logger.database(`updateEvidenceById called with ID: ${id}`);
 
     const db = getDb();
     const existingRow = db.prepare(`SELECT doc FROM ${database.TABLE} WHERE id = ?`).get(id);
 
     if (!existingRow) {
-      logger.error(`Reference with ID ${id} NOT FOUND in database`);
+      logger.error(`Evidence with ID ${id} NOT FOUND in database`);
       return null;
     }
 
     const existing = JSON.parse(existingRow.doc);
-    const updated = updateReference({ ...existing, ...updateData, id });
+    const updated = updateEvidence({ ...existing, ...updateData, id });
     const docJson = JSON.stringify(updated);
-    const fts = ftsRowFromReference(updated);
+    const fts = ftsRowFromEvidence(updated);
 
     const updateRecord = db.prepare(
       `UPDATE ${database.TABLE} SET doc = ?, updated_at = ? WHERE id = ?`
@@ -446,30 +446,30 @@ async function updateReferenceById(id, updateData) {
     const runInTransaction = db.transaction(() => {
       const result = updateRecord.run(docJson, updated.updatedAt, id);
       if (result.changes === 0) {
-        throw new Error('Referência não encontrada');
+        throw new Error('Evidência não encontrada');
       }
       deleteFts.run(id);
       insertFts.run(id, fts.titulo, fts.autores, fts.resumo, fts.doi, fts.comunidades);
     });
     runInTransaction();
 
-    logger.database(`Reference updated successfully with ID: ${id}`);
+    logger.database(`Evidence updated successfully with ID: ${id}`);
 
     return updated;
   } catch (error) {
-    logger.error(`Failed to update reference ${id}:`, error.message);
-    throw new Error(`Falha ao atualizar referência: ${error.message}`);
+    logger.error(`Failed to update evidence ${id}:`, error.message);
+    throw new Error(`Falha ao atualizar evidência: ${error.message}`);
   }
 }
 
 /**
- * Update reference status only
- * @param {string} id - Reference ID
+ * Update evidence status only
+ * @param {string} id - Evidence ID
  * @param {string} status - New status (pending|approved|rejected)
  * @param {string|null} justificativaRejeicao - Justification for rejection (only for 'rejected' status)
- * @returns {Promise<Object>} Updated reference
+ * @returns {Promise<Object>} Updated evidence
  */
-async function updateReferenceStatus(id, status, justificativaRejeicao = null) {
+async function updateEvidenceStatus(id, status, justificativaRejeicao = null) {
   try {
     if (!Object.values(Status).includes(status)) {
       throw new Error('Status inválido');
@@ -479,7 +479,7 @@ async function updateReferenceStatus(id, status, justificativaRejeicao = null) {
     const existingRow = db.prepare(`SELECT doc FROM ${database.TABLE} WHERE id = ?`).get(id);
 
     if (!existingRow) {
-      throw new Error('Referência não encontrada');
+      throw new Error('Evidência não encontrada');
     }
 
     const existing = JSON.parse(existingRow.doc);
@@ -492,7 +492,7 @@ async function updateReferenceStatus(id, status, justificativaRejeicao = null) {
     }
 
     const docJson = JSON.stringify(updated);
-    const fts = ftsRowFromReference(updated);
+    const fts = ftsRowFromEvidence(updated);
 
     const updateRecord = db.prepare(
       `UPDATE ${database.TABLE} SET doc = ?, updated_at = ? WHERE id = ?`
@@ -505,28 +505,28 @@ async function updateReferenceStatus(id, status, justificativaRejeicao = null) {
     const runInTransaction = db.transaction(() => {
       const result = updateRecord.run(docJson, updated.updatedAt, id);
       if (result.changes === 0) {
-        throw new Error('Referência não encontrada');
+        throw new Error('Evidência não encontrada');
       }
       deleteFts.run(id);
       insertFts.run(id, fts.titulo, fts.autores, fts.resumo, fts.doi, fts.comunidades);
     });
     runInTransaction();
 
-    logger.database(`Reference status updated to "${status}" for ID: ${id}`);
+    logger.database(`Evidence status updated to "${status}" for ID: ${id}`);
 
     return updated;
   } catch (error) {
-    logger.error('Failed to update reference status:', error.message);
+    logger.error('Failed to update evidence status:', error.message);
     throw new Error(`Falha ao atualizar status: ${error.message}`);
   }
 }
 
 /**
- * Delete reference by ID
- * @param {string} id - Reference ID
+ * Delete evidence by ID
+ * @param {string} id - Evidence ID
  * @returns {Promise<boolean>} True if deleted
  */
-async function deleteReferenceById(id) {
+async function deleteEvidenceById(id) {
   try {
     const db = getDb();
 
@@ -536,27 +536,27 @@ async function deleteReferenceById(id) {
     const runInTransaction = db.transaction(() => {
       const result = deleteRecord.run(id);
       if (result.changes === 0) {
-        throw new Error('Referência não encontrada');
+        throw new Error('Evidência não encontrada');
       }
       deleteFts.run(id);
     });
     runInTransaction();
 
-    logger.database(`Reference deleted with ID: ${id}`);
+    logger.database(`Evidence deleted with ID: ${id}`);
 
     return true;
   } catch (error) {
-    logger.error('Failed to delete reference:', error.message);
-    throw new Error(`Falha ao deletar referência: ${error.message}`);
+    logger.error('Failed to delete evidence:', error.message);
+    throw new Error(`Falha ao deletar evidência: ${error.message}`);
   }
 }
 
 /**
- * Count references by query
+ * Count evidences by query
  * @param {Object} query - Structured query (see module doc)
  * @returns {Promise<number>} Count of documents
  */
-async function countReferences(query = {}) {
+async function countEvidences(query = {}) {
   try {
     const db = getDb();
     const { sql: whereSql, params } = buildWhereClause(query);
@@ -564,56 +564,56 @@ async function countReferences(query = {}) {
     const row = db.prepare(`SELECT COUNT(*) as n FROM ${database.TABLE} ${whereSql}`.trim()).get(...params);
     const count = row.n;
 
-    logger.database(`Counted ${count} references`);
+    logger.database(`Counted ${count} evidences`);
 
     return count;
   } catch (error) {
-    logger.error('Failed to count references:', error.message);
-    throw new Error(`Falha ao contar referências: ${error.message}`);
+    logger.error('Failed to count evidences:', error.message);
+    throw new Error(`Falha ao contar evidências: ${error.message}`);
   }
 }
 
 /**
- * Search references with pagination
+ * Search evidences with pagination
  * @param {Object} query - Structured query (see module doc)
  * @param {number} page - Page number (1-based)
  * @param {number} limit - Results per page
- * @returns {Promise<Object>} { references, total, page, totalPages }
+ * @returns {Promise<Object>} { evidences, total, page, totalPages }
  */
-async function searchReferences(query = {}, page = 1, limit = 50) {
+async function searchEvidences(query = {}, page = 1, limit = 50) {
   try {
     const skip = (page - 1) * limit;
 
-    const [references, total] = await Promise.all([
-      findReferences(query, { limit, skip }),
-      countReferences(query)
+    const [evidences, total] = await Promise.all([
+      findEvidences(query, { limit, skip }),
+      countEvidences(query)
     ]);
 
     const totalPages = Math.ceil(total / limit);
 
-    logger.database(`Search returned ${references.length} of ${total} total references (page ${page}/${totalPages})`);
+    logger.database(`Search returned ${evidences.length} of ${total} total evidences (page ${page}/${totalPages})`);
 
     return {
-      references,
+      evidences,
       total,
       page,
       limit,
       totalPages
     };
   } catch (error) {
-    logger.error('Failed to search references:', error.message);
+    logger.error('Failed to search evidences:', error.message);
     throw new Error(`Falha na busca: ${error.message}`);
   }
 }
 
 module.exports = {
-  checkDuplicateReference,
-  insertReference,
-  findReferences,
-  findReferenceById,
-  updateReferenceById,
-  updateReferenceStatus,
-  deleteReferenceById,
-  countReferences,
-  searchReferences
+  checkDuplicateEvidence,
+  insertEvidence,
+  findEvidences,
+  findEvidenceById,
+  updateEvidenceById,
+  updateEvidenceStatus,
+  deleteEvidenceById,
+  countEvidences,
+  searchEvidences
 };

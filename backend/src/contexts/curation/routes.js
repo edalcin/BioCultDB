@@ -2,24 +2,24 @@
  * Curation Context Routes
  *
  * Routes for data curation workflow:
- * - GET /: List all references with status filter
- * - GET /reference/edit/:id: Edit reference form
- * - PUT /reference/update/:id: Update reference content
- * - POST /reference/status/:id: Update reference status only
- * - POST /reference/delete/:id: Delete reference
- * - POST /reference/:id/community/add: Add community fragment (HTMX)
- * - POST /reference/:id/plant/add/:communityIndex: Add plant fragment (HTMX)
+ * - GET /: List all evidences with status filter
+ * - GET /evidence/edit/:id: Edit evidence form
+ * - PUT /evidence/update/:id: Update evidence content
+ * - POST /evidence/status/:id: Update evidence status only
+ * - POST /evidence/delete/:id: Delete evidence
+ * - POST /evidence/:id/community/add: Add community fragment (HTMX)
+ * - POST /evidence/:id/plant/add/:communityIndex: Add plant fragment (HTMX)
  */
 
 const express = require('express');
 const router = express.Router();
-const { findReferences, findReferenceById, updateReferenceById, updateReferenceStatus, deleteReferenceById } = require('../../services/database');
-const { validateReference } = require('../../services/validation');
-const { Status } = require('../../models/Reference');
+const { findEvidences, findEvidenceById, updateEvidenceById, updateEvidenceStatus, deleteEvidenceById } = require('../../services/database');
+const { validateEvidence } = require('../../services/validation');
+const { Status } = require('../../models/Evidence');
 const logger = require('../../shared/logger');
 
 /**
- * GET / - List all references with optional status filter and sorting
+ * GET / - List all evidences with optional status filter and sorting
  */
 router.get('/', async (req, res) => {
   try {
@@ -37,12 +37,12 @@ router.get('/', async (req, res) => {
     const sortOrder = order === 'asc' ? 1 : -1;
     const sortObj = { [sortField]: sortOrder };
 
-    // Fetch references with pagination
+    // Fetch evidences with pagination
     const pageNum = parseInt(page) || 1;
     const limitNum = parseInt(limit) || 50;
     const skip = (pageNum - 1) * limitNum;
 
-    const references = await findReferences(query, {
+    const evidences = await findEvidences(query, {
       limit: limitNum,
       skip,
       sort: sortObj,
@@ -56,17 +56,17 @@ router.get('/', async (req, res) => {
       }
     });
 
-    logger.curation(`Listing ${references.length} references (status: ${status || 'all'}, sort: ${sortField} ${order})`);
-    if (references.length > 0) {
-      logger.curation(`First reference ID: ${references[0].id}, title: ${references[0].titulo}`);
+    logger.curation(`Listing ${evidences.length} evidences (status: ${status || 'all'}, sort: ${sortField} ${order})`);
+    if (evidences.length > 0) {
+      logger.curation(`First evidence ID: ${evidences[0].id}, title: ${evidences[0].titulo}`);
     }
 
     res.render('index', {
       pageTitle: 'Curadoria',
       contextName: 'Curadoria de Dados Etnobotânicos',
-      contextDescription: 'Revisão e aprovação de referências científicas',
+      contextDescription: 'Revisão e aprovação de evidências científicas',
       showNavigation: true,
-      references,
+      evidences,
       statusFilter: status || 'all',
       sortField,
       sortOrder: order,
@@ -74,186 +74,186 @@ router.get('/', async (req, res) => {
     });
 
   } catch (error) {
-    logger.error('Failed to list references:', error.message);
+    logger.error('Failed to list evidences:', error.message);
 
     res.render('index', {
       pageTitle: 'Curadoria',
       contextName: 'Curadoria de Dados Etnobotânicos',
-      contextDescription: 'Revisão e aprovação de referências científicas',
+      contextDescription: 'Revisão e aprovação de evidências científicas',
       showNavigation: true,
-      references: [],
+      evidences: [],
       statusFilter: 'all',
       sortField: 'createdAt',
       sortOrder: 'desc',
       success: false,
-      error: 'Erro ao listar referências: ' + error.message
+      error: 'Erro ao listar evidências: ' + error.message
     });
   }
 });
 
 /**
- * GET /reference/edit/:id - Edit reference form
+ * GET /evidence/edit/:id - Edit evidence form
  */
-router.get('/reference/edit/:id', async (req, res) => {
+router.get('/evidence/edit/:id', async (req, res) => {
   try {
     logger.curation(`=== GET EDIT PAGE ===`);
-    logger.curation(`Requested reference ID: ${req.params.id}`);
+    logger.curation(`Requested evidence ID: ${req.params.id}`);
     logger.curation(`ID length: ${req.params.id.length}, type: ${typeof req.params.id}`);
 
-    const reference = await findReferenceById(req.params.id);
+    const evidence = await findEvidenceById(req.params.id);
 
-    if (!reference) {
-      logger.error(`Reference ${req.params.id} NOT FOUND when loading edit page`);
+    if (!evidence) {
+      logger.error(`Evidence ${req.params.id} NOT FOUND when loading edit page`);
       return res.status(404).render('error', {
-        message: 'Referência não encontrada',
+        message: 'Evidência não encontrada',
         error: {}
       });
     }
 
-    logger.curation(`Reference found: ${reference.id}`);
-    logger.curation(`Reference has ${reference.comunidades.length} communities`);
-    logger.curation(`Reference title: ${reference.titulo}`);
+    logger.curation(`Evidence found: ${evidence.id}`);
+    logger.curation(`Evidence has ${evidence.comunidades.length} communities`);
+    logger.curation(`Evidence title: ${evidence.titulo}`);
 
     res.render('edit', {
-      pageTitle: 'Editar Referência',
+      pageTitle: 'Editar Evidência',
       contextName: 'Curadoria de Dados Etnobotânicos',
-      contextDescription: 'Edição de referência científica',
+      contextDescription: 'Edição de evidência científica',
       showNavigation: true,
-      reference,
+      evidence,
       errors: null
     });
 
   } catch (error) {
-    logger.error(`Failed to load reference ${req.params.id} for editing:`, error.message);
+    logger.error(`Failed to load evidence ${req.params.id} for editing:`, error.message);
     logger.error(`Stack:`, error.stack);
 
     res.status(500).render('error', {
-      message: 'Erro ao carregar referência: ' + error.message,
+      message: 'Erro ao carregar evidência: ' + error.message,
       error: {}
     });
   }
 });
 
 /**
- * PUT /reference/update/:id - Update reference content
+ * PUT /evidence/update/:id - Update evidence content
  */
-router.put('/reference/update/:id', async (req, res) => {
-  await handleReferenceUpdate(req, res);
+router.put('/evidence/update/:id', async (req, res) => {
+  await handleEvidenceUpdate(req, res);
 });
 
 /**
- * POST /reference/update/:id - Update reference content (alternative method)
+ * POST /evidence/update/:id - Update evidence content (alternative method)
  */
-router.post('/reference/update/:id', async (req, res) => {
-  await handleReferenceUpdate(req, res);
+router.post('/evidence/update/:id', async (req, res) => {
+  await handleEvidenceUpdate(req, res);
 });
 
 /**
- * Handle reference update (shared logic for PUT and POST)
+ * Handle evidence update (shared logic for PUT and POST)
  */
-async function handleReferenceUpdate(req, res) {
+async function handleEvidenceUpdate(req, res) {
   try {
-    logger.curation(`=== UPDATE REFERENCE START ===`);
-    logger.curation(`Reference ID from params: ${req.params.id}`);
+    logger.curation(`=== UPDATE EVIDENCE START ===`);
+    logger.curation(`Evidence ID from params: ${req.params.id}`);
     logger.curation(`Request method: ${req.method}`);
 
     // Parse form data
-    const referenceData = parseFormData(req.body);
+    const evidenceData = parseFormData(req.body);
 
-    // Validate reference data
-    const validation = validateReference(referenceData);
+    // Validate evidence data
+    const validation = validateEvidence(evidenceData);
 
     if (!validation.isValid) {
       logger.curation(`Validation failed: ${validation.errors.length} errors`);
-      logger.curation(`Fetching reference ${req.params.id} from database to preserve data...`);
+      logger.curation(`Fetching evidence ${req.params.id} from database to preserve data...`);
 
-      const reference = await findReferenceById(req.params.id);
+      const evidence = await findEvidenceById(req.params.id);
 
-      if (!reference) {
-        logger.error(`Reference ${req.params.id} NOT FOUND in database during validation error handling`);
+      if (!evidence) {
+        logger.error(`Evidence ${req.params.id} NOT FOUND in database during validation error handling`);
       } else {
-        logger.curation(`Reference ${req.params.id} found in database, has ${reference.comunidades.length} communities`);
+        logger.curation(`Evidence ${req.params.id} found in database, has ${evidence.comunidades.length} communities`);
       }
 
       // Preserve original data when validation fails to avoid data loss
       // Only update metadata fields, keep communities from form data if they exist
-      const preservedReference = {
-        ...reference,
-        titulo: referenceData.titulo || reference.titulo,
-        autores: referenceData.autores || reference.autores,
-        ano: referenceData.ano || reference.ano,
-        resumo: referenceData.resumo !== undefined ? referenceData.resumo : reference.resumo,
-        DOI: referenceData.DOI !== undefined ? referenceData.DOI : reference.DOI,
+      const preservedEvidence = {
+        ...evidence,
+        titulo: evidenceData.titulo || evidence.titulo,
+        autores: evidenceData.autores || evidence.autores,
+        ano: evidenceData.ano || evidence.ano,
+        resumo: evidenceData.resumo !== undefined ? evidenceData.resumo : evidence.resumo,
+        DOI: evidenceData.DOI !== undefined ? evidenceData.DOI : evidence.DOI,
         // Keep communities from form if they exist, otherwise use original
-        comunidades: (referenceData.comunidades && referenceData.comunidades.length > 0)
-          ? referenceData.comunidades
-          : reference.comunidades,
-        id: reference.id
+        comunidades: (evidenceData.comunidades && evidenceData.comunidades.length > 0)
+          ? evidenceData.comunidades
+          : evidence.comunidades,
+        id: evidence.id
       };
 
       return res.render('edit', {
-        pageTitle: 'Editar Referência',
+        pageTitle: 'Editar Evidência',
         contextName: 'Curadoria de Dados Etnobotânicos',
-        contextDescription: 'Edição de referência científica',
+        contextDescription: 'Edição de evidência científica',
         showNavigation: true,
-        reference: preservedReference,
+        evidence: preservedEvidence,
         errors: validation.errors
       });
     }
 
     // Filter empty plants before saving (only after validation passes)
-    logger.curation(`Validation passed. Filtering empty plants and updating reference ${req.params.id}...`);
-    referenceData.comunidades = referenceData.comunidades.map(com => ({
+    logger.curation(`Validation passed. Filtering empty plants and updating evidence ${req.params.id}...`);
+    evidenceData.comunidades = evidenceData.comunidades.map(com => ({
       ...com,
       plantas: filterEmptyPlants(com.plantas)
     }));
 
-    logger.curation(`Calling updateReferenceById for ${req.params.id} with ${referenceData.comunidades.length} communities`);
+    logger.curation(`Calling updateEvidenceById for ${req.params.id} with ${evidenceData.comunidades.length} communities`);
 
-    // Update reference
-    const updated = await updateReferenceById(req.params.id, referenceData);
+    // Update evidence
+    const updated = await updateEvidenceById(req.params.id, evidenceData);
 
     if (!updated) {
-      logger.error(`updateReferenceById returned null/undefined for ${req.params.id}`);
+      logger.error(`updateEvidenceById returned null/undefined for ${req.params.id}`);
     } else {
-      logger.curation(`Reference updated successfully: ${updated.id}`);
+      logger.curation(`Evidence updated successfully: ${updated.id}`);
     }
 
     // Redirect to list with success message
     res.redirect('/?success=true');
 
   } catch (error) {
-    logger.error(`=== UPDATE REFERENCE ERROR ===`);
-    logger.error(`Failed to update reference ${req.params.id}:`, error.message);
+    logger.error(`=== UPDATE EVIDENCE ERROR ===`);
+    logger.error(`Failed to update evidence ${req.params.id}:`, error.message);
     logger.error(`Error stack:`, error.stack);
 
-    logger.curation(`Fetching reference ${req.params.id} to show error page...`);
-    const reference = await findReferenceById(req.params.id);
+    logger.curation(`Fetching evidence ${req.params.id} to show error page...`);
+    const evidence = await findEvidenceById(req.params.id);
 
-    if (!reference) {
-      logger.error(`Reference ${req.params.id} NOT FOUND when trying to show error page`);
+    if (!evidence) {
+      logger.error(`Evidence ${req.params.id} NOT FOUND when trying to show error page`);
       return res.status(404).render('error', {
-        message: 'Referência não encontrada',
+        message: 'Evidência não encontrada',
         error: {}
       });
     }
 
-    logger.curation(`Rendering error page for reference ${req.params.id}`);
+    logger.curation(`Rendering error page for evidence ${req.params.id}`);
     res.render('edit', {
-      pageTitle: 'Editar Referência',
+      pageTitle: 'Editar Evidência',
       contextName: 'Curadoria de Dados Etnobotânicos',
-      contextDescription: 'Edição de referência científica',
+      contextDescription: 'Edição de evidência científica',
       showNavigation: true,
-      reference,
+      evidence,
       errors: ['Erro ao atualizar: ' + error.message]
     });
   }
 }
 
 /**
- * POST /reference/status/:id - Update reference status only
+ * POST /evidence/status/:id - Update evidence status only
  */
-router.post('/reference/status/:id', async (req, res) => {
+router.post('/evidence/status/:id', async (req, res) => {
   try {
     const { status, justificativaRejeicao } = req.body;
 
@@ -264,12 +264,12 @@ router.post('/reference/status/:id', async (req, res) => {
     // Justificativa só é salva quando o status é "rejected"
     const justificativa = status === Status.REJECTED ? (justificativaRejeicao?.trim() || null) : null;
 
-    const updated = await updateReferenceStatus(req.params.id, status, justificativa);
+    const updated = await updateEvidenceStatus(req.params.id, status, justificativa);
 
-    logger.curation(`Reference status updated to "${status}": ${updated.id}`);
+    logger.curation(`Evidence status updated to "${status}": ${updated.id}`);
 
     // Redirect back to edit page
-    res.redirect(`/reference/edit/${req.params.id}`);
+    res.redirect(`/evidence/edit/${req.params.id}`);
 
   } catch (error) {
     logger.error('Failed to update status:', error.message);
@@ -282,41 +282,41 @@ router.post('/reference/status/:id', async (req, res) => {
 });
 
 /**
- * POST /reference/delete/:id - Delete reference
+ * POST /evidence/delete/:id - Delete evidence
  */
-router.post('/reference/delete/:id', async (req, res) => {
+router.post('/evidence/delete/:id', async (req, res) => {
   try {
-    logger.curation(`Deleting reference: ${req.params.id}`);
+    logger.curation(`Deleting evidence: ${req.params.id}`);
 
-    const deleted = await deleteReferenceById(req.params.id);
+    const deleted = await deleteEvidenceById(req.params.id);
 
     if (!deleted) {
-      logger.error(`Reference ${req.params.id} not found for deletion`);
+      logger.error(`Evidence ${req.params.id} not found for deletion`);
       return res.status(404).render('error', {
-        message: 'Referência não encontrada',
+        message: 'Evidência não encontrada',
         error: {}
       });
     }
 
-    logger.curation(`Reference deleted successfully: ${req.params.id}`);
+    logger.curation(`Evidence deleted successfully: ${req.params.id}`);
 
     // Redirect to list with success message
     res.redirect('/?success=true');
 
   } catch (error) {
-    logger.error('Failed to delete reference:', error.message);
+    logger.error('Failed to delete evidence:', error.message);
 
     res.status(500).render('error', {
-      message: 'Erro ao deletar referência: ' + error.message,
+      message: 'Erro ao deletar evidência: ' + error.message,
       error: {}
     });
   }
 });
 
 /**
- * POST /reference/:id/community/add - Add community form fragment (HTMX)
+ * POST /evidence/:id/community/add - Add community form fragment (HTMX)
  */
-router.post('/reference/:id/community/add', (req, res) => {
+router.post('/evidence/:id/community/add', (req, res) => {
   const communityIndex = parseInt(req.body.communityIndex) || 0;
 
   logger.curation(`Adding community form fragment #${communityIndex}`);
@@ -324,14 +324,14 @@ router.post('/reference/:id/community/add', (req, res) => {
   res.render('partials/community-form', {
     communityIndex,
     community: null,
-    referenceId: req.params.id
+    evidenceId: req.params.id
   });
 });
 
 /**
- * POST /reference/:id/plant/add/:communityIndex - Add plant form fragment (HTMX)
+ * POST /evidence/:id/plant/add/:communityIndex - Add plant form fragment (HTMX)
  */
-router.post('/reference/:id/plant/add/:communityIndex', (req, res) => {
+router.post('/evidence/:id/plant/add/:communityIndex', (req, res) => {
   const communityIndex = parseInt(req.params.communityIndex);
   const plantIndex = parseInt(req.body.plantIndex) || 0;
 
@@ -423,7 +423,7 @@ function filterEmptyPlants(plantas) {
 }
 
 /**
- * Parse form data into reference structure
+ * Parse form data into evidence structure
  * Handles both pre-parsed (Express urlencoded with extended:true) and raw form data
  */
 function parseFormData(formData) {
@@ -432,7 +432,7 @@ function parseFormData(formData) {
     logger.curation(`parseFormData: Data already parsed as array by Express`);
 
     // Data is already in the correct format (parsed by Express urlencoded)
-    const reference = {
+    const evidence = {
       titulo: formData.titulo?.trim() || '',
       autores: parseCommaSeparated(formData.autores),
       ano: parseInt(formData.ano) || 0,
@@ -463,13 +463,13 @@ function parseFormData(formData) {
       }))
     };
 
-    logger.curation(`parseFormData: Parsed ${reference.comunidades.length} communities from Express array`);
-    return reference;
+    logger.curation(`parseFormData: Parsed ${evidence.comunidades.length} communities from Express array`);
+    return evidence;
   }
 
   // Original parsing for non-pre-parsed data
   logger.curation(`parseFormData: Using regex-based parsing`);
-  const reference = {
+  const evidence = {
     titulo: formData.titulo?.trim() || '',
     autores: parseCommaSeparated(formData.autores),
     ano: parseInt(formData.ano) || 0,
@@ -523,7 +523,7 @@ function parseFormData(formData) {
       });
     });
 
-    reference.comunidades.push({
+    evidence.comunidades.push({
       nome: comunidade.nome?.trim() || '',
       tipo: comunidade.tipo?.trim() || '',
       municipio: comunidade.municipio?.trim() || '',
@@ -535,8 +535,8 @@ function parseFormData(formData) {
     });
   });
 
-  logger.curation(`parseFormData: matched ${matchedKeys} keys, created ${reference.comunidades.length} communities`);
-  return reference;
+  logger.curation(`parseFormData: matched ${matchedKeys} keys, created ${evidence.comunidades.length} communities`);
+  return evidence;
 }
 
 function parseCommaSeparated(str) {

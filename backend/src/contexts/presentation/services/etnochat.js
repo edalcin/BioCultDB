@@ -8,7 +8,7 @@
 const fs = require('fs');
 const path = require('path');
 const database = require('../../../shared/database');
-const { Status } = require('../../../models/Reference');
+const { Status } = require('../../../models/Evidence');
 const logger = require('../../../shared/logger');
 const { createClient, validateApiKey, getModels, getProviders } = require('../../../services/ai-providers');
 
@@ -97,7 +97,7 @@ function formatQueryResults(data) {
     return 'Nenhum resultado encontrado.';
   }
 
-  // The filter DSL only ever returns Reference documents (titulo, autores, ano, ...)
+  // The filter DSL only ever returns Evidence documents (titulo, autores, ano, ...)
   if (data[0].titulo !== undefined) {
     const lines = data.map((item, i) => {
       const autores = Array.isArray(item.autores) ? item.autores.join(', ') : safeStringify(item.autores);
@@ -106,7 +106,7 @@ function formatQueryResults(data) {
       if (item.ano) line += ` (${item.ano})`;
       return line;
     });
-    return `**Referências encontradas (${data.length}):**\n\n` + lines.join('\n');
+    return `**Evidências encontradas (${data.length}):**\n\n` + lines.join('\n');
   }
 
   // Generic fallback formatting for any other result shape

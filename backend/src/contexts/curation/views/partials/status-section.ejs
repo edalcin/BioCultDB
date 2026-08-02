@@ -1,18 +1,18 @@
-<section class="card mb-8 border-l-4 <%= reference.status === 'approved' ? 'border-green-500' : reference.status === 'rejected' ? 'border-red-500' : 'border-yellow-500' %>" x-data="{ showDeleteModal: false, selectedStatus: '<%= reference.status %>' }" @open-delete-modal.window="showDeleteModal = true">
+<section class="card mb-8 border-l-4 <%= evidence.status === 'approved' ? 'border-green-500' : evidence.status === 'rejected' ? 'border-red-500' : 'border-yellow-500' %>" x-data="{ showDeleteModal: false, selectedStatus: '<%= evidence.status %>' }" @open-delete-modal.window="showDeleteModal = true">
   <div class="flex items-start justify-between mb-4">
     <div>
-      <h2 class="text-xl font-semibold text-gray-900 mb-2">Status da Referência</h2>
+      <h2 class="text-xl font-semibold text-gray-900 mb-2">Status da Evidência</h2>
       <p class="text-sm text-gray-600">
-        ID: <code class="font-mono text-xs bg-gray-100 px-2 py-1 rounded"><%= reference._id %></code>
+        ID: <code class="font-mono text-xs bg-gray-100 px-2 py-1 rounded"><%= evidence._id %></code>
       </p>
     </div>
     <div>
-      <%- include('status-badge', { status: reference.status }) %>
+      <%- include('status-badge', { status: evidence.status }) %>
     </div>
   </div>
 
   <!-- Status Change Form -->
-  <form method="POST" action="/reference/status/<%= reference._id %>" class="mt-4">
+  <form method="POST" action="/evidence/status/<%= evidence._id %>" class="mt-4">
     <div class="bg-gray-50 rounded-lg p-4">
       <label class="form-label mb-3">Alterar Status:</label>
 
@@ -23,7 +23,7 @@
             type="radio"
             name="status"
             value="pending"
-            <%= reference.status === 'pending' ? 'checked' : '' %>
+            <%= evidence.status === 'pending' ? 'checked' : '' %>
             class="h-4 w-4 text-yellow-600 focus:ring-yellow-500"
             @change="selectedStatus = 'pending'"
           >
@@ -39,7 +39,7 @@
             type="radio"
             name="status"
             value="approved"
-            <%= reference.status === 'approved' ? 'checked' : '' %>
+            <%= evidence.status === 'approved' ? 'checked' : '' %>
             class="h-4 w-4 text-green-600 focus:ring-green-500"
             @change="selectedStatus = 'approved'"
           >
@@ -55,7 +55,7 @@
             type="radio"
             name="status"
             value="rejected"
-            <%= reference.status === 'rejected' ? 'checked' : '' %>
+            <%= evidence.status === 'rejected' ? 'checked' : '' %>
             class="h-4 w-4 text-red-600 focus:ring-red-500"
             @change="selectedStatus = 'rejected'"
           >
@@ -75,9 +75,9 @@
             name="justificativaRejeicao"
             rows="3"
             class="form-input text-sm"
-            placeholder="Informe o motivo da rejeição desta referência..."
+            placeholder="Informe o motivo da rejeição desta evidência..."
             x-bind:required="selectedStatus === 'rejected'"
-          ><%= reference.justificativaRejeicao || '' %></textarea>
+          ><%= evidence.justificativaRejeicao || '' %></textarea>
         </div>
       </div>
 
@@ -90,30 +90,30 @@
           class="btn bg-red-600 hover:bg-red-700 text-white"
           @click="$dispatch('open-delete-modal')"
         >
-          Deletar Referência
+          Deletar Evidência
         </button>
       </div>
     </div>
   </form>
 
   <!-- Justificativa de Rejeição (exibição permanente) -->
-  <% if (reference.status === 'rejected' && reference.justificativaRejeicao) { %>
+  <% if (evidence.status === 'rejected' && evidence.justificativaRejeicao) { %>
   <div class="mt-4 p-3 bg-red-50 border border-red-200 rounded">
     <p class="text-sm font-medium text-red-800 mb-1">Motivo da Rejeição:</p>
-    <p class="text-sm text-red-700"><%= reference.justificativaRejeicao %></p>
+    <p class="text-sm text-red-700"><%= evidence.justificativaRejeicao %></p>
   </div>
   <% } %>
 
   <!-- Metadata -->
   <div class="mt-4 pt-4 border-t border-gray-200 text-xs text-gray-600 space-y-1">
-    <% if (reference.createdAt) { %>
-      <p><strong>Criado em:</strong> <%= new Date(reference.createdAt).toLocaleString('pt-BR') %></p>
+    <% if (evidence.createdAt) { %>
+      <p><strong>Criado em:</strong> <%= new Date(evidence.createdAt).toLocaleString('pt-BR') %></p>
     <% } %>
-    <% if (reference.updatedAt && reference.createdAt && reference.updatedAt.toString() !== reference.createdAt.toString()) { %>
-      <p><strong>Atualizado em:</strong> <%= new Date(reference.updatedAt).toLocaleString('pt-BR') %></p>
+    <% if (evidence.updatedAt && evidence.createdAt && evidence.updatedAt.toString() !== evidence.createdAt.toString()) { %>
+      <p><strong>Atualizado em:</strong> <%= new Date(evidence.updatedAt).toLocaleString('pt-BR') %></p>
     <% } %>
-    <% if (reference.fonte) { %>
-      <p><strong>Fonte:</strong> <%= reference.fonte %></p>
+    <% if (evidence.fonte) { %>
+      <p><strong>Fonte:</strong> <%= evidence.fonte %></p>
     <% } %>
   </div>
 
@@ -167,7 +167,7 @@
               </h3>
               <div class="mt-2">
                 <p class="text-sm text-gray-500">
-                  Tem certeza que deseja deletar esta referência? Esta ação não pode ser desfeita e todos os dados associados (comunidades e plantas) serão permanentemente removidos.
+                  Tem certeza que deseja deletar esta evidência? Esta ação não pode ser desfeita e todos os dados associados (comunidades e plantas) serão permanentemente removidos.
                 </p>
               </div>
             </div>
@@ -175,7 +175,7 @@
         </div>
         <!-- Actions -->
         <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6 gap-3">
-          <form method="POST" action="/reference/delete/<%= reference._id %>">
+          <form method="POST" action="/evidence/delete/<%= evidence._id %>">
             <button
               type="submit"
               class="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:w-auto"

@@ -1,7 +1,7 @@
 /**
- * Reference Data Model
+ * Evidence Data Model
  *
- * Schema definition for scientific reference documents stored as JSON in the
+ * Schema definition for scientific evidence documents stored as JSON in the
  * `biocultdb_records.doc` column (ADR-005, SQLite+JSON1 persistence).
  * Based on data-model.md specification.
  */
@@ -9,11 +9,11 @@
 const { randomUUID } = require('crypto');
 
 /**
- * Reference Schema
+ * Evidence Schema
  * Represents a scientific publication documenting ethnobotanical knowledge.
  * Canonical shape of the JSON document stored in `biocultdb_records.doc`.
  */
-const ReferenceSchema = {
+const EvidenceSchema = {
   id: String,                       // UUID v4, generated at creation (crypto.randomUUID())
   titulo: String,                   // Publication title (required)
   autores: [String],                // List of author names (required, min: 1)
@@ -54,11 +54,11 @@ const Status = {
 };
 
 /**
- * Create new reference document with defaults
- * @param {Object} data - Reference data
- * @returns {Object} Reference document with timestamps and default status
+ * Create new evidence document with defaults
+ * @param {Object} data - Evidence data
+ * @returns {Object} Evidence document with timestamps and default status
  */
-function createReference(data) {
+function createEvidence(data) {
   const now = new Date().toISOString();
 
   return {
@@ -71,11 +71,11 @@ function createReference(data) {
 }
 
 /**
- * Update reference document with new timestamp
- * @param {Object} data - Updated reference data
- * @returns {Object} Reference document with updated timestamp
+ * Update evidence document with new timestamp
+ * @param {Object} data - Updated evidence data
+ * @returns {Object} Evidence document with updated timestamp
  */
-function updateReference(data) {
+function updateEvidence(data) {
   return {
     ...data,
     updatedAt: new Date().toISOString()
@@ -108,9 +108,9 @@ const Constraints = {
 };
 
 module.exports = {
-  ReferenceSchema,
+  EvidenceSchema,
   Status,
   Constraints,
-  createReference,
-  updateReference
+  createEvidence,
+  updateEvidence
 };

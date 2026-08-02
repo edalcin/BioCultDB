@@ -80,7 +80,7 @@ function normalizeDeep(value) {
 /**
  * Maps a raw Mongo document to the canonical `biocultdb_records.doc` shape.
  */
-function mapToReference(mongoDoc) {
+function mapToEvidence(mongoDoc) {
   const id = mongoDoc._id?.toHexString ? mongoDoc._id.toHexString() : String(mongoDoc._id);
   const { _id, ...rest } = mongoDoc;
   const normalized = normalizeDeep(rest);
@@ -93,19 +93,19 @@ function mapToReference(mongoDoc) {
   };
 }
 
-function syncFtsRow(db, reference) {
-  db.prepare(`DELETE FROM biocultdb_records_fts WHERE id = ?`).run(reference.id);
-  const comunidadesText = (reference.comunidades ?? [])
+function syncFtsRow(db, evidence) {
+  db.prepare(`DELETE FROM biocultdb_records_fts WHERE id = ?`).run(evidence.id);
+  const comunidadesText = (evidence.comunidades ?? [])
     .map((c) => `${c.nome ?? ''} ${(c.plantas ?? []).flatMap((p) => p.nomeVernacular ?? []).join(' ')}`)
     .join(' ');
   db.prepare(
     `INSERT INTO biocultdb_records_fts (id, titulo, autores, resumo, doi, comunidades) VALUES (?, ?, ?, ?, ?, ?)`
   ).run(
-    reference.id,
-    reference.titulo ?? '',
-    (reference.autores ?? []).join(' '),
-    reference.resumo ?? '',
-    reference.DOI ?? '',
+    evidence.id,
+    evidence.titulo ?? '',
+    (evidence.autores ?? []).join(' '),
+    evidence.resumo ?? '',
+    evidence.DOI ?? '',
     comunidadesText
   );
 }
@@ -141,10 +141,10 @@ async function main() {
     const migrateBatch = db.transaction((docs) => {
       for (const mongoDoc of docs) {
         try {
-          const reference = mapToReference(mongoDoc);
-          const json = JSON.stringify(reference);
-          insertStmt.run(reference.id, json, reference.createdAt, reference.updatedAt);
-          syncFtsRow(db, reference);
+          const evidence = mapToEvidence(mongoDoc);
+          const json = JSON.stringify(evidence);
+          insertStmt.run(evidence.id, json, evidence.createdAt, evidence.updatedAt);
+          syncFtsRow(db, evidence);
           migrated++;
         } catch (err) {
           errors++;

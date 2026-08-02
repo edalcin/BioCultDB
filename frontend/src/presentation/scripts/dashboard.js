@@ -141,23 +141,23 @@ async function loadSummaryCards(filters) {
       document.getElementById('community-count').textContent = '0';
     }
 
-    // Reference count
-    const refUrl = `/painel/api/stats/reference-count?${queryString}`;
-    console.debug('Fetching:', refUrl);
-    const refRes = await fetch(refUrl);
-    if (refRes.ok) {
-      const refData = await refRes.json();
-      if (refData && refData.approved !== undefined) {
-        document.getElementById('reference-count').textContent = refData.approved.toLocaleString('pt-BR');
+    // Evidence count
+    const evidenceUrl = `/painel/api/stats/evidence-count?${queryString}`;
+    console.debug('Fetching:', evidenceUrl);
+    const evidenceRes = await fetch(evidenceUrl);
+    if (evidenceRes.ok) {
+      const evidenceData = await evidenceRes.json();
+      if (evidenceData && evidenceData.approved !== undefined) {
+        document.getElementById('evidence-count').textContent = evidenceData.approved.toLocaleString('pt-BR');
       } else {
-        console.error('Invalid reference data:', refData);
-        document.getElementById('reference-count').textContent = '0';
+        console.error('Invalid evidence data:', evidenceData);
+        document.getElementById('evidence-count').textContent = '0';
       }
     } else {
-      console.error('Reference count error:', refRes.status, refRes.statusText);
-      const errorData = await refRes.json();
+      console.error('Evidence count error:', evidenceRes.status, evidenceRes.statusText);
+      const errorData = await evidenceRes.json();
       console.error('Error details:', errorData);
-      document.getElementById('reference-count').textContent = '0';
+      document.getElementById('evidence-count').textContent = '0';
     }
 
     // Top plants (just to get count)
@@ -201,7 +201,7 @@ async function loadSummaryCards(filters) {
   } catch (error) {
     console.error('Error loading summary cards:', error);
     document.getElementById('community-count').textContent = '0';
-    document.getElementById('reference-count').textContent = '0';
+    document.getElementById('evidence-count').textContent = '0';
     document.getElementById('plant-count').textContent = '0';
     document.getElementById('author-count').textContent = '0';
   }
@@ -214,23 +214,23 @@ async function loadMaps(filters) {
   const queryString = buildQueryString(filters);
 
   try {
-    // References by state
-    const refUrl = `/painel/api/stats/references-by-state?${queryString}`;
-    console.debug('Fetching:', refUrl);
-    const refRes = await fetch(refUrl);
-    if (refRes.ok) {
-      const refByState = await refRes.json();
-      if (Array.isArray(refByState)) {
-        drawGeoChart('map-references', refByState, 'Referências');
+    // Evidences by state
+    const evidenceUrl = `/painel/api/stats/evidences-by-state?${queryString}`;
+    console.debug('Fetching:', evidenceUrl);
+    const evidenceRes = await fetch(evidenceUrl);
+    if (evidenceRes.ok) {
+      const evidencesByState = await evidenceRes.json();
+      if (Array.isArray(evidencesByState)) {
+        drawGeoChart('map-references', evidencesByState, 'Evidências');
       } else {
-        console.error('Invalid references by state data:', refByState);
-        drawGeoChart('map-references', [], 'Referências');
+        console.error('Invalid evidences by state data:', evidencesByState);
+        drawGeoChart('map-references', [], 'Evidências');
       }
     } else {
-      console.error('References by state error:', refRes.status, refRes.statusText);
-      const errorData = await refRes.json();
+      console.error('Evidences by state error:', evidenceRes.status, evidenceRes.statusText);
+      const errorData = await evidenceRes.json();
       console.error('Error details:', errorData);
-      drawGeoChart('map-references', [], 'Referências');
+      drawGeoChart('map-references', [], 'Evidências');
     }
 
     // Communities by state
@@ -254,7 +254,7 @@ async function loadMaps(filters) {
 
   } catch (error) {
     console.error('Error loading maps:', error);
-    drawGeoChart('map-references', [], 'Referências');
+    drawGeoChart('map-references', [], 'Evidências');
     drawGeoChart('map-communities', [], 'Comunidades');
   }
 }
@@ -702,20 +702,20 @@ async function loadTables(filters) {
       ]);
     }
 
-    // References with most communities
-    const refCommunitiesUrl = `/painel/api/stats/references-by-communities?limit=10&${queryString}`;
-    console.debug('Fetching:', refCommunitiesUrl);
-    const refCommunitiesRes = await fetch(refCommunitiesUrl);
-    if (refCommunitiesRes.ok) {
-      const refCommunities = await refCommunitiesRes.json();
-      if (Array.isArray(refCommunities)) {
-        drawTable('table-ref-communities', refCommunities, [
+    // Evidences with most communities
+    const evidenceCommunitiesUrl = `/painel/api/stats/evidences-by-communities?limit=10&${queryString}`;
+    console.debug('Fetching:', evidenceCommunitiesUrl);
+    const evidenceCommunitiesRes = await fetch(evidenceCommunitiesUrl);
+    if (evidenceCommunitiesRes.ok) {
+      const evidenceCommunities = await evidenceCommunitiesRes.json();
+      if (Array.isArray(evidenceCommunities)) {
+        drawTable('table-ref-communities', evidenceCommunities, [
           { label: 'Título', key: 'titulo', type: 'text' },
           { label: 'Ano', key: 'ano', type: 'year' },
           { label: 'Comunidades', key: 'communityCount', type: 'number' }
         ]);
       } else {
-        console.error('Invalid ref-communities data:', refCommunities);
+        console.error('Invalid evidence-communities data:', evidenceCommunities);
         drawTable('table-ref-communities', [], [
           { label: 'Título', key: 'titulo', type: 'text' },
           { label: 'Ano', key: 'ano', type: 'year' },
@@ -723,8 +723,8 @@ async function loadTables(filters) {
         ]);
       }
     } else {
-      console.error('References by communities error:', refCommunitiesRes.status, refCommunitiesRes.statusText);
-      const errorData = await refCommunitiesRes.json();
+      console.error('Evidences by communities error:', evidenceCommunitiesRes.status, evidenceCommunitiesRes.statusText);
+      const errorData = await evidenceCommunitiesRes.json();
       console.error('Error details:', errorData);
       drawTable('table-ref-communities', [], [
         { label: 'Título', key: 'titulo', type: 'text' },
@@ -733,20 +733,20 @@ async function loadTables(filters) {
       ]);
     }
 
-    // References with most plants
-    const refPlantsUrl = `/painel/api/stats/references-by-plants?limit=10&${queryString}`;
-    console.debug('Fetching:', refPlantsUrl);
-    const refPlantsRes = await fetch(refPlantsUrl);
-    if (refPlantsRes.ok) {
-      const refPlants = await refPlantsRes.json();
-      if (Array.isArray(refPlants)) {
-        drawTable('table-ref-plants', refPlants, [
+    // Evidences with most plants
+    const evidencePlantsUrl = `/painel/api/stats/evidences-by-plants?limit=10&${queryString}`;
+    console.debug('Fetching:', evidencePlantsUrl);
+    const evidencePlantsRes = await fetch(evidencePlantsUrl);
+    if (evidencePlantsRes.ok) {
+      const evidencePlants = await evidencePlantsRes.json();
+      if (Array.isArray(evidencePlants)) {
+        drawTable('table-ref-plants', evidencePlants, [
           { label: 'Título', key: 'titulo', type: 'text' },
           { label: 'Ano', key: 'ano', type: 'year' },
           { label: 'Plantas', key: 'plantCount', type: 'number' }
         ]);
       } else {
-        console.error('Invalid ref-plants data:', refPlants);
+        console.error('Invalid evidence-plants data:', evidencePlants);
         drawTable('table-ref-plants', [], [
           { label: 'Título', key: 'titulo', type: 'text' },
           { label: 'Ano', key: 'ano', type: 'year' },
@@ -754,8 +754,8 @@ async function loadTables(filters) {
         ]);
       }
     } else {
-      console.error('References by plants error:', refPlantsRes.status, refPlantsRes.statusText);
-      const errorData = await refPlantsRes.json();
+      console.error('Evidences by plants error:', evidencePlantsRes.status, evidencePlantsRes.statusText);
+      const errorData = await evidencePlantsRes.json();
       console.error('Error details:', errorData);
       drawTable('table-ref-plants', [], [
         { label: 'Título', key: 'titulo', type: 'text' },

@@ -1,7 +1,7 @@
 /**
  * Acquisition Context Application
  *
- * Port 3001 - Data entry interface for scientific references
+ * Port 3001 - Data entry interface for scientific evidence
  * Allows researchers to enter hierarchical ethnobotanical data
  */
 

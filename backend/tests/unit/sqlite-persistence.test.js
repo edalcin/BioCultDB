@@ -14,13 +14,13 @@ process.env.SQLITE_DB_PATH = ':memory:';
 process.env.NODE_ENV = 'test';
 
 const database = require('../../src/shared/database');
-const { insertReference, findReferenceById, updateReferenceStatus, searchReferences } = require('../../src/services/database');
+const { insertEvidence, findEvidenceById, updateEvidenceStatus, searchEvidences } = require('../../src/services/database');
 const { getTopPlants } = require('../../src/services/statistics');
 const { executeQuery } = require('../../src/contexts/presentation/services/etnochat');
-const { Status } = require('../../src/models/Reference');
+const { Status } = require('../../src/models/Evidence');
 
 /**
- * Build a valid Reference payload (pre-insertReference), overridable per test.
+ * Build a valid Reference payload (pre-insertEvidence), overridable per test.
  */
 function makeReference(overrides = {}) {
   return {
@@ -62,13 +62,13 @@ afterAll(() => {
 });
 
 describe('services/database.js — insert/read round-trip', () => {
-  test('insertReference persists the document and findReferenceById reads it back', async () => {
-    const inserted = await insertReference(makeReference({ titulo: 'Insert Round Trip' }));
+  test('insertEvidence persists the document and findEvidenceById reads it back', async () => {
+    const inserted = await insertEvidence(makeReference({ titulo: 'Insert Round Trip' }));
 
     expect(inserted.id).toBeTruthy();
     expect(inserted.status).toBe(Status.APPROVED);
 
-    const found = await findReferenceById(inserted.id);
+    const found = await findEvidenceById(inserted.id);
 
     expect(found).not.toBeNull();
     expect(found.titulo).toBe('Insert Round Trip');
@@ -76,28 +76,28 @@ describe('services/database.js — insert/read round-trip', () => {
     expect(found.comunidades[0].tipo).toBe('Quilombolas');
   });
 
-  test('findReferenceById returns null for an unknown id', async () => {
-    const found = await findReferenceById('00000000-0000-4000-8000-000000000000');
+  test('findEvidenceById returns null for an unknown id', async () => {
+    const found = await findEvidenceById('00000000-0000-4000-8000-000000000000');
     expect(found).toBeNull();
   });
 });
 
 describe('services/database.js — status transition', () => {
-  test('updateReferenceStatus persists the new status across a fresh read', async () => {
-    const inserted = await insertReference(
+  test('updateEvidenceStatus persists the new status across a fresh read', async () => {
+    const inserted = await insertEvidence(
       makeReference({ titulo: 'Status Update Test', status: Status.PENDING })
     );
 
-    const updated = await updateReferenceStatus(inserted.id, Status.APPROVED);
+    const updated = await updateEvidenceStatus(inserted.id, Status.APPROVED);
     expect(updated.status).toBe(Status.APPROVED);
 
-    const reread = await findReferenceById(inserted.id);
+    const reread = await findEvidenceById(inserted.id);
     expect(reread.status).toBe(Status.APPROVED);
   });
 
-  test('updateReferenceStatus rejects an invalid status value', async () => {
-    const inserted = await insertReference(makeReference({ titulo: 'Invalid Status Test' }));
-    await expect(updateReferenceStatus(inserted.id, 'not-a-real-status')).rejects.toThrow();
+  test('updateEvidenceStatus rejects an invalid status value', async () => {
+    const inserted = await insertEvidence(makeReference({ titulo: 'Invalid Status Test' }));
+    await expect(updateEvidenceStatus(inserted.id, 'not-a-real-status')).rejects.toThrow();
   });
 });
 
@@ -119,8 +119,8 @@ describe('services/statistics.js — SQL/JSON1 aggregation', () => {
       municipio: 'Y'
     };
 
-    await insertReference(makeReference({ titulo: 'Plant Stats Ref A', comunidades: [communityA] }));
-    await insertReference(makeReference({ titulo: 'Plant Stats Ref B', comunidades: [communityB] }));
+    await insertEvidence(makeReference({ titulo: 'Plant Stats Ref A', comunidades: [communityA] }));
+    await insertEvidence(makeReference({ titulo: 'Plant Stats Ref B', comunidades: [communityB] }));
 
     const topPlants = await getTopPlants(10, {});
     const match = topPlants.find((p) => p.nomeCientifico === 'Bidens pilosa');
@@ -132,15 +132,15 @@ describe('services/statistics.js — SQL/JSON1 aggregation', () => {
 });
 
 describe('services/database.js — FTS5 search', () => {
-  test('searchReferences finds a seeded record by free-text term via FTS5', async () => {
-    await insertReference(
+  test('searchEvidences finds a seeded record by free-text term via FTS5', async () => {
+    await insertEvidence(
       makeReference({ titulo: 'Etnobotânica de plantas raras da Mata Atlântica' })
     );
 
-    const result = await searchReferences({ text: 'Atlântica' }, 1, 50);
+    const result = await searchEvidences({ text: 'Atlântica' }, 1, 50);
 
     expect(result.total).toBeGreaterThanOrEqual(1);
-    expect(result.references.some((r) => r.titulo.includes('Mata Atlântica'))).toBe(true);
+    expect(result.evidences.some((r) => r.titulo.includes('Mata Atlântica'))).toBe(true);
   });
 });
 

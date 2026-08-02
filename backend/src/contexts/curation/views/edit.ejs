@@ -12,7 +12,7 @@
     [x-cloak] { display: none !important; }
   </style>
 </head>
-<body class="min-h-screen bg-gray-50" x-data="{ communityCount: <%= reference.comunidades.length %>, plantCounts: <%= JSON.stringify(reference.comunidades.map(c => c.plantas.length)) %> }">
+<body class="min-h-screen bg-gray-50" x-data="{ communityCount: <%= evidence.comunidades.length %>, plantCounts: <%= JSON.stringify(evidence.comunidades.map(c => c.plantas.length)) %> }">
 
   <!-- Header -->
   <header class="bg-forest-700 text-white shadow-lg">
@@ -48,14 +48,14 @@
     <% } %>
 
     <!-- Status Section -->
-    <%- include('partials/status-section', { reference: reference }) %>
+    <%- include('partials/status-section', { evidence: evidence }) %>
 
-    <!-- Reference Edit Form -->
-    <form method="POST" action="/reference/update/<%= reference._id %>" class="space-y-8">
+    <!-- Evidence Edit Form -->
+    <form method="POST" action="/evidence/update/<%= evidence._id %>" class="space-y-8">
 
-      <!-- Reference Metadata Section -->
+      <!-- Evidence Metadata Section -->
       <section class="card">
-        <h2 class="text-xl font-semibold text-gray-900 mb-4">Dados da Referência</h2>
+        <h2 class="text-xl font-semibold text-gray-900 mb-4">Dados da Evidência</h2>
 
         <div class="space-y-4">
           <!-- Title -->
@@ -68,7 +68,7 @@
               id="titulo"
               name="titulo"
               class="form-input"
-              value="<%= reference.titulo %>"
+              value="<%= evidence.titulo %>"
               required
               maxlength="500"
             >
@@ -85,7 +85,7 @@
               id="autores"
               name="autores"
               class="form-input"
-              value="<%= reference.autores.join(', ') %>"
+              value="<%= evidence.autores.join(', ') %>"
               required
             >
           </div>
@@ -100,7 +100,7 @@
               id="ano"
               name="ano"
               class="form-input"
-              value="<%= reference.ano %>"
+              value="<%= evidence.ano %>"
               min="1500"
               max="2100"
               required
@@ -118,7 +118,7 @@
               class="form-input"
               rows="4"
               maxlength="5000"
-            ><%= reference.resumo || '' %></textarea>
+            ><%= evidence.resumo || '' %></textarea>
           </div>
 
           <!-- DOI -->
@@ -131,7 +131,7 @@
               id="DOI"
               name="DOI"
               class="form-input"
-              value="<%= reference.DOI || '' %>"
+              value="<%= evidence.DOI || '' %>"
               maxlength="100"
             >
           </div>
@@ -145,7 +145,7 @@
           <button
             type="button"
             class="btn btn-secondary"
-            @click="htmx.ajax('POST', '/reference/<%= reference._id %>/community/add', {
+            @click="htmx.ajax('POST', '/evidence/<%= evidence._id %>/community/add', {
               target: '#communities-container',
               swap: 'beforeend',
               values: { communityIndex: communityCount }
@@ -157,8 +157,8 @@
 
         <div id="communities-container" class="space-y-6">
           <!-- Existing communities -->
-          <% reference.comunidades.forEach((comunidade, idx) => { %>
-            <%- include('partials/community-form', { communityIndex: idx, community: comunidade, referenceId: reference._id }) %>
+          <% evidence.comunidades.forEach((comunidade, idx) => { %>
+            <%- include('partials/community-form', { communityIndex: idx, community: comunidade, evidenceId: evidence._id }) %>
           <% }); %>
         </div>
       </section>

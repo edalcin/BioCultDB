@@ -3,7 +3,7 @@
  *
  * SQL/JSON1 aggregation queries for dashboard statistics, replacing the former
  * MongoDB aggregation pipelines (ADR-005). All queries default to only
- * processing approved references (`filters.status` overrides the default).
+ * processing approved evidences (`filters.status` overrides the default).
  *
  * `filters` keeps the same shape the presentation routes already build
  * (`buildFilters` in contexts/presentation/routes.js), so callers are
@@ -18,7 +18,7 @@
 
 const database = require('../shared/database');
 const logger = require('../shared/logger');
-const { Status } = require('../models/Reference');
+const { Status } = require('../models/Evidence');
 
 /**
  * Ensure the shared SQLite connection is open (idempotent, synchronous).
@@ -59,7 +59,7 @@ function anoClauses(filters, clauses, params) {
 
 /**
  * @param {Object} filters
- * @param {boolean} includeStatus - false for getReferenceCountByStatus (wants all statuses)
+ * @param {boolean} includeStatus - false for getEvidenceCountByStatus (wants all statuses)
  * @returns {{sql: string, params: Array}} WHERE clause (or '') + params
  */
 function buildDocsWhere(filters = {}, includeStatus = true) {
@@ -122,7 +122,7 @@ function comunidadesCte(filters = {}, comOptions) {
   const { sql: comWhere, params } = buildComunidadeFilter(filters, comOptions);
   return {
     sql: `comunidades AS (
-      SELECT docs.id AS ref_id, docs.doc AS ref_doc, com.value AS comunidade
+      SELECT docs.id AS evidence_id, docs.doc AS evidence_doc, com.value AS comunidade
       FROM docs, json_each(docs.doc, '$.comunidades') AS com
       WHERE 1=1 ${comWhere}
     )`,
@@ -179,7 +179,7 @@ function isValidAuthor(author) {
  * Get top N most used plants across all communities
  * @param {number} limit - Number of results
  * @param {Object} filters - Query filters
- * @returns {Promise<Array>} Array of {nomeCientifico, nomeVernacular, count, communityCount, referenceCount}
+ * @returns {Promise<Array>} Array of {nomeCientifico, nomeVernacular, count, communityCount, evidenceCount}
  */
 async function getTopPlants(limit = 10, filters = {}) {
   try {
@@ -191,11 +191,11 @@ async function getTopPlants(limit = 10, filters = {}) {
       WITH ${docs.sql},
       ${com.sql},
       plantas AS (
-        SELECT comunidades.ref_id, comunidades.comunidade, pl.value AS planta
+        SELECT comunidades.evidence_id, comunidades.comunidade, pl.value AS planta
         FROM comunidades, json_each(comunidades.comunidade, '$.plantas') AS pl
       ),
       nomes AS (
-        SELECT plantas.ref_id, plantas.comunidade, plantas.planta, nc.value AS nomeCientifico
+        SELECT plantas.evidence_id, plantas.comunidade, plantas.planta, nc.value AS nomeCientifico
         FROM plantas, json_each(plantas.planta, '$.nomeCientifico') AS nc
         WHERE nc.value IS NOT NULL AND nc.value != ''
       )
@@ -204,7 +204,7 @@ async function getTopPlants(limit = 10, filters = {}) {
         MAX(json_extract(planta,'$.nomeVernacular[0]')) AS nomeVernacular,
         COUNT(*) AS count,
         COUNT(DISTINCT json_extract(comunidade,'$.nome')) AS communityCount,
-        COUNT(DISTINCT ref_id) AS referenceCount
+        COUNT(DISTINCT evidence_id) AS evidenceCount
       FROM nomes
       GROUP BY nomeCientifico
       ORDER BY count DESC
@@ -217,7 +217,7 @@ async function getTopPlants(limit = 10, filters = {}) {
       nomeVernacular: row.nomeVernacular,
       count: row.count,
       communityCount: row.communityCount,
-      referenceCount: row.referenceCount
+      evidenceCount: row.evidenceCount
     }));
 
     logger.database(`Top plants query returned ${result.length} results`);
@@ -279,11 +279,11 @@ async function getCommunityCount(filters = {}) {
 }
 
 /**
- * Get reference count by status
+ * Get evidence count by status
  * @param {Object} filters - Query filters
  * @returns {Promise<Object>} {approved, pending, rejected, total}
  */
-async function getReferenceCountByStatus(filters = {}) {
+async function getEvidenceCountByStatus(filters = {}) {
   try {
     const db = getDb();
 
@@ -329,10 +329,10 @@ async function getReferenceCountByStatus(filters = {}) {
       counts.total += row.count;
     });
 
-    logger.database('Reference count by status completed');
+    logger.database('Evidence count by status completed');
     return counts;
   } catch (error) {
-    logger.error('Reference count by status failed:', error.message);
+    logger.error('Evidence count by status failed:', error.message);
     throw error;
   }
 }
@@ -355,13 +355,13 @@ async function getTopAuthors(limit = 10, filters = {}) {
     if (hasComFilter) {
       const comFilter = buildComunidadeFilter(filters);
       qualifyingCte = `qualifying AS (
-        SELECT DISTINCT docs.id AS ref_id, docs.doc AS doc
+        SELECT DISTINCT docs.id AS evidence_id, docs.doc AS doc
         FROM docs, json_each(docs.doc, '$.comunidades') AS com
         WHERE 1=1 ${comFilter.sql}
       )`;
       qualifyingParams = comFilter.params;
     } else {
-      qualifyingCte = `qualifying AS (SELECT id AS ref_id, doc FROM docs)`;
+      qualifyingCte = `qualifying AS (SELECT id AS evidence_id, doc FROM docs)`;
       qualifyingParams = [];
     }
 
@@ -369,7 +369,7 @@ async function getTopAuthors(limit = 10, filters = {}) {
       WITH ${docs.sql},
       ${qualifyingCte},
       autores AS (
-        SELECT qualifying.ref_id, json_extract(qualifying.doc,'$.titulo') AS titulo, au.value AS autor
+        SELECT qualifying.evidence_id, json_extract(qualifying.doc,'$.titulo') AS titulo, au.value AS autor
         FROM qualifying, json_each(qualifying.doc, '$.autores') AS au
         WHERE LENGTH(au.value) >= 4
       )
@@ -407,11 +407,11 @@ async function getTopAuthors(limit = 10, filters = {}) {
 }
 
 /**
- * Get number of references by state (for heat map)
+ * Get number of evidences by state (for heat map)
  * @param {Object} filters - Query filters
  * @returns {Promise<Array>} Array of {state, count}
  */
-async function getReferencesByState(filters = {}) {
+async function getEvidencesByState(filters = {}) {
   try {
     const db = getDb();
     const docs = docsCte(filters);
@@ -420,18 +420,18 @@ async function getReferencesByState(filters = {}) {
     const sql = `
       WITH ${docs.sql},
       ${com.sql}
-      SELECT json_extract(comunidade,'$.estado') AS state, COUNT(DISTINCT ref_id) AS count
+      SELECT json_extract(comunidade,'$.estado') AS state, COUNT(DISTINCT evidence_id) AS count
       FROM comunidades
       GROUP BY state
       ORDER BY count DESC
     `;
 
     const rows = db.prepare(sql).all(...docs.params, ...com.params);
-    logger.database(`References by state returned ${rows.length} states`);
+    logger.database(`Evidences by state returned ${rows.length} states`);
 
     return rows.map((row) => ({ state: row.state, count: row.count }));
   } catch (error) {
-    logger.error('References by state failed:', error.message);
+    logger.error('Evidences by state failed:', error.message);
     throw error;
   }
 }
@@ -554,12 +554,12 @@ async function getTopCommunitiesByPlants(limit = 10, filters = {}) {
 }
 
 /**
- * Get references with most communities
+ * Get evidences with most communities
  * @param {number} limit - Number of results
  * @param {Object} filters - Query filters
  * @returns {Promise<Array>} Array of {titulo, autores, ano, communityCount}
  */
-async function getTopReferencesByCommunities(limit = 10, filters = {}) {
+async function getTopEvidencesByCommunities(limit = 10, filters = {}) {
   try {
     const db = getDb();
     const docs = docsCte(filters);
@@ -587,22 +587,22 @@ async function getTopReferencesByCommunities(limit = 10, filters = {}) {
       communityCount: row.communityCount
     }));
 
-    logger.database(`Top references by communities returned ${result.length} results`);
+    logger.database(`Top evidences by communities returned ${result.length} results`);
 
     return result;
   } catch (error) {
-    logger.error('Top references by communities failed:', error.message);
+    logger.error('Top evidences by communities failed:', error.message);
     throw error;
   }
 }
 
 /**
- * Get references with most plants
+ * Get evidences with most plants
  * @param {number} limit - Number of results
  * @param {Object} filters - Query filters
  * @returns {Promise<Array>} Array of {titulo, autores, ano, plantCount}
  */
-async function getTopReferencesByPlants(limit = 10, filters = {}) {
+async function getTopEvidencesByPlants(limit = 10, filters = {}) {
   try {
     const db = getDb();
     const docs = docsCte(filters);
@@ -632,11 +632,11 @@ async function getTopReferencesByPlants(limit = 10, filters = {}) {
       plantCount: row.plantCount
     }));
 
-    logger.database(`Top references by plants returned ${result.length} results`);
+    logger.database(`Top evidences by plants returned ${result.length} results`);
 
     return result;
   } catch (error) {
-    logger.error('Top references by plants failed:', error.message);
+    logger.error('Top evidences by plants failed:', error.message);
     throw error;
   }
 }
@@ -772,14 +772,14 @@ async function getPublicationsByYear(filters = {}) {
 module.exports = {
   getTopPlants,
   getCommunityCount,
-  getReferenceCountByStatus,
+  getEvidenceCountByStatus,
   getTopAuthors,
-  getReferencesByState,
+  getEvidencesByState,
   getCommunitiesByState,
   getPlantsByState,
   getTopCommunitiesByPlants,
-  getTopReferencesByCommunities,
-  getTopReferencesByPlants,
+  getTopEvidencesByCommunities,
+  getTopEvidencesByPlants,
   getPublicationsByYear,
   getSankeyData
 };

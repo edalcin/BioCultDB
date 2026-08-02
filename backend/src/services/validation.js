@@ -1,11 +1,11 @@
 /**
  * Validation Service
  *
- * Server-side validation for reference data
+ * Server-side validation for evidence data
  * All error messages in Portuguese per requirements
  */
 
-const { Constraints, Status } = require('../models/Reference');
+const { Constraints, Status } = require('../models/Evidence');
 const logger = require('../shared/logger');
 
 /**
@@ -46,11 +46,11 @@ const VALID_COMMUNITY_TYPES = [
 ];
 
 /**
- * Validate reference data
- * @param {Object} data - Reference data to validate
+ * Validate evidence data
+ * @param {Object} data - Evidence data to validate
  * @returns {Object} { isValid: boolean, errors: string[] }
  */
-function validateReference(data) {
+function validateEvidence(data) {
   const errors = [];
 
   // Title validation
@@ -259,7 +259,7 @@ function sanitizeArray(arr, maxLength) {
 }
 
 module.exports = {
-  validateReference,
+  validateEvidence,
   validateCommunity,
   validatePlant,
   sanitizeString,

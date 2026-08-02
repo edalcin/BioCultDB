@@ -2,7 +2,7 @@
  * Presentation Context Application
  *
  * Port 3003 - Public search interface for ethnobotanical data
- * Allows public users to search and browse approved references
+ * Allows public users to search and browse approved evidence
  */
 
 const express = require('express');

@@ -1,8 +1,8 @@
 /**
  * Curation Context Application
  *
- * Port 3002 - Data curation interface for reviewing and approving references
- * Allows curators to edit, approve, or reject submitted references
+ * Port 3002 - Data curation interface for reviewing and approving evidence
+ * Allows curators to edit, approve, or reject submitted evidence
  */
 
 const express = require('express');

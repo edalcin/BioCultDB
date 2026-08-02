@@ -18,7 +18,7 @@
  *       used by an unrelated existing row (PK collision) — in that case a
  *       fresh id is generated with crypto.randomUUID().
  *   `ano_coleta` (if present) is preserved as `anoColeta` for reference; it
- *   is not part of the Reference schema/generated columns.
+ *   is not part of the Evidence schema/generated columns.
  *
  * Idempotency:
  *   Each incoming record is deduplicated against existing rows using, in
@@ -48,7 +48,7 @@ const TABLE = database.TABLE;
 
 /**
  * Build the searchable text extracted from a mapped doc for the FTS5 row.
- * Mirrors services/database.js#ftsRowFromReference so full-text search
+ * Mirrors services/database.js#ftsRowFromEvidence so full-text search
  * behaves identically for imported records.
  * @param {Object} doc
  * @returns {{titulo: string, autores: string, resumo: string, doi: string, comunidades: string}}

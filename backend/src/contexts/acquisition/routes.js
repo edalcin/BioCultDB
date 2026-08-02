@@ -5,13 +5,13 @@
  * - GET /: Main form page
  * - POST /community/add: Add community form fragment (HTMX)
  * - POST /plant/add/:communityIndex: Add plant form fragment (HTMX)
- * - POST /reference/submit: Submit complete reference
+ * - POST /evidence/submit: Submit complete evidence
  */
 
 const express = require('express');
 const router = express.Router();
-const { validateReference } = require('../../services/validation');
-const { checkDuplicateReference, insertReference } = require('../../services/database');
+const { validateEvidence } = require('../../services/validation');
+const { checkDuplicateEvidence, insertEvidence } = require('../../services/database');
 const logger = require('../../shared/logger');
 
 /**
@@ -23,7 +23,7 @@ router.get('/', (req, res) => {
   res.render('index', {
     pageTitle: 'Entrada de Dados',
     contextName: 'Entrada de Dados Etnobotânicos',
-    contextDescription: 'Cadastro de referências científicas com dados de comunidades e plantas',
+    contextDescription: 'Cadastro de evidências científicas com dados de comunidades e plantas',
     showNavigation: true,
     errors: null,
     formData: null
@@ -122,17 +122,17 @@ router.post('/plant/add/:communityIndex', (req, res) => {
 });
 
 /**
- * POST /reference/submit - Submit complete reference
+ * POST /evidence/submit - Submit complete evidence
  */
-router.post('/reference/submit', async (req, res) => {
+router.post('/evidence/submit', async (req, res) => {
   try {
-    logger.acquisition('Processing reference submission');
+    logger.acquisition('Processing evidence submission');
 
-    // Parse form data into reference structure
-    const referenceData = parseFormData(req.body);
+    // Parse form data into evidence structure
+    const evidenceData = parseFormData(req.body);
 
-    // Validate reference data
-    const validation = validateReference(referenceData);
+    // Validate evidence data
+    const validation = validateEvidence(evidenceData);
 
     if (!validation.isValid) {
       logger.acquisition(`Validation failed: ${validation.errors.length} errors`);
@@ -140,56 +140,56 @@ router.post('/reference/submit', async (req, res) => {
       return res.render('index', {
         pageTitle: 'Entrada de Dados',
         contextName: 'Entrada de Dados Etnobotânicos',
-        contextDescription: 'Cadastro de referências científicas com dados de comunidades e plantas',
+        contextDescription: 'Cadastro de evidências científicas com dados de comunidades e plantas',
         showNavigation: true,
         errors: validation.errors,
         formData: req.body
       });
     }
 
-    // Check for duplicate reference (title + year)
-    const existingReference = await checkDuplicateReference(referenceData.titulo, referenceData.ano);
+    // Check for duplicate evidence (title + year)
+    const existingEvidence = await checkDuplicateEvidence(evidenceData.titulo, evidenceData.ano);
 
-    if (existingReference) {
-      logger.acquisition(`Duplicate reference detected: "${referenceData.titulo}" (${referenceData.ano})`);
+    if (existingEvidence) {
+      logger.acquisition(`Duplicate evidence detected: "${evidenceData.titulo}" (${evidenceData.ano})`);
 
       return res.render('index', {
         pageTitle: 'Entrada de Dados',
         contextName: 'Entrada de Dados Etnobotânicos',
-        contextDescription: 'Cadastro de referências científicas com dados de comunidades e plantas',
+        contextDescription: 'Cadastro de evidências científicas com dados de comunidades e plantas',
         showNavigation: true,
-        errors: [`Referência duplicada: Já existe uma referência com o título "${referenceData.titulo}" e ano ${referenceData.ano} na base de dados.`],
+        errors: [`Evidência duplicada: Já existe uma evidência com o título "${evidenceData.titulo}" e ano ${evidenceData.ano} na base de dados.`],
         formData: req.body
       });
     }
 
     // Filter empty plants before saving (only after validation passes)
-    referenceData.comunidades = referenceData.comunidades.map(com => ({
+    evidenceData.comunidades = evidenceData.comunidades.map(com => ({
       ...com,
       plantas: filterEmptyPlants(com.plantas)
     }));
 
-    // Insert reference into database
-    const inserted = await insertReference(referenceData);
+    // Insert evidence into database
+    const inserted = await insertEvidence(evidenceData);
 
-    logger.acquisition(`Reference inserted successfully: ${inserted.id}`);
+    logger.acquisition(`Evidence inserted successfully: ${inserted.id}`);
 
     // Render success page
     res.render('success', {
       pageTitle: 'Sucesso',
       contextName: 'Entrada de Dados Etnobotânicos',
-      contextDescription: 'Cadastro de referências científicas',
+      contextDescription: 'Cadastro de evidências científicas',
       showNavigation: true,
-      referenceId: inserted.id
+      evidenceId: inserted.id
     });
 
   } catch (error) {
-    logger.error('Failed to submit reference:', error.message);
+    logger.error('Failed to submit evidence:', error.message);
 
     res.render('index', {
       pageTitle: 'Entrada de Dados',
       contextName: 'Entrada de Dados Etnobotânicos',
-      contextDescription: 'Cadastro de referências científicas',
+      contextDescription: 'Cadastro de evidências científicas',
       showNavigation: true,
       errors: ['Erro ao salvar: ' + error.message],
       formData: req.body
@@ -215,7 +215,7 @@ function filterEmptyPlants(plantas) {
 }
 
 /**
- * Parse form data into reference structure
+ * Parse form data into evidence structure
  * Handles nested arrays from HTML form (comunidades[0][plantas][0][field])
  * Converts comma-separated strings to arrays
  */
@@ -224,7 +224,7 @@ function parseFormData(formData) {
   if (Array.isArray(formData.comunidades)) {
 
     // Data is already in the correct format (sent as JSON)
-    const reference = {
+    const evidence = {
       titulo: formData.titulo?.trim() || '',
       autores: parseCommaSeparated(formData.autores).map(formatAuthorABNT),
       ano: parseInt(formData.ano) || 0,
@@ -255,11 +255,11 @@ function parseFormData(formData) {
       }))
     };
 
-    return reference;
+    return evidence;
   }
 
   // Original parsing for form-urlencoded format
-  const reference = {
+  const evidence = {
     titulo: formData.titulo?.trim() || '',
     autores: parseCommaSeparated(formData.autores).map(formatAuthorABNT),
     ano: parseInt(formData.ano) || 0,
@@ -317,7 +317,7 @@ function parseFormData(formData) {
       });
     });
 
-    reference.comunidades.push({
+    evidence.comunidades.push({
       nome: comunidade.nome?.trim() || '',
       tipo: comunidade.tipo?.trim() || '',
       municipio: comunidade.municipio?.trim() || '',
@@ -329,7 +329,7 @@ function parseFormData(formData) {
     });
   });
 
-  return reference;
+  return evidence;
 }
 
 /**

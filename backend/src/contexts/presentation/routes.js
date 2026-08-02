@@ -7,20 +7,20 @@
 
 const express = require('express');
 const router = express.Router();
-const { searchReferences, findReferenceById } = require('../../services/database');
-const { Status } = require('../../models/Reference');
+const { searchEvidences, findEvidenceById } = require('../../services/database');
+const { Status } = require('../../models/Evidence');
 const logger = require('../../shared/logger');
 const {
   getTopPlants,
   getCommunityCount,
-  getReferenceCountByStatus,
+  getEvidenceCountByStatus,
   getTopAuthors,
-  getReferencesByState,
+  getEvidencesByState,
   getCommunitiesByState,
   getPlantsByState,
   getTopCommunitiesByPlants,
-  getTopReferencesByCommunities,
-  getTopReferencesByPlants,
+  getTopEvidencesByCommunities,
+  getTopEvidencesByPlants,
   getPublicationsByYear,
   getSankeyData
 } = require('../../services/statistics');
@@ -45,7 +45,7 @@ router.get('/health', async (req, res) => {
         path: config.sqlitePath,
         table: database.TABLE
       },
-      references: {
+      evidences: {
         total: conn.prepare(`SELECT COUNT(*) as n FROM ${database.TABLE}`).get().n,
         approved: countByStatus(Status.APPROVED),
         pending: countByStatus(Status.PENDING),
@@ -104,10 +104,10 @@ router.get('/', async (req, res) => {
     const pageNum = parseInt(page) || 1;
     const limitNum = parseInt(limit) || 50;
 
-    const searchResult = await searchReferences(query, pageNum, limitNum);
+    const searchResult = await searchEvidences(query, pageNum, limitNum);
 
     logger.presentation(
-      `Search returned ${searchResult.references.length} of ${searchResult.total} references (page ${pageNum})`
+      `Search returned ${searchResult.evidences.length} of ${searchResult.total} evidences (page ${pageNum})`
     );
 
     // Render search page with results
@@ -124,7 +124,7 @@ router.get('/', async (req, res) => {
         estado: estado || '',
         municipio: municipio || ''
       },
-      results: searchResult.references,
+      results: searchResult.evidences,
       pagination: {
         page: searchResult.page,
         limit: searchResult.limit,
@@ -170,8 +170,8 @@ router.get('/', async (req, res) => {
  */
 router.get('/referencia/:id', async (req, res, next) => {
   try {
-    const reference = await findReferenceById(req.params.id);
-    if (!reference || reference.status !== Status.APPROVED) {
+    const evidence = await findEvidenceById(req.params.id);
+    if (!evidence || evidence.status !== Status.APPROVED) {
       return res.status(404).render('index', {
         pageTitle: 'Busca Pública',
         contextName: 'Busca de Dados Etnobotânicos',
@@ -180,23 +180,23 @@ router.get('/referencia/:id', async (req, res, next) => {
         filters: { q: '', tipo: '', comunidade: '', planta: '', estado: '', municipio: '' },
         results: [],
         pagination: { page: 1, limit: 50, total: 0, totalPages: 0, hasNext: false, hasPrev: false },
-        error: 'Referência não encontrada'
+        error: 'Evidência não encontrada'
       });
     }
-    res.render('reference-detail', {
-      pageTitle: reference.titulo,
-      contextName: 'Detalhe da Referência',
+    res.render('evidence-detail', {
+      pageTitle: evidence.titulo,
+      contextName: 'Detalhe da Evidência',
       contextDescription: '',
-      reference
+      evidence
     });
   } catch (error) {
-    logger.error('Failed to load reference detail:', error.message);
+    logger.error('Failed to load evidence detail:', error.message);
     next(error);
   }
 });
 
 /**
- * Build a structured search query consumed by searchReferences(query, page, limit)
+ * Build a structured search query consumed by searchEvidences(query, page, limit)
  * (see services/database.js). Free text (`filters.q`) becomes an FTS5 MATCH search
  * against `biocultdb_records_fts`; every other filter becomes an AND-ed condition
  * resolved by the data layer against a whitelisted json_extract/json_each path —
@@ -207,7 +207,7 @@ router.get('/referencia/:id', async (req, res, next) => {
  */
 function buildSearchQuery(filters) {
   const query = {
-    status: Status.APPROVED // Only show approved references
+    status: Status.APPROVED // Only show approved evidences
   };
 
   const conditions = [];
@@ -262,7 +262,7 @@ router.get('/painel', (req, res) => {
     res.render('painel', {
       pageTitle: 'Painel de Estatísticas',
       contextName: 'Painel de Informações',
-      contextDescription: 'Visualize estatísticas e métricas sobre as referências, comunidades e sua relação com as plantas',
+      contextDescription: 'Visualize estatísticas e métricas sobre as evidências, comunidades e sua relação com as plantas',
       showNavigation: true
     });
   } catch (error) {
@@ -332,17 +332,17 @@ router.get('/painel/api/stats/community-count', async (req, res) => {
 });
 
 /**
- * GET /painel/api/stats/reference-count
- * Total de referências por status
+ * GET /painel/api/stats/evidence-count
+ * Total de evidências por status
  */
-router.get('/painel/api/stats/reference-count', async (req, res) => {
+router.get('/painel/api/stats/evidence-count', async (req, res) => {
   try {
     const { estado, tipo, anoInicio, anoFim } = req.query;
     const filters = buildFilters({ estado, tipo, anoInicio, anoFim });
-    const result = await getReferenceCountByStatus(filters);
+    const result = await getEvidenceCountByStatus(filters);
     res.json(result);
   } catch (error) {
-    logger.error('Reference count failed:', error.message);
+    logger.error('Evidence count failed:', error.message);
     res.status(500).json({ error: error.message });
   }
 });
@@ -364,17 +364,17 @@ router.get('/painel/api/stats/top-authors', async (req, res) => {
 });
 
 /**
- * GET /painel/api/stats/references-by-state
- * Número de referências por estado (para mapa de calor)
+ * GET /painel/api/stats/evidences-by-state
+ * Número de evidências por estado (para mapa de calor)
  */
-router.get('/painel/api/stats/references-by-state', async (req, res) => {
+router.get('/painel/api/stats/evidences-by-state', async (req, res) => {
   try {
     const { tipo, anoInicio, anoFim } = req.query;
     const filters = buildFilters({ tipo, anoInicio, anoFim });
-    const result = await getReferencesByState(filters);
+    const result = await getEvidencesByState(filters);
     res.json(result);
   } catch (error) {
-    logger.error('References by state failed:', error.message);
+    logger.error('Evidences by state failed:', error.message);
     res.status(500).json({ error: error.message });
   }
 });
@@ -428,33 +428,33 @@ router.get('/painel/api/stats/top-communities', async (req, res) => {
 });
 
 /**
- * GET /painel/api/stats/references-by-communities
- * Referências com mais comunidades relatadas
+ * GET /painel/api/stats/evidences-by-communities
+ * Evidências com mais comunidades relatadas
  */
-router.get('/painel/api/stats/references-by-communities', async (req, res) => {
+router.get('/painel/api/stats/evidences-by-communities', async (req, res) => {
   try {
     const { limit = 10, estado, tipo, anoInicio, anoFim } = req.query;
     const filters = buildFilters({ estado, tipo, anoInicio, anoFim });
-    const result = await getTopReferencesByCommunities(parseInt(limit), filters);
+    const result = await getTopEvidencesByCommunities(parseInt(limit), filters);
     res.json(result);
   } catch (error) {
-    logger.error('References by communities failed:', error.message);
+    logger.error('Evidences by communities failed:', error.message);
     res.status(500).json({ error: error.message });
   }
 });
 
 /**
- * GET /painel/api/stats/references-by-plants
- * Referências com mais plantas relatadas
+ * GET /painel/api/stats/evidences-by-plants
+ * Evidências com mais plantas relatadas
  */
-router.get('/painel/api/stats/references-by-plants', async (req, res) => {
+router.get('/painel/api/stats/evidences-by-plants', async (req, res) => {
   try {
     const { limit = 10, estado, tipo, anoInicio, anoFim } = req.query;
     const filters = buildFilters({ estado, tipo, anoInicio, anoFim });
-    const result = await getTopReferencesByPlants(parseInt(limit), filters);
+    const result = await getTopEvidencesByPlants(parseInt(limit), filters);
     res.json(result);
   } catch (error) {
-    logger.error('References by plants failed:', error.message);
+    logger.error('Evidences by plants failed:', error.message);
     res.status(500).json({ error: error.message });
   }
 });
