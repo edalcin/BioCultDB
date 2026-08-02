@@ -33,6 +33,11 @@ function etnoChat() {
     providers: [],
     availableModels: [],
 
+    // OpenRouter has no curated list (ADR-002 D11) — fetched live by the
+    // browser, straight from OpenRouter's public endpoint.
+    openrouterModels: [],
+    openrouterModelsError: false,
+
     // Conversations
     conversations: [],
     currentConversation: {
@@ -50,7 +55,8 @@ function etnoChat() {
       this.providers = [
         { id: 'claude', name: 'Claude (Anthropic)' },
         { id: 'openai', name: 'OpenAI' },
-        { id: 'gemini', name: 'Google Gemini' }
+        { id: 'gemini', name: 'Google Gemini' },
+        { id: 'openrouter', name: 'OpenRouter' }
       ];
 
       // Load settings from localStorage
@@ -69,6 +75,11 @@ function etnoChat() {
 
       // Update available models
       this.updateAvailableModels();
+
+      // Pre-existing OpenRouter selection needs its live model list too
+      if (this.tempSettings.provider === 'openrouter') {
+        this.fetchOpenRouterModels();
+      }
     },
 
     // Settings Management
@@ -102,6 +113,10 @@ function etnoChat() {
       this.tempSettings.model = '';
       this.updateAvailableModels();
       this.validationStatus = '';
+
+      if (this.tempSettings.provider === 'openrouter') {
+        this.fetchOpenRouterModels();
+      }
     },
 
     updateAvailableModels() {
@@ -124,6 +139,24 @@ function etnoChat() {
       };
 
       this.availableModels = modelsByProvider[this.tempSettings.provider] || [];
+    },
+
+    // OpenRouter's catalog is live (ADR-002 D11): fetched by the browser
+    // straight from OpenRouter's public, CORS-enabled endpoint — no server
+    // route in between. A failed fetch degrades gracefully: the model field
+    // stays a free-text input either way, so the user can still type an id.
+    async fetchOpenRouterModels() {
+      this.openrouterModelsError = false;
+      try {
+        const response = await fetch('https://openrouter.ai/api/v1/models');
+        if (!response.ok) throw new Error('Request failed');
+        const { data } = await response.json();
+        this.openrouterModels = (data || []).map(m => ({ id: m.id, name: m.name || m.id }));
+      } catch (e) {
+        console.error('Failed to fetch OpenRouter models:', e);
+        this.openrouterModels = [];
+        this.openrouterModelsError = true;
+      }
     },
 
     async validateKey() {

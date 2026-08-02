@@ -326,7 +326,8 @@ async function streamChat({ provider, apiKey, model, messages, onText, onEnd, on
         break;
       }
 
-      case 'openai': {
+      case 'openai':
+      case 'openrouter': {
         const client = createClient(provider, apiKey);
         const stream = await client.chat.completions.create({
           model,
