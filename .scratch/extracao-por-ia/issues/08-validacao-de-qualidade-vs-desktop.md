@@ -36,16 +36,33 @@ Contexto: `.scratch/extracao-por-ia/spec.md` (Further Notes), `docs/decisions/AD
 
 **Bloqueado por:** 06 — a leitura de PDF precisa existir para ser comparada.
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] Amostra de artigos reais definida e registrada, com variedade de editora, idioma e layout,
-      incluindo ao menos um de coluna dupla e um com tabelas
-- [ ] Cada artigo processado nos dois caminhos com provedor, modelo e prompt idênticos
-- [ ] Comparação campo a campo registrada, com destaque para contagem e identidade das Comunidades
-      Tradicionais e Plantas
-- [ ] Diferenças qualitativas descritas, não só contadas — o que exatamente se perdeu ou se ganhou
-- [ ] Documento de resultado versionado no repositório
-- [ ] **Decisão explícita registrada**: seguir com a leitura no navegador, ou reabrir o ADR-002 D2
-      para leitura no servidor
-- [ ] Se reprovado, um ticket novo é aberto para a alternativa, e os tickets 09 a 11 ficam bloqueados
-      por ele
+- [x] ~~Amostra de artigos reais definida e registrada~~ — dispensado, ver decisão abaixo
+- [x] ~~Cada artigo processado nos dois caminhos~~ — dispensado, ver decisão abaixo
+- [x] ~~Comparação campo a campo registrada~~ — dispensado, ver decisão abaixo
+- [x] ~~Diferenças qualitativas descritas~~ — dispensado, ver decisão abaixo
+- [x] Documento de resultado versionado no repositório — esta seção é o documento
+- [x] **Decisão explícita registrada**: seguir com a leitura no navegador, sem comparação formal
+      contra o BioCultPapers
+- [x] N/A — decisão foi aprovar sem medição, então não há reprovação a desdobrar em ticket novo
+
+## Comments
+
+**Decisão do usuário (2026-08-02): dispensar a comparação formal deste ticket.** O portão de
+qualidade descrito acima — amostra de artigos, processamento pelos dois caminhos, comparação campo a
+campo — não foi executado. O usuário optou explicitamente por aprovar o caminho atual (leitura de PDF
+no navegador, texto corrido) sem essa medição.
+
+Consequência assumida conscientemente: o risco nomeado no ticket — perda de qualidade na extração de
+Comunidades Tradicionais e Plantas por não ter mais o Markdown estruturado que o BioCultPapers
+produzia — fica **sem verificação empírica**. Não há dado que confirme equivalência nem que a
+contradiga.
+
+Isso também significa que a alternativa do ADR-002 D2 (leitura do PDF no servidor, em memória)
+**não foi descartada por evidência**, apenas por decisão de não medir. Se algum dia a qualidade da
+extração for questionada, este é o ponto de partida: não há como distinguir "o texto corrido do
+navegador é a causa" de "a IA errou por outro motivo" sem a comparação que este ticket propunha.
+
+Ticket fechado por decisão do usuário, não por critério de aceite satisfeito. Tickets 09–11
+desbloqueados.
