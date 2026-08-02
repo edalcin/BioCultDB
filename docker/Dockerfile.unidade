@@ -72,6 +72,15 @@ COPY --from=builder /build/biocultdb/frontend/dist ./biocultdb/frontend/dist
 COPY frontend/src/presentation/styles ./biocultdb/frontend/src/presentation/styles
 COPY frontend/src/presentation/scripts ./biocultdb/frontend/src/presentation/scripts
 
+# Acquisition (PDF text extraction, Extração por IA — ADR-002) and Curation
+# static assets: served straight from src by their Express apps (no Tailwind
+# build step for these), so they must be copied like presentation's above —
+# omitting them 404s /scripts/pdf-text.js, /scripts/extraction.js (breaks
+# the Extração por IA screen entirely) and /styles/curation/list.css.
+COPY frontend/src/acquisition/scripts ./biocultdb/frontend/src/acquisition/scripts
+COPY frontend/src/acquisition/styles ./biocultdb/frontend/src/acquisition/styles
+COPY frontend/src/curation/styles ./biocultdb/frontend/src/curation/styles
+
 COPY --from=builder /build/bioculttermos/backend ./bioculttermos/backend
 COPY docker/start-unit.sh /app/start-unit.sh
 

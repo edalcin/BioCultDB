@@ -62,6 +62,13 @@ COPY --from=builder /app/frontend/dist ./frontend/dist
 COPY frontend/src/presentation/styles ./frontend/src/presentation/styles
 COPY frontend/src/presentation/scripts ./frontend/src/presentation/scripts
 
+# Acquisition (PDF text extraction, Extração por IA — ADR-002) and Curation
+# static assets: same reason as presentation above — served straight from
+# src, not part of the Tailwind build, so must be copied explicitly.
+COPY frontend/src/acquisition/scripts ./frontend/src/acquisition/scripts
+COPY frontend/src/acquisition/styles ./frontend/src/acquisition/styles
+COPY frontend/src/curation/styles ./frontend/src/curation/styles
+
 # Create non-root user for security, and the SQLite data directory owned by
 # it (the docker-compose volume mounted at /data inherits this ownership on
 # first mount — otherwise database.connect()'s mkdirSync('/data') fails with
