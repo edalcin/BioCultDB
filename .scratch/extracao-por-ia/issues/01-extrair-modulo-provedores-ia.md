@@ -18,7 +18,7 @@ Contexto: `.scratch/extracao-por-ia/spec.md` e `docs/decisions/ADR-002-extracao-
 
 **Bloqueado por:** nada — pode começar imediatamente.
 
-**Status:** done (verificação manual na interface com chaves reais pendente — ver Comments)
+**Status:** done-pending-manual (5/6 critérios verificados; falta checagem manual na interface com chaves reais — ver Comments)
 
 - [x] O registro de provedores, a validação de chave, a listagem de modelos e a criação de cliente
       vivem num módulo compartilhado no nível de serviços, fora do contexto de Apresentação
@@ -50,3 +50,15 @@ chaves de API reais que este ambiente não tem — não pude marcá-lo. Equival�
 comportamento pré-refactor está estabelecida; falta a checagem manual na UI com chaves reais.
 
 Nenhuma dependência nova em `package.json` (confirmado: arquivo não foi tocado).
+
+Code review (Standards + Spec, HEAD contra `5b377f0`): sem violação bloqueante em nenhum eixo.
+Standards apontou `PROVIDERS` exportado de `ai-providers.js` como desvio da convenção da pasta
+(`FIELD_REGISTRY` fica privado em `services/database.js`) e sem consumidor real — corrigido: `PROVIDERS`
+agora é privado ao módulo, `getModels` devolve cópia defensiva do array (simetria com `getProviders`),
+docblock renomeado para "AI Providers Service" (padrão dos módulos irmãos). Reverificado após o ajuste:
+jest 8/8, `require()` de ambos os módulos e de `routes.js` sem erro, `PROVIDERS` ausente da superfície
+pública de ambos os módulos, mutação do array de `getModels` não vaza para chamadas seguintes.
+Achados não aplicados (fora do escopo deste ticket, por design): manter `etnochat.js` reexportando
+`validateApiKey/getModels/getProviders` (routes.js segue chamando via `etnochatService.*`; tocar
+`routes.js` não foi pedido e ampliaria o diff) e os três `switch(provider)` remanescentes (consolidar
+dispatch é trabalho do ticket 03, que já vai tocar esta função para adicionar o OpenRouter).

@@ -10,7 +10,7 @@ const path = require('path');
 const database = require('../../../shared/database');
 const { Status } = require('../../../models/Reference');
 const logger = require('../../../shared/logger');
-const { PROVIDERS, createClient, validateApiKey, getModels, getProviders } = require('../../../services/ai-providers');
+const { createClient, validateApiKey, getModels, getProviders } = require('../../../services/ai-providers');
 
 // Load system prompt
 const systemPromptPath = path.join(__dirname, '../prompts/etnochat-system.md');
@@ -450,6 +450,5 @@ module.exports = {
   chat,
   extractFilterQuery,
   executeQuery,
-  FIELD_WHITELIST,
-  PROVIDERS
+  FIELD_WHITELIST
 };

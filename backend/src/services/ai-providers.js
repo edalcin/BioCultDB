@@ -1,5 +1,5 @@
 /**
- * AI Providers module
+ * AI Providers Service
  *
  * Shared registry of AI Providers (Claude, OpenAI, Gemini): provider/model
  * catalog, API key validation and SDK client construction. Consumed by the
@@ -134,7 +134,7 @@ async function validateApiKey(provider, apiKey, model = null) {
  */
 function getModels(provider) {
   const providerConfig = PROVIDERS[provider];
-  return providerConfig ? providerConfig.models : [];
+  return providerConfig ? [...providerConfig.models] : [];
 }
 
 /**
@@ -149,7 +149,6 @@ function getProviders() {
 }
 
 module.exports = {
-  PROVIDERS,
   createClient,
   validateApiKey,
   getModels,
