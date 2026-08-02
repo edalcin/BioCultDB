@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%= pageTitle %> - BioCultDB</title>
   <link rel="stylesheet" href="/styles/main.css">
+  <style>[x-cloak] { display: none !important; }</style>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.3/dist/cdn.min.js"></script>
 </head>
 <body class="min-h-screen bg-gray-50">
 
@@ -35,8 +37,12 @@
             Painel
           </a>
         </li>
-        <li>
-          <a href="/etnochat" class="block px-6 py-3 hover:bg-forest-700 transition-colors border-b-2 <%= featureName === 'etnoChat' ? 'border-forest-400 font-medium' : 'border-transparent hover:border-forest-300' %>">
+        <li x-data="{ ok: !!JSON.parse(localStorage.getItem('etnochat_settings')||'null')?.apiKey }"
+            x-on:etnochat-settings-changed.window="ok = !!JSON.parse(localStorage.getItem('etnochat_settings')||'null')?.apiKey"
+            x-cloak>
+          <a href="/etnochat"
+             :class="ok ? 'block px-6 py-3 hover:bg-forest-700 transition-colors border-b-2 <%= featureName === 'etnoChat' ? 'border-forest-400 font-medium' : 'border-transparent hover:border-forest-300' %>' : 'block px-6 py-3 border-b-2 border-transparent text-white/40 cursor-not-allowed'"
+             :title="ok ? '' : 'Configure uma chave de API para habilitar'">
             etnoChat
           </a>
         </li>

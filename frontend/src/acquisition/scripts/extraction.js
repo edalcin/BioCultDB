@@ -103,6 +103,13 @@ function extracaoIA() {
       this.tempSettings = { ...this.settings };
       this.updateAvailableModels();
 
+      // No key yet: open settings directly instead of a screen that will
+      // just fail (ADR-002 D8) — same behaviour as clicking the disabled
+      // nav item elsewhere in the app.
+      if (!this.settings.apiKey) {
+        this.showSettings = true;
+      }
+
       if (this.tempSettings.provider === 'openrouter') {
         this.fetchOpenRouterModels();
       }
@@ -128,6 +135,10 @@ function extracaoIA() {
       } catch (e) {
         console.error('Failed to save settings:', e);
       }
+
+      // Lets the nav item (a separate Alpine component) react without a
+      // reload when the key is set or cleared (ADR-002 D8).
+      window.dispatchEvent(new Event('extracao-settings-changed'));
 
       this.showSettings = false;
       this.validationStatus = '';

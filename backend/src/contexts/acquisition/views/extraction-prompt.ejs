@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%= pageTitle %> - BioCultDB</title>
   <link rel="stylesheet" href="/styles/main.css">
+  <script src="https://unpkg.com/alpinejs@3.13.3" defer></script>
+  <style>[x-cloak] { display: none !important; }</style>
 </head>
 <body class="min-h-screen bg-gray-50">
 
@@ -35,8 +37,12 @@
             Prompt de Extração
           </a>
         </li>
-        <li>
-          <a href="/extracao-ia" class="block px-6 py-2 hover:bg-forest-700 transition-colors border-b-2 border-transparent hover:border-forest-300 text-sm">
+        <li x-data="{ ok: !!JSON.parse(localStorage.getItem('extracao_settings')||'null')?.apiKey }"
+            x-on:extracao-settings-changed.window="ok = !!JSON.parse(localStorage.getItem('extracao_settings')||'null')?.apiKey"
+            x-cloak>
+          <a href="/extracao-ia"
+             :class="ok ? 'block px-6 py-2 hover:bg-forest-700 transition-colors border-b-2 border-transparent hover:border-forest-300 text-sm' : 'block px-6 py-2 border-b-2 border-transparent text-sm text-white/40 cursor-not-allowed'"
+             :title="ok ? '' : 'Configure uma chave de API para habilitar'">
             Extração por IA
           </a>
         </li>
