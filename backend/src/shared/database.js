@@ -3,7 +3,8 @@
  *
  * Opens the shared unit SQLite file (SQLITE_DB_PATH), applies WAL/foreign_keys/
  * busy_timeout PRAGMAs, and idempotently ensures the `biocultdb_records` table,
- * its generated-column indexes, and the `biocultdb_fts` FTS5 virtual table.
+ * its generated-column indexes, the `biocultdb_fts` FTS5 virtual table, and the
+ * `app_config` key/value table (ADR-002 D6).
  *
  * ADR-005 (Arquitetura-BioCultural): each federated unit shares ONE SQLite file
  * across its tools (distinct tables). BioCultTermos opens the same file and only
@@ -90,6 +91,16 @@ class Database {
         doi,
         comunidades,
         tokenize='unicode61 remove_diacritics 2'
+      );
+    `);
+
+    // Key/value app configuration (ADR-002 D6) — first consumer is the
+    // editable Extração por IA prompt, seeded lazily by services/database.js.
+    this.db.exec(`
+      CREATE TABLE IF NOT EXISTS app_config (
+        key        TEXT PRIMARY KEY,
+        value      TEXT NOT NULL,
+        updated_at TEXT NOT NULL
       );
     `);
   }

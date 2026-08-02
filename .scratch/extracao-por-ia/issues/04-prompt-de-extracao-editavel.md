@@ -33,18 +33,61 @@ Contexto: `docs/decisions/ADR-002-extracao-por-ia.md` (D6, D7).
 
 **Bloqueado por:** nada — pode começar imediatamente.
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] Existe uma tabela de configuração chave-valor com data de atualização, criada de forma
+- [x] Existe uma tabela de configuração chave-valor com data de atualização, criada de forma
       idempotente junto do restante do schema
-- [ ] Os acessores de leitura e escrita ficam na camada de serviço de dados existente, não num módulo
+- [x] Os acessores de leitura e escrita ficam na camada de serviço de dados existente, não num módulo
       novo
-- [ ] O prompt padrão é um arquivo versionado no repositório e semeia a linha no primeiro boot
-- [ ] A tela permite ler, editar e salvar o prompt, numa área de texto monoespaçada
-- [ ] **O texto salvo é preservado byte a byte** — quebras de linha, indentação e aspas retas
+- [x] O prompt padrão é um arquivo versionado no repositório e semeia a linha no primeiro boot
+- [x] A tela permite ler, editar e salvar o prompt, numa área de texto monoespaçada
+- [x] **O texto salvo é preservado byte a byte** — quebras de linha, indentação e aspas retas
       sobrevivem a um ciclo de salvar e recarregar. O bloco JSON dentro do prompt continua íntegro
-- [ ] Restaurar o padrão devolve o conteúdo do arquivo versionado
-- [ ] A tela mostra quando o prompt foi alterado pela última vez
-- [ ] Testes cobrem: leitura antes de qualquer escrita devolve o padrão semeado; escrita e releitura
+- [x] Restaurar o padrão devolve o conteúdo do arquivo versionado
+- [x] A tela mostra quando o prompt foi alterado pela última vez
+- [x] Testes cobrem: leitura antes de qualquer escrita devolve o padrão semeado; escrita e releitura
       preservam o texto exatamente; restauração volta ao arquivo; a data de atualização muda a cada
       escrita
+
+## Comments
+
+Tabela: `app_config(key TEXT PRIMARY KEY, value TEXT NOT NULL, updated_at TEXT NOT NULL)`, criada em
+`backend/src/shared/database.js` `_ensureSchema()`, idempotente (`CREATE TABLE IF NOT EXISTS`) junto
+do resto do schema.
+
+Acessores em `backend/src/services/database.js` (mesma camada de `insertEvidence`/`findEvidenceById`,
+não um módulo novo): `getConfig`/`setConfig` genéricos (upsert via `ON CONFLICT`, `updated_at` sempre
+recarimbado) e, sobre eles, `getExtractionPrompt`/`saveExtractionPrompt`/`restoreDefaultExtractionPrompt`
+específicos do Prompt de Extração. `getExtractionPrompt` semeia a linha na **primeira leitura** (não
+há gancho de "boot" nesta camada, e nada escreve a chave antes de a tela carregá-la pela primeira vez
+— efeito idêntico ao pedido).
+
+Padrão versionado em `backend/src/prompts/extraction-default.md` — mesmo diretório de nível que
+`services/`/`models/`, já que o acessor mora em `services/database.js` e não num contexto específico.
+Conteúdo é o `DefaultExtractionPrompt` real do BioCultPapers
+(`src/EtnoPapers.Core/Services/AIProviderService.cs`, buscado do repositório `edalcin/BioCultPapers`
+no GitHub): princípio de copiar exatamente, regra N:N de comunidades/plantas, lista dos 29 tipos de
+comunidade separada por `|`, e o bloco JSON literal — convertido de string verbatim C# (`""` → `"`)
+para o arquivo `.md`.
+
+Tela em `backend/src/contexts/acquisition/views/extraction-prompt.ejs`, rotas em
+`contexts/acquisition/routes.js`: `GET /extraction-prompt` (lê + semeia), `POST /extraction-prompt`
+(salva), `POST /extraction-prompt/reset` (restaura). `<textarea class="font-mono ... whitespace-pre">`
+monoespaçada, sem editor rich-text (D7). O texto do servidor entra via `<%= prompt %>` — EJS escapa
+entidades HTML, e o parser de `<textarea>` do navegador as decodifica de volta ao valor original: é
+round-trip sem perda para quebras de linha, aspas e o bloco JSON. Timestamp formatado com
+`toLocaleString('pt-BR')`. Nav adicionada tanto na tela nova quanto em `views/index.ejs`
+("Entrada de Dados" / "Prompt de Extração").
+
+Verificação automatizada: 4 testes novos em `backend/tests/unit/sqlite-persistence.test.js`
+("app_config (Prompt de Extração, ADR-002 D6)") — leitura antes de qualquer escrita devolve o arquivo
+semeado; escrita+releitura preserva texto com indentação, JSON e aspas retas exatamente; restauração
+volta ao arquivo; `updatedAt` muda a cada escrita (comparado por timestamp, não só desigualdade de
+string). Suíte completa: 12/12 (8 preexistentes + 4 novos), nenhum teste existente editado.
+
+Verificação manual na interface (`localhost:3001/extraction-prompt`, servidor local): primeira carga
+mostra os 2104 bytes do arquivo padrão (`startsWith`/`endsWith` conferem literalmente); editei o
+textarea com um trecho contendo indentação e um bloco `{"chave": "valor"}`, salvei, **recarreguei a
+página do zero** (`tab.goto`, não apenas estado do cliente) — o valor voltou exatamente igual,
+confirmando persistência server-side byte a byte; cliquei "Restaurar Padrão" — voltou aos 2104 bytes
+originais.

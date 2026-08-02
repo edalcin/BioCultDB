@@ -6,12 +6,21 @@
  * - POST /community/add: Add community form fragment (HTMX)
  * - POST /plant/add/:communityIndex: Add plant form fragment (HTMX)
  * - POST /evidence/submit: Submit complete evidence
+ * - GET /extraction-prompt: Prompt de Extração editor (ADR-002 D6)
+ * - POST /extraction-prompt: Save an edited prompt
+ * - POST /extraction-prompt/reset: Restore the versioned default prompt
  */
 
 const express = require('express');
 const router = express.Router();
 const { validateEvidence } = require('../../services/validation');
-const { checkDuplicateEvidence, insertEvidence } = require('../../services/database');
+const {
+  checkDuplicateEvidence,
+  insertEvidence,
+  getExtractionPrompt,
+  saveExtractionPrompt,
+  restoreDefaultExtractionPrompt
+} = require('../../services/database');
 const logger = require('../../shared/logger');
 
 /**
@@ -27,6 +36,57 @@ router.get('/', (req, res) => {
     showNavigation: true,
     errors: null,
     formData: null
+  });
+});
+
+/**
+ * GET /extraction-prompt - Prompt de Extração editor
+ */
+router.get('/extraction-prompt', (req, res) => {
+  const prompt = getExtractionPrompt();
+
+  res.render('extraction-prompt', {
+    pageTitle: 'Prompt de Extração',
+    contextName: 'Prompt de Extração',
+    contextDescription: 'Edite o texto que instrui a IA na Extração por IA',
+    prompt: prompt.value,
+    updatedAt: prompt.updatedAt,
+    saved: false
+  });
+});
+
+/**
+ * POST /extraction-prompt - Save the edited prompt (preserved byte-for-byte)
+ */
+router.post('/extraction-prompt', (req, res) => {
+  const { prompt: value } = req.body;
+  const saved = saveExtractionPrompt(value || '');
+  logger.acquisition('Extraction prompt saved');
+
+  res.render('extraction-prompt', {
+    pageTitle: 'Prompt de Extração',
+    contextName: 'Prompt de Extração',
+    contextDescription: 'Edite o texto que instrui a IA na Extração por IA',
+    prompt: saved.value,
+    updatedAt: saved.updatedAt,
+    saved: true
+  });
+});
+
+/**
+ * POST /extraction-prompt/reset - Restore the versioned default prompt
+ */
+router.post('/extraction-prompt/reset', (req, res) => {
+  const restored = restoreDefaultExtractionPrompt();
+  logger.acquisition('Extraction prompt restored to default');
+
+  res.render('extraction-prompt', {
+    pageTitle: 'Prompt de Extração',
+    contextName: 'Prompt de Extração',
+    contextDescription: 'Edite o texto que instrui a IA na Extração por IA',
+    prompt: restored.value,
+    updatedAt: restored.updatedAt,
+    saved: true
   });
 });
 

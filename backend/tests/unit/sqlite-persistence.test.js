@@ -13,8 +13,18 @@
 process.env.SQLITE_DB_PATH = ':memory:';
 process.env.NODE_ENV = 'test';
 
+const fs = require('fs');
+const path = require('path');
 const database = require('../../src/shared/database');
-const { insertEvidence, findEvidenceById, updateEvidenceStatus, searchEvidences } = require('../../src/services/database');
+const {
+  insertEvidence,
+  findEvidenceById,
+  updateEvidenceStatus,
+  searchEvidences,
+  getExtractionPrompt,
+  saveExtractionPrompt,
+  restoreDefaultExtractionPrompt
+} = require('../../src/services/database');
 const { getTopPlants } = require('../../src/services/statistics');
 const { executeQuery } = require('../../src/contexts/presentation/services/etnochat');
 const { Status } = require('../../src/models/Evidence');
@@ -173,5 +183,43 @@ describe('contexts/presentation/services/etnochat.js — DSL whitelist enforceme
     expect(result.success).toBe(true);
     expect(Array.isArray(result.data)).toBe(true);
     expect(result.data.every((doc) => doc.status === Status.APPROVED)).toBe(true);
+  });
+});
+
+describe('services/database.js — app_config (Prompt de Extração, ADR-002 D6)', () => {
+  const defaultPromptPath = path.join(__dirname, '../../src/prompts/extraction-default.md');
+  const defaultPrompt = fs.readFileSync(defaultPromptPath, 'utf-8');
+
+  test('reading before any write returns the seeded default from the versioned file', () => {
+    const result = getExtractionPrompt();
+    expect(result.value).toBe(defaultPrompt);
+    expect(result.updatedAt).toBeTruthy();
+  });
+
+  test('writing and rereading preserves the text exactly, including JSON and indentation', () => {
+    const edited = 'Prompt editado\n\n  com indentação\n{"chave": "valor"}\ne "aspas retas"';
+    const saved = saveExtractionPrompt(edited);
+    expect(saved.value).toBe(edited);
+
+    const reread = getExtractionPrompt();
+    expect(reread.value).toBe(edited);
+  });
+
+  test('restoring reverts to the versioned default file', () => {
+    saveExtractionPrompt('texto temporário, será descartado');
+    const restored = restoreDefaultExtractionPrompt();
+    expect(restored.value).toBe(defaultPrompt);
+
+    const reread = getExtractionPrompt();
+    expect(reread.value).toBe(defaultPrompt);
+  });
+
+  test('updatedAt changes on every write', async () => {
+    const first = saveExtractionPrompt('versão 1');
+    await new Promise((resolve) => setTimeout(resolve, 5));
+    const second = saveExtractionPrompt('versão 2');
+
+    expect(second.updatedAt).not.toBe(first.updatedAt);
+    expect(new Date(second.updatedAt).getTime()).toBeGreaterThan(new Date(first.updatedAt).getTime());
   });
 });

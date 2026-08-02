@@ -18,6 +18,8 @@
  *   }
  */
 
+const fs = require('fs');
+const path = require('path');
 const database = require('../shared/database');
 const logger = require('../shared/logger');
 const { createEvidence, updateEvidence, Status } = require('../models/Evidence');
@@ -606,6 +608,69 @@ async function searchEvidences(query = {}, page = 1, limit = 50) {
   }
 }
 
+const APP_CONFIG_TABLE = 'app_config';
+const EXTRACTION_PROMPT_KEY = 'extraction_prompt';
+const DEFAULT_EXTRACTION_PROMPT_PATH = path.join(__dirname, '../prompts/extraction-default.md');
+
+/**
+ * Read a config row from `app_config`.
+ * @param {string} key
+ * @returns {{value: string, updatedAt: string}|null}
+ */
+function getConfig(key) {
+  const db = getDb();
+  const row = db.prepare(`SELECT value, updated_at FROM ${APP_CONFIG_TABLE} WHERE key = ?`).get(key);
+  return row ? { value: row.value, updatedAt: row.updated_at } : null;
+}
+
+/**
+ * Upsert a config row in `app_config`, stamping `updated_at` on every write.
+ * @param {string} key
+ * @param {string} value
+ * @returns {{value: string, updatedAt: string}}
+ */
+function setConfig(key, value) {
+  const db = getDb();
+  const updatedAt = new Date().toISOString();
+  db.prepare(`
+    INSERT INTO ${APP_CONFIG_TABLE} (key, value, updated_at) VALUES (?, ?, ?)
+    ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = excluded.updated_at
+  `).run(key, value, updatedAt);
+  return { value, updatedAt };
+}
+
+function readDefaultExtractionPrompt() {
+  return fs.readFileSync(DEFAULT_EXTRACTION_PROMPT_PATH, 'utf-8');
+}
+
+/**
+ * Get the Extração por IA prompt (ADR-002 D6). Seeds `app_config` from the
+ * versioned default file on first read — "primeiro boot" in practice is
+ * "primeira leitura", since nothing writes to this key before the editor
+ * screen loads it.
+ * @returns {{value: string, updatedAt: string}}
+ */
+function getExtractionPrompt() {
+  return getConfig(EXTRACTION_PROMPT_KEY) || setConfig(EXTRACTION_PROMPT_KEY, readDefaultExtractionPrompt());
+}
+
+/**
+ * Save an edited Extração por IA prompt, preserved byte-for-byte.
+ * @param {string} value
+ * @returns {{value: string, updatedAt: string}}
+ */
+function saveExtractionPrompt(value) {
+  return setConfig(EXTRACTION_PROMPT_KEY, value);
+}
+
+/**
+ * Restore the Extração por IA prompt to the versioned default file.
+ * @returns {{value: string, updatedAt: string}}
+ */
+function restoreDefaultExtractionPrompt() {
+  return setConfig(EXTRACTION_PROMPT_KEY, readDefaultExtractionPrompt());
+}
+
 module.exports = {
   checkDuplicateEvidence,
   insertEvidence,
@@ -615,5 +680,8 @@ module.exports = {
   updateEvidenceStatus,
   deleteEvidenceById,
   countEvidences,
-  searchEvidences
+  searchEvidences,
+  getExtractionPrompt,
+  saveExtractionPrompt,
+  restoreDefaultExtractionPrompt
 };
