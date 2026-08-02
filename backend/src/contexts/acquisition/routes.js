@@ -9,6 +9,11 @@
  * - GET /extraction-prompt: Prompt de Extração editor (ADR-002 D6)
  * - POST /extraction-prompt: Save an edited prompt
  * - POST /extraction-prompt/reset: Restore the versioned default prompt
+ * - GET /extracao-ia: Extração por IA screen (ADR-002 D5/D9)
+ * - GET /extracao-ia/api/providers, /api/models, POST /api/validate-key:
+ *   same shared ai-providers module the etnoChat routes use
+ * - POST /extracao-ia/api/consultar: call the AI provider, return raw text
+ * - POST /extracao-ia/api/gravar: parse the raw text, save a pending Evidence
  */
 
 const express = require('express');
@@ -21,6 +26,8 @@ const {
   saveExtractionPrompt,
   restoreDefaultExtractionPrompt
 } = require('../../services/database');
+const { validateApiKey, completeText, getModels, getProviders } = require('../../services/ai-providers');
+const { parseExtractionResponse } = require('../../services/extraction-parser');
 const logger = require('../../shared/logger');
 
 /**
@@ -88,6 +95,122 @@ router.post('/extraction-prompt/reset', (req, res) => {
     updatedAt: restored.updatedAt,
     saved: true
   });
+});
+
+/**
+ * GET /extracao-ia - Extração por IA screen
+ */
+router.get('/extracao-ia', (req, res) => {
+  res.render('extracao-ia', {
+    pageTitle: 'Extração por IA',
+    contextName: 'Extração por IA',
+    contextDescription: 'Extraia uma Evidência a partir do texto de um artigo'
+  });
+});
+
+/**
+ * GET /extracao-ia/api/providers - List available AI providers
+ */
+router.get('/extracao-ia/api/providers', (req, res) => {
+  res.json(getProviders());
+});
+
+/**
+ * GET /extracao-ia/api/models - List curated models for a provider
+ */
+router.get('/extracao-ia/api/models', (req, res) => {
+  const { provider } = req.query;
+  if (!provider) {
+    return res.status(400).json({ error: 'Provedor é obrigatório' });
+  }
+  res.json(getModels(provider));
+});
+
+/**
+ * POST /extracao-ia/api/validate-key - Validate an API key
+ */
+router.post('/extracao-ia/api/validate-key', async (req, res) => {
+  try {
+    const { provider, apiKey, model } = req.body;
+    if (!provider || !apiKey) {
+      return res.status(400).json({ valid: false, error: 'Provedor e chave são obrigatórios' });
+    }
+    const result = await validateApiKey(provider, apiKey, model);
+    res.json(result);
+  } catch (error) {
+    logger.error('Extração por IA — validate-key error:', error.message);
+    res.status(500).json({ valid: false, error: 'Erro ao validar chave' });
+  }
+});
+
+/**
+ * Translate a raw provider error into a message the user can act on.
+ * Never includes the API key. `error.status`/`error.message` cover the
+ * three SDKs (`@anthropic-ai/sdk`, `openai`, `@google/genai`) in this repo.
+ * @param {Error} error
+ * @returns {string}
+ */
+function classifyProviderError(error) {
+  const status = error?.status || error?.response?.status;
+  const message = logger.redactApiKey(error?.message || '');
+
+  if (status === 429 || /rate.?limit|quota/i.test(message)) {
+    return 'Limite de uso do provedor de IA atingido. Aguarde um pouco e tente novamente.';
+  }
+  if (/context length|maximum.*tokens?|token limit|too long/i.test(message)) {
+    return 'O texto excede a janela de contexto do modelo escolhido. Tente um modelo com contexto maior ou reduza o texto.';
+  }
+  return `Falha ao consultar o provedor de IA: ${message || 'erro desconhecido'}`;
+}
+
+/**
+ * POST /extracao-ia/api/consultar - Ask the AI provider to extract from
+ * the pasted text. The API key transits here and is never persisted or
+ * logged (ADR-002 D5) — only `error.message` is logged on failure.
+ */
+router.post('/extracao-ia/api/consultar', async (req, res) => {
+  const { provider, apiKey, model, texto } = req.body;
+
+  if (!provider || !apiKey || !model || !texto || !String(texto).trim()) {
+    return res.status(400).json({ success: false, error: 'Provedor, chave, modelo e texto são obrigatórios' });
+  }
+
+  try {
+    const extractionPrompt = getExtractionPrompt().value;
+    const rawResponse = await completeText(provider, apiKey, model, extractionPrompt, texto);
+    res.json({ success: true, rawResponse });
+  } catch (error) {
+    logger.error(`Extração por IA — consulta falhou (${provider}/${model}):`, logger.redactApiKey(error.message));
+    res.json({ success: false, error: classifyProviderError(error) });
+  }
+});
+
+/**
+ * POST /extracao-ia/api/gravar - Parse the raw AI response and save a
+ * pending Evidence. Always saves, even incomplete (ADR-002 D9) — only a
+ * response the parser cannot make sense of fails this step.
+ */
+router.post('/extracao-ia/api/gravar', (req, res) => {
+  const { rawResponse, provider, model } = req.body;
+
+  if (!rawResponse) {
+    return res.status(400).json({ success: false, error: 'Nenhuma resposta da IA para processar' });
+  }
+
+  const parsed = parseExtractionResponse(rawResponse, { provider, model });
+  if (!parsed.success) {
+    return res.json({ success: false, error: parsed.error });
+  }
+
+  insertEvidence(parsed.evidence)
+    .then((evidence) => {
+      logger.acquisition(`Extração por IA gravou Evidência pendente ${evidence.id} (${evidence.fonte})`);
+      res.json({ success: true, id: evidence.id });
+    })
+    .catch((error) => {
+      logger.error('Extração por IA — falha ao gravar Evidência:', error.message);
+      res.json({ success: false, error: 'Falha ao salvar a Evidência extraída' });
+    });
 });
 
 /**

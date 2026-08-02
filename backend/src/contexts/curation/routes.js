@@ -23,12 +23,21 @@ const logger = require('../../shared/logger');
  */
 router.get('/', async (req, res) => {
   try {
-    const { status, page = 1, limit = 50, sort = 'createdAt', order = 'desc' } = req.query;
+    const { status, origem, page = 1, limit = 50, sort = 'createdAt', order = 'desc' } = req.query;
 
     // Build query
     const query = {};
     if (status && status !== 'all' && Object.values(Status).includes(status)) {
       query.status = status;
+    }
+    // "Origem" filter (ticket 05): "ia" groups every `extração IA — <provedor>/<modelo>`
+    // fonte via substring match; any other value is an exact `fonte` match.
+    if (origem && origem !== 'all') {
+      if (origem === 'ia') {
+        query.fonteContains = 'extração IA';
+      } else {
+        query.fonte = origem;
+      }
     }
 
     // Build sort object
@@ -51,12 +60,13 @@ router.get('/', async (req, res) => {
         autores: 1,
         ano: 1,
         status: 1,
+        fonte: 1,
         createdAt: 1,
         updatedAt: 1
       }
     });
 
-    logger.curation(`Listing ${evidences.length} evidences (status: ${status || 'all'}, sort: ${sortField} ${order})`);
+    logger.curation(`Listing ${evidences.length} evidences (status: ${status || 'all'}, origem: ${origem || 'all'}, sort: ${sortField} ${order})`);
     if (evidences.length > 0) {
       logger.curation(`First evidence ID: ${evidences[0].id}, title: ${evidences[0].titulo}`);
     }
@@ -68,6 +78,7 @@ router.get('/', async (req, res) => {
       showNavigation: true,
       evidences,
       statusFilter: status || 'all',
+      origemFilter: origem || 'all',
       sortField,
       sortOrder: order,
       success: req.query.success === 'true'
@@ -83,6 +94,7 @@ router.get('/', async (req, res) => {
       showNavigation: true,
       evidences: [],
       statusFilter: 'all',
+      origemFilter: 'all',
       sortField: 'createdAt',
       sortOrder: 'desc',
       success: false,

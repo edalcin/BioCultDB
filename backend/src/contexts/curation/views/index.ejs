@@ -71,6 +71,32 @@
       </div>
     </section>
 
+    <!-- Origin Filter (ticket 05: filter by "extração IA — <provedor>/<modelo>") -->
+    <section class="card mb-6">
+      <h2 class="text-xl font-semibold text-gray-900 mb-4">Filtrar por Origem</h2>
+
+      <div class="flex flex-wrap gap-3">
+        <a
+          href="/?status=<%= statusFilter %>&origem=all"
+          class="filter-btn <%= origemFilter === 'all' ? 'filter-btn-active' : '' %>"
+        >
+          Todas
+        </a>
+        <a
+          href="/?status=<%= statusFilter %>&origem=etnodb"
+          class="filter-btn <%= origemFilter === 'etnodb' ? 'filter-btn-active' : '' %>"
+        >
+          Entrada manual
+        </a>
+        <a
+          href="/?status=<%= statusFilter %>&origem=ia"
+          class="filter-btn <%= origemFilter === 'ia' ? 'filter-btn-active' : '' %>"
+        >
+          Extração por IA
+        </a>
+      </div>
+    </section>
+
     <!-- Evidences List -->
     <section class="card">
       <div class="flex items-center justify-between mb-4">
@@ -85,7 +111,7 @@
             <thead>
               <tr class="bg-gray-50 border-b border-gray-200">
                 <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                  <a href="?status=<%= statusFilter %>&sort=titulo&order=<%= sortField === 'titulo' && sortOrder === 'asc' ? 'desc' : 'asc' %>" class="hover:text-forest-600 flex items-center gap-1">
+                  <a href="?status=<%= statusFilter %>&origem=<%= origemFilter %>&sort=titulo&order=<%= sortField === 'titulo' && sortOrder === 'asc' ? 'desc' : 'asc' %>" class="hover:text-forest-600 flex items-center gap-1">
                     Título
                     <% if (sortField === 'titulo') { %>
                       <span><%= sortOrder === 'asc' ? '↑' : '↓' %></span>
@@ -93,7 +119,7 @@
                   </a>
                 </th>
                 <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                  <a href="?status=<%= statusFilter %>&sort=autores&order=<%= sortField === 'autores' && sortOrder === 'asc' ? 'desc' : 'asc' %>" class="hover:text-forest-600 flex items-center gap-1">
+                  <a href="?status=<%= statusFilter %>&origem=<%= origemFilter %>&sort=autores&order=<%= sortField === 'autores' && sortOrder === 'asc' ? 'desc' : 'asc' %>" class="hover:text-forest-600 flex items-center gap-1">
                     Autores
                     <% if (sortField === 'autores') { %>
                       <span><%= sortOrder === 'asc' ? '↑' : '↓' %></span>
@@ -101,7 +127,7 @@
                   </a>
                 </th>
                 <th class="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                  <a href="?status=<%= statusFilter %>&sort=ano&order=<%= sortField === 'ano' && sortOrder === 'asc' ? 'desc' : 'asc' %>" class="hover:text-forest-600 flex items-center justify-end gap-1">
+                  <a href="?status=<%= statusFilter %>&origem=<%= origemFilter %>&sort=ano&order=<%= sortField === 'ano' && sortOrder === 'asc' ? 'desc' : 'asc' %>" class="hover:text-forest-600 flex items-center justify-end gap-1">
                     Ano
                     <% if (sortField === 'ano') { %>
                       <span><%= sortOrder === 'asc' ? '↑' : '↓' %></span>
@@ -109,7 +135,7 @@
                   </a>
                 </th>
                 <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                  <a href="?status=<%= statusFilter %>&sort=status&order=<%= sortField === 'status' && sortOrder === 'asc' ? 'desc' : 'asc' %>" class="hover:text-forest-600 flex items-center gap-1">
+                  <a href="?status=<%= statusFilter %>&origem=<%= origemFilter %>&sort=status&order=<%= sortField === 'status' && sortOrder === 'asc' ? 'desc' : 'asc' %>" class="hover:text-forest-600 flex items-center gap-1">
                     Status
                     <% if (sortField === 'status') { %>
                       <span><%= sortOrder === 'asc' ? '↑' : '↓' %></span>
@@ -117,7 +143,10 @@
                   </a>
                 </th>
                 <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                  <a href="?status=<%= statusFilter %>&sort=createdAt&order=<%= sortField === 'createdAt' && sortOrder === 'asc' ? 'desc' : 'asc' %>" class="hover:text-forest-600 flex items-center gap-1">
+                  Origem
+                </th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                  <a href="?status=<%= statusFilter %>&origem=<%= origemFilter %>&sort=createdAt&order=<%= sortField === 'createdAt' && sortOrder === 'asc' ? 'desc' : 'asc' %>" class="hover:text-forest-600 flex items-center gap-1">
                     Criado
                     <% if (sortField === 'createdAt') { %>
                       <span><%= sortOrder === 'asc' ? '↑' : '↓' %></span>
@@ -151,13 +180,24 @@
                     <%- include('partials/status-badge', { status: evidence.status }) %>
                   </td>
                   <td class="px-4 py-3">
+                    <% if ((evidence.fonte || '').includes('extração IA')) { %>
+                      <span class="text-xs bg-blue-50 text-blue-700 px-2 py-1 rounded-full" title="<%= evidence.fonte %>">
+                        Extração por IA
+                      </span>
+                    <% } else { %>
+                      <span class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
+                        Manual
+                      </span>
+                    <% } %>
+                  </td>
+                  <td class="px-4 py-3">
                     <p class="text-xs text-gray-600">
                       <%= new Date(evidence.createdAt).toLocaleDateString('pt-BR') %>
                     </p>
                   </td>
                   <td class="px-4 py-3">
                     <a
-                      href="/evidence/edit/<%= evidence._id %>"
+                      href="/evidence/edit/<%= evidence.id %>"
                       class="text-forest-600 hover:text-forest-700 font-medium text-sm"
                     >
                       Editar

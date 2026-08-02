@@ -142,8 +142,68 @@ async function validateApiKey(provider, apiKey, model = null) {
         return { valid: false, error: 'Provedor desconhecido' };
     }
   } catch (error) {
-    logger.error(`API key validation failed for ${provider} with model ${model}:`, error.message);
-    return { valid: false, error: error.message };
+    const safeMessage = logger.redactApiKey(error.message);
+    logger.error(`API key validation failed for ${provider} with model ${model}:`, safeMessage);
+    return { valid: false, error: safeMessage };
+  }
+}
+
+/**
+ * Single-shot, non-streaming completion: one system prompt + one user
+ * message, full response text. Used by the Extração por IA (no chat
+ * history, no streaming) — dispatches through the same per-provider SDK
+ * calls as `validateApiKey`/etnoChat's `streamChat` (ADR-002 D4).
+ * @param {string} provider
+ * @param {string} apiKey
+ * @param {string} model
+ * @param {string} systemPrompt
+ * @param {string} userText
+ * @returns {Promise<string>} Raw response text
+ */
+async function completeText(provider, apiKey, model, systemPrompt, userText) {
+  const client = createClient(provider, apiKey);
+
+  switch (provider) {
+    case 'claude': {
+      const response = await client.messages.create({
+        model,
+        max_tokens: 8000,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: userText }]
+      });
+      return response.content
+        .filter((block) => block.type === 'text')
+        .map((block) => block.text)
+        .join('');
+    }
+
+    case 'openai':
+    case 'openrouter': {
+      const response = await client.chat.completions.create({
+        model,
+        max_tokens: 8000,
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userText }
+        ]
+      });
+      return response.choices[0]?.message?.content || '';
+    }
+
+    case 'gemini': {
+      const response = await client.models.generateContent({
+        model,
+        contents: [
+          { role: 'user', parts: [{ text: systemPrompt }] },
+          { role: 'model', parts: [{ text: 'Entendido.' }] },
+          { role: 'user', parts: [{ text: userText }] }
+        ]
+      });
+      return response.text || '';
+    }
+
+    default:
+      throw new Error('Provedor desconhecido');
   }
 }
 
@@ -171,6 +231,7 @@ function getProviders() {
 module.exports = {
   createClient,
   validateApiKey,
+  completeText,
   getModels,
   getProviders
 };

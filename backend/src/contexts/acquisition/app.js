@@ -24,6 +24,7 @@ app.use(express.json({ limit: '10mb' }));
 app.use('/styles', express.static(path.join(__dirname, '../../../../frontend/dist/styles')));
 app.use('/styles/acquisition', express.static(path.join(__dirname, '../../../../frontend/src/acquisition/styles')));
 app.use('/images', express.static(path.join(__dirname, '../../shared/public/images')));
+app.use('/scripts', express.static(path.join(__dirname, '../../../../frontend/src/acquisition/scripts')));
 
 // Request logging
 app.use((req, res, next) => {

@@ -168,6 +168,14 @@ function buildWhereClause(query = {}) {
     params.push(query.fonte);
   }
 
+  // Substring match on the same generated `fonte` column — lets Curadoria
+  // filter "Extração por IA" as a category without listing every exact
+  // "extração IA — <provedor>/<modelo>" string (ADR-002, ticket 05).
+  if (query.fonteContains !== undefined && query.fonteContains !== null && query.fonteContains !== '') {
+    clauses.push("fonte LIKE '%' || ? || '%'");
+    params.push(query.fonteContains);
+  }
+
   const conditionsClause = buildConditionsClause(query.conditions, params);
   if (conditionsClause) clauses.push(conditionsClause);
 

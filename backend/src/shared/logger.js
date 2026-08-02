@@ -26,4 +26,18 @@ const loggers = {
 // Always enable error logging
 loggers.error.enabled = true;
 
-module.exports = loggers;
+/**
+ * Strip API-key-shaped fragments from a string before it reaches a log line
+ * or an error message shown to the user — including a provider's own
+ * *partially masked* echo of the key (e.g. OpenAI's "sk-defin****-xyz" in
+ * its 401 body), which is not a raw substring of the key we sent and so a
+ * plain string-replace of the original key would miss it (ADR-002 D5:
+ * "a chave nunca aparece em log algum, nem truncada").
+ * @param {string} text
+ * @returns {string}
+ */
+function redactApiKey(text) {
+  return String(text).replace(/\b(sk-|sk-ant-|sk-or-|AIza)[A-Za-z0-9_\-*]{4,}\b/g, '[REDACTED]');
+}
+
+module.exports = { ...loggers, redactApiKey };
