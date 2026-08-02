@@ -35,12 +35,34 @@ Contexto: `docs/decisions/ADR-002-extracao-por-ia.md` (D14 e Consequências).
 
 **Bloqueado por:** 09 — não se anuncia a aposentadoria antes de os dados estarem migrados.
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] Aviso em destaque no topo do README, antes de qualquer outro conteúdo
-- [ ] O aviso diz para onde a funcionalidade foi, com link para o BioCultDB
-- [ ] O aviso declara que o repositório está congelado e não recebe mais atualizações
-- [ ] O aviso explica como migrar dados locais remanescentes
-- [ ] Instruções de instalação preservadas abaixo do aviso, para quem precise exportar dados antigos
-- [ ] Histórico e código preservados — nada apagado
-- [ ] Decisão sobre arquivar o repositório na plataforma tomada e registrada, seja ela qual for
+- [x] Aviso em destaque no topo do README, antes de qualquer outro conteúdo
+- [x] O aviso diz para onde a funcionalidade foi, com link para o BioCultDB
+- [x] O aviso declara que o repositório está congelado e não recebe mais atualizações
+- [x] O aviso explica como migrar dados locais remanescentes
+- [x] Instruções de instalação preservadas abaixo do aviso, para quem precise exportar dados antigos
+- [x] Histórico e código preservados — nada apagado
+- [x] Decisão sobre arquivar o repositório na plataforma tomada e registrada, seja ela qual for
+
+## Comments
+
+Implementado no repositório `BioCultPapers` (commit `c2dae01`), via subagente delegado em paralelo
+com o ticket 10. Único arquivo tocado: `README.md`.
+
+Aviso em blockquote inserido como as 9 primeiras linhas do arquivo, antes do título/badges/descrição:
+"⚠️ REPOSITÓRIO CONGELADO", com as três informações na ordem pedida — (a) para onde foi, com link
+`https://github.com/edalcin/BioCultDB`; (b) declaração de congelamento (sem atualizações, correções
+ou resposta a issues); (c) como migrar dados antigos, citando a função "Exportar para BioCultDB" do
+próprio app e o script `backend/src/scripts/import-papers.js` do BioCultDB (nome real confirmado no
+código).
+
+Decisão de arquivamento registrada em nova seção ao final do README ("Status do Repositório no
+GitHub"): **não arquivar por enquanto** — releases/instalador precisam continuar acessíveis para quem
+for exportar dados antigos, e arquivamento bloquearia issues/escrita durante o período de migração.
+Reavaliação prevista para quando a migração for considerada encerrada. Arquivamento não foi executado
+na plataforma, só a decisão foi documentada, conforme o ticket permite.
+
+Verificação: `git diff --stat README.md` = +18/-0 (apenas adições, nenhuma remoção); `git status`
+confirma que só `README.md` foi modificado por este trabalho; título, badges, descrição, instruções
+de instalação e capturas de tela do app permanecem intactos abaixo do aviso.
