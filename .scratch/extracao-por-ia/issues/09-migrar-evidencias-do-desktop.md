@@ -30,14 +30,22 @@ Contexto: `docs/decisions/ADR-002-extracao-por-ia.md` (D14).
 
 **Bloqueado por:** 08 — não se migra para uma funcionalidade cuja qualidade ainda não foi aprovada.
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] Backup do arquivo SQLite da unidade feito e verificado antes da importação
-- [ ] Todas as Evidências do desktop exportadas, com a contagem registrada
-- [ ] Importação executada e a contagem posterior confere com a anterior
-- [ ] Amostragem manual confirma que Comunidades Tradicionais e Plantas aninhadas chegaram íntegras
-- [ ] O estado das Evidências importadas foi decidido e registrado; nenhuma ficou aprovada sem
-      revisão humana nesta unidade
-- [ ] Comportamento de reexecução verificado: rodar de novo não duplica
-- [ ] As Evidências importadas aparecem normalmente na Curadoria e na busca
-- [ ] Resultado da migração registrado, com números
+- [x] N/A — não há dados reais no BioCultPapers desktop para migrar
+- [x] ~~Todas as Evidências do desktop exportadas~~ — não aplicável, base vazia/já migrada
+- [x] ~~Importação executada~~ — não aplicável
+- [x] ~~Amostragem manual~~ — não aplicável
+- [x] N/A — nenhum estado a decidir, nada foi importado
+- [x] N/A — nada a reexecutar
+- [x] N/A — nada a aparecer na Curadoria
+- [x] Resultado registrado: nenhuma migração necessária
+
+## Comments
+
+**Decisão do usuário (2026-08-02): não há Evidências reais no BioCultPapers desktop a migrar** — base
+vazia ou já coberta por migração anterior. `import-papers.js` permanece no repositório como rede de
+segurança, conforme já previsto no ticket, para o caso de um banco de desktop esquecido aparecer
+depois. Nenhuma operação de importação foi executada nesta sessão; nada havia para importar.
+
+Ticket fechado por constatação do usuário, não por execução do procedimento de migração.
