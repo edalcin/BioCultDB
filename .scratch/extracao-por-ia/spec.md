@@ -1,6 +1,6 @@
 # Spec: Extração por IA
 
-Status: ready-for-agent
+Status: done — todos os 11 tickets fechados (ver `.scratch/extracao-por-ia/issues/`)
 
 > Produzido por `/to-spec` em 2026-08-02, a partir da sessão de `grill-with-docs` da mesma data.
 > Decisões e alternativas descartadas: `docs/decisions/ADR-002-extracao-por-ia.md`.
