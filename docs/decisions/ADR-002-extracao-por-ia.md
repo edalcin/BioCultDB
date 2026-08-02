@@ -38,7 +38,7 @@ exportar/importar entre duas aplicações que já falam o mesmo modelo de docume
 | SDKs dos três provedores instalados | `package.json` (`@anthropic-ai/sdk`, `openai`, `@google/genai`) | Zero dependência nova de provedor |
 | Aquisição e Curadoria completas | contextos 3001 e 3002 | Tornam desnecessário portar a metade de gestão do BioCultPapers |
 | Importador do JSON do desktop | `backend/src/scripts/import-papers.js` | Caminho de migração já construído |
-| Modelo de documento idêntico | `backend/src/models/Reference.js` ≡ `ArticleRecord.cs` | Não há tradução de schema a fazer |
+| Modelo de documento idêntico | `backend/src/models/Evidence.js` ≡ `ArticleRecord.cs` | Não há tradução de schema a fazer |
 
 ## Decisões
 
@@ -214,7 +214,7 @@ individual exigiria reestruturar o documento JSON, que é contrato compartilhado
 
 Escopo do rename: **modelo, rotas e interface**. Explicitamente **não**: o nome da tabela
 `biocultdb_records` nem os campos do JSON (`titulo`, `autores`, `comunidades`…) — contrato de dados.
-Acoplamento a lembrar: `etnochat.js:14` importa `Status` de `models/Reference`.
+Acoplamento a lembrar: `etnochat.js:11` importa `Status` de `models/Evidence` (renomeado no ticket 02).
 
 Pendência de federação: "Evidência" é bom demais para ficar só no BioCultDB. Se o BioCultRelatos
 chamar a mesma coisa de outro nome, a federação fala duas línguas. Vocabulário de arquitetura é

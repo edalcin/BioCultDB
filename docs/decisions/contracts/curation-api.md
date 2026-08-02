@@ -6,11 +6,11 @@
 
 ## Endpoints
 
-### 1. Display Reference List
+### 1. Display Evidence List
 
 **Endpoint**: `GET /`
 
-**Description**: Renders list of all references with their status, sorted by most recent first
+**Description**: Renders list of all evidences with their status, sorted by most recent first
 
 **Query Parameters**:
 - `status` (optional): Filter by status ("pending", "approved", "rejected", or "all")
@@ -20,7 +20,7 @@
 - `limit` (optional): Results per page
   - Default: 50
 
-**Response**: HTML page with reference table
+**Response**: HTML page with evidence table
 
 **Table Columns**:
 - Título (title)
@@ -42,7 +42,7 @@
     <a href="/?status=rejected">Rejeitadas</a>
   </div>
 
-  <table class="reference-table">
+  <table class="evidence-table">
     <thead>
       <tr>
         <th>Título</th>
@@ -60,7 +60,7 @@
         <td>2000</td>
         <td><span class="badge pending">Pendente</span></td>
         <td>2025-12-24</td>
-        <td><a href="/reference/edit/{id}">Editar</a></td>
+        <td><a href="/evidence/edit/{id}">Editar</a></td>
       </tr>
     </tbody>
   </table>
@@ -75,23 +75,23 @@
 
 ---
 
-### 2. Display Reference Edit Form
+### 2. Display Evidence Edit Form
 
-**Endpoint**: `GET /reference/edit/:id`
+**Endpoint**: `GET /evidence/edit/:id`
 
-**Description**: Renders edit form for a specific reference, pre-populated with existing data
+**Description**: Renders edit form for a specific evidence, pre-populated with existing data
 
 **Path Parameters**:
-- `id`: id (string UUID v4) of the reference
+- `id`: id (string UUID v4) of the evidence
 
 **Response**: HTML page with editable form (same structure as acquisition form, but pre-filled)
 
 **Additional Elements**:
 - Status change section (radio buttons: pending, approved, rejected)
 - "Salvar Alterações" button
-- "Cancelar" link back to reference list
+- "Cancelar" link back to evidence list
 
-**404 Response**: If reference ID not found
+**404 Response**: If evidence ID not found
 ```html
 <div class="error-page">
   <h2>Referência Não Encontrada</h2>
@@ -104,14 +104,14 @@
 
 ---
 
-### 3. Update Reference Content
+### 3. Update Evidence Content
 
-**Endpoint**: `PUT /reference/update/:id`
+**Endpoint**: `PUT /evidence/update/:id`
 
-**Description**: Updates reference data (metadata, communities, plants) without changing status
+**Description**: Updates evidence data (metadata, communities, plants) without changing status
 
 **Path Parameters**:
-- `id`: id (string UUID v4) of the reference
+- `id`: id (string UUID v4) of the evidence
 
 **Request Body** (application/x-www-form-urlencoded):
 Same format as acquisition submit, with all fields editable
@@ -129,7 +129,7 @@ Same format as acquisition submit, with all fields editable
 
 **Success Response**:
 - **Status**: 302 Redirect
-- **Location**: `/reference/edit/:id?success=true`
+- **Location**: `/evidence/edit/:id?success=true`
 
 **Validation Error Response**:
 - **Status**: 400 Bad Request
@@ -138,14 +138,14 @@ Same format as acquisition submit, with all fields editable
 
 ---
 
-### 4. Change Reference Status
+### 4. Change Evidence Status
 
-**Endpoint**: `POST /reference/status/:id`
+**Endpoint**: `POST /evidence/status/:id`
 
-**Description**: Changes only the status field of a reference (approve or reject)
+**Description**: Changes only the status field of a evidence (approve or reject)
 
 **Path Parameters**:
-- `id`: id (string UUID v4) of the reference
+- `id`: id (string UUID v4) of the evidence
 
 **Request Body** (application/x-www-form-urlencoded):
 ```
@@ -160,7 +160,7 @@ status=approved
 **Processing**:
 1. Validate status value
 2. Update only `status` field and `updatedAt` timestamp
-3. Redirect to reference list
+3. Redirect to evidence list
 
 **Success Response**:
 - **Status**: 302 Redirect
@@ -174,12 +174,12 @@ status=approved
 
 ### 5. Add Community (Edit Mode)
 
-**Endpoint**: `POST /reference/:id/community/add`
+**Endpoint**: `POST /evidence/:id/community/add`
 
-**Description**: HTMX endpoint that returns HTML fragment for adding a community to existing reference during editing
+**Description**: HTMX endpoint that returns HTML fragment for adding a community to existing evidence during editing
 
 **Path Parameters**:
-- `id`: id (string UUID v4) of the reference being edited
+- `id`: id (string UUID v4) of the evidence being edited
 
 **Request Body**: Current community count (for indexing)
 
@@ -191,12 +191,12 @@ status=approved
 
 ### 6. Add Plant (Edit Mode)
 
-**Endpoint**: `POST /reference/:id/plant/add/:communityIndex`
+**Endpoint**: `POST /evidence/:id/plant/add/:communityIndex`
 
 **Description**: HTMX endpoint that returns HTML fragment for adding a plant to a community during editing
 
 **Path Parameters**:
-- `id`: id (string UUID v4) of the reference being edited
+- `id`: id (string UUID v4) of the evidence being edited
 - `communityIndex`: Index of the community (0-based)
 
 **Response**: Same plant form fragment as acquisition context
@@ -207,9 +207,9 @@ status=approved
 
 ## SQL Queries
 
-### List References with Filters
+### List Evidences with Filters
 
-**Query** (all references):
+**Query** (all evidences):
 ```sql
 SELECT id, titulo, autores, ano, status, created_at
 FROM biocultdb_records
@@ -228,28 +228,28 @@ LIMIT ? OFFSET ?;
 -- params: ["pending", limit, (page - 1) * limit]
 ```
 
-### Get Single Reference for Editing
+### Get Single Evidence for Editing
 
 ```sql
 SELECT id, doc, created_at, updated_at FROM biocultdb_records WHERE id = ?;
 ```
 
-### Update Reference Content
+### Update Evidence Content
 
 ```javascript
 // doc is fetched, merged with edited fields in JS (comunidades[] replaced wholesale),
 // updatedAt set, then rewritten in one statement
-const updated = { ...existingReference, titulo, autores, ano, resumo, DOI, comunidades, updatedAt: new Date().toISOString() };
+const updated = { ...existingEvidence, titulo, autores, ano, resumo, DOI, comunidades, updatedAt: new Date().toISOString() };
 ```
 ```sql
 UPDATE biocultdb_records SET doc = ?, updated_at = ? WHERE id = ?;
 -- params: [JSON.stringify(updated), updated.updatedAt, id]
 ```
 
-### Update Reference Status Only
+### Update Evidence Status Only
 
 ```javascript
-const updated = { ...existingReference, status: "approved", updatedAt: new Date().toISOString() };
+const updated = { ...existingEvidence, status: "approved", updatedAt: new Date().toISOString() };
 ```
 ```sql
 UPDATE biocultdb_records SET doc = ?, updated_at = ? WHERE id = ?;
@@ -278,7 +278,7 @@ UPDATE biocultdb_records SET doc = ?, updated_at = ? WHERE id = ?;
 ```html
 <div class="status-section">
   <h3>Alterar Status</h3>
-  <form action="/reference/status/{id}" method="POST">
+  <form action="/evidence/status/{id}" method="POST">
     <label>
       <input type="radio" name="status" value="pending" <%= status === 'pending' ? 'checked' : '' %>>
       Pendente
@@ -329,7 +329,7 @@ UPDATE biocultdb_records SET doc = ?, updated_at = ? WHERE id = ?;
 
 ## Error Responses
 
-### Invalid Reference ID
+### Invalid Evidence ID
 
 **Status**: 404 Not Found
 
@@ -364,7 +364,7 @@ UPDATE biocultdb_records SET doc = ?, updated_at = ? WHERE id = ?;
 <div class="error-page">
   <h2>Erro ao Atualizar Referência</h2>
   <p>Ocorreu um erro ao salvar as alterações. Por favor, tente novamente.</p>
-  <a href="/reference/edit/{id}">Voltar ao Formulário</a>
+  <a href="/evidence/edit/{id}">Voltar ao Formulário</a>
 </div>
 ```
 
@@ -374,15 +374,15 @@ UPDATE biocultdb_records SET doc = ?, updated_at = ? WHERE id = ?;
 
 ### Pagination
 
-- Default 50 references per page
+- Default 50 evidences per page
 - Indexes on `status` and `createdAt` for efficient queries
 - Skip/limit for pagination (acceptable for <10,000 total records)
 
 ### Edit Form Pre-population
 
-- Single SQLite query fetches complete reference document
+- Single SQLite query fetches complete evidence document
 - No lazy loading needed for nested communities/plants
-- Typical reference size: 5-50KB
+- Typical evidence size: 5-50KB
 
 ---
 
@@ -391,42 +391,42 @@ UPDATE biocultdb_records SET doc = ?, updated_at = ? WHERE id = ?;
 ### Shared with Acquisition Context
 
 - Same validation logic (`services/validation.js`)
-- Same data models (`models/Reference.js`)
+- Same data models (`models/Evidence.js`)
 - Same database service (`services/database.js`)
 - Same HTMX form fragments for adding communities/plants
 
 ### Impact on Presentation Context
 
-- When status changes to "approved", reference becomes visible in public search
-- When status changes to "rejected" or "pending", reference hidden from public
+- When status changes to "approved", evidence becomes visible in public search
+- When status changes to "rejected" or "pending", evidence hidden from public
 
 ---
 
 ## Example Workflows
 
-### Workflow 1: Approve Pending Reference
+### Workflow 1: Approve Pending Evidence
 
-1. Curator accesses `/` (reference list)
+1. Curator accesses `/` (evidence list)
 2. Filters by status "pending": `/?status=pending`
-3. Clicks "Editar" on a reference: `GET /reference/edit/{id}`
-4. Reviews content, makes any corrections: `PUT /reference/update/{id}`
-5. Changes status to "approved": `POST /reference/status/{id}` with `status=approved`
+3. Clicks "Editar" on a evidence: `GET /evidence/edit/{id}`
+4. Reviews content, makes any corrections: `PUT /evidence/update/{id}`
+5. Changes status to "approved": `POST /evidence/status/{id}` with `status=approved`
 6. Redirected to list with success message
-7. Reference now visible in presentation context (port 3003)
+7. Evidence now visible in presentation context (port 3003)
 
-### Workflow 2: Edit and Reject Reference
+### Workflow 2: Edit and Reject Evidence
 
-1. Curator accesses reference list
-2. Opens reference for editing: `GET /reference/edit/{id}`
+1. Curator accesses evidence list
+2. Opens evidence for editing: `GET /evidence/edit/{id}`
 3. Reviews content and identifies issues
-4. Changes status to "rejected": `POST /reference/status/{id}` with `status=rejected`
-5. Reference remains hidden from public presentation
+4. Changes status to "rejected": `POST /evidence/status/{id}` with `status=rejected`
+5. Evidence remains hidden from public presentation
 
-### Workflow 3: Edit Reference Content
+### Workflow 3: Edit Evidence Content
 
-1. Curator opens approved reference for editing
+1. Curator opens approved evidence for editing
 2. Corrects typo in plant name or adds missing community
-3. Submits update: `PUT /reference/update/{id}`
+3. Submits update: `PUT /evidence/update/{id}`
 4. Status remains "approved", content updated
 5. Updated content immediately reflects in presentation context
 
@@ -434,9 +434,9 @@ UPDATE biocultdb_records SET doc = ?, updated_at = ? WHERE id = ?;
 
 ## Future Enhancements (Out of Scope)
 
-- Bulk status changes (approve/reject multiple references)
-- Comments/notes on references for curator communication
+- Bulk status changes (approve/reject multiple evidences)
+- Comments/notes on evidences for curator communication
 - Revision history with rollback capability
-- Duplicate reference detection and merging
+- Duplicate evidence detection and merging
 - Taxonomic validation integration with external APIs
 - Email notifications when status changes

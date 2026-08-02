@@ -89,21 +89,21 @@ GET /?estado=São+Paulo&municipio=Ubatuba&planta=palmito
 
 ### 3. Result Card Structure
 
-**Description**: Each approved reference is displayed as a card showing key information
+**Description**: Each approved evidence is displayed as a card showing key information
 
 **Card HTML Template**:
 ```html
 <div class="result-card">
   <div class="card-header">
-    <h3 class="reference-title"><%= reference.titulo %></h3>
-    <p class="reference-meta">
-      <%= reference.autores.slice(0, 3).join('; ') %><%= reference.autores.length > 3 ? '; et al.' : '' %>
-      (<%= reference.ano %>)
+    <h3 class="evidence-title"><%= evidence.titulo %></h3>
+    <p class="evidence-meta">
+      <%= evidence.autores.slice(0, 3).join('; ') %><%= evidence.autores.length > 3 ? '; et al.' : '' %>
+      (<%= evidence.ano %>)
     </p>
   </div>
 
   <div class="card-body">
-    <% reference.comunidades.forEach(comunidade => { %>
+    <% evidence.comunidades.forEach(comunidade => { %>
       <div class="community-section">
         <h4 class="community-name">
           📍 <%= comunidade.nome %> - <%= comunidade.municipio %>, <%= comunidade.estado %>
@@ -131,10 +131,10 @@ GET /?estado=São+Paulo&municipio=Ubatuba&planta=palmito
     <% }); %>
   </div>
 
-  <% if (reference.DOI && reference.DOI.trim() !== '') { %>
+  <% if (evidence.DOI && evidence.DOI.trim() !== '') { %>
     <div class="card-footer">
-      <a href="https://doi.org/<%= reference.DOI %>" target="_blank" rel="noopener">
-        DOI: <%= reference.DOI %>
+      <a href="https://doi.org/<%= evidence.DOI %>" target="_blank" rel="noopener">
+        DOI: <%= evidence.DOI %>
       </a>
     </div>
   <% } %>
@@ -142,7 +142,7 @@ GET /?estado=São+Paulo&municipio=Ubatuba&planta=palmito
 ```
 
 **Card Content**:
-- Title (reference.titulo)
+- Title (evidence.titulo)
 - Authors (first 3, "et al." if more)
 - Year
 - For each community:
@@ -321,7 +321,7 @@ const results = db.prepare(
 
 ### Empty Search (No Filters)
 
-- **Action**: Display all approved references
+- **Action**: Display all approved evidences
 - **Sort**: By year (descending), then title (ascending)
 - **Result**: Browse-all functionality
 
@@ -345,8 +345,8 @@ const results = db.prepare(
 ### Multiple Filter Logic
 
 - **All filters** combined with AND
-- Example: `?estado=São Paulo&municipio=Ubatuba` → References with communities in Ubatuba, São Paulo only
-- Example: `?planta=palmito&estado=São Paulo` → References with palmito plant AND communities in São Paulo
+- Example: `?estado=São Paulo&municipio=Ubatuba` → Evidences with communities in Ubatuba, São Paulo only
+- Example: `?planta=palmito&estado=São Paulo` → Evidences with palmito plant AND communities in São Paulo
 
 ---
 
@@ -417,7 +417,7 @@ CREATE VIRTUAL TABLE biocultdb_records_fts USING fts5(
 
 ### Public Access (No Authentication)
 
-- All approved references publicly visible
+- All approved evidences publicly visible
 - No sensitive data displayed (as per spec)
 - Read-only interface (no data modification)
 
@@ -444,12 +444,12 @@ db.prepare(`SELECT r.* FROM biocultdb_records r JOIN biocultdb_records_fts f ON 
 ### Data Source
 
 - **Database**: SQLite `biocultdb_records` table (arquivo compartilhado da unidade)
-- **Filter**: Only `status: "approved"` references
+- **Filter**: Only `status: "approved"` evidences
 - **Real-time**: Changes in curation context (approvals/rejections) immediately affect search results
 
 ### Shared Services
 
-- Uses `models/Reference.js` for data structure
+- Uses `models/Evidence.js` for data structure
 - Uses `services/database.js` for SQLite queries
 - No dependency on acquisition or curation contexts
 
@@ -461,25 +461,25 @@ db.prepare(`SELECT r.* FROM biocultdb_records r JOIN biocultdb_records_fts f ON 
 
 **Query**: `?planta=medicinal`
 
-**Expected**: References where any plant has "medicinal" in tipoUso array
+**Expected**: Evidences where any plant has "medicinal" in tipoUso array
 
 **Challenge**: Current query matches plant name, not use type
 
 **Solution**: Modify query to search tipoUso field as well (future enhancement)
 
-### Scenario 2: Browse All References from Ubatuba
+### Scenario 2: Browse All Evidences from Ubatuba
 
 **Query**: `?municipio=Ubatuba`
 
-**Expected**: All references with communities in Ubatuba municipality
+**Expected**: All evidences with communities in Ubatuba municipality
 
-**Result**: Multiple references, each displayed as a card
+**Result**: Multiple evidences, each displayed as a card
 
 ### Scenario 3: Search for Specific Plant by Scientific Name
 
 **Query**: `?planta=Foeniculum+vulgare`
 
-**Expected**: References containing Foeniculum vulgare
+**Expected**: Evidences containing Foeniculum vulgare
 
 **Result**: Matches in nomeCientifico arrays
 
@@ -487,7 +487,7 @@ db.prepare(`SELECT r.* FROM biocultdb_records r JOIN biocultdb_records_fts f ON 
 
 **Query**: `?estado=São+Paulo&planta=palmito`
 
-**Expected**: References with communities in São Paulo state AND plants named "palmito"
+**Expected**: Evidences with communities in São Paulo state AND plants named "palmito"
 
 **SQL Query**:
 ```sql
@@ -512,7 +512,7 @@ WHERE r.status = 'approved'
 - Export results (CSV, JSON download)
 - Sorting options (alphabetical, by year, by number of plants)
 - Map view (geolocation of communities)
-- Detailed reference view (expandable card or separate page)
+- Detailed evidence view (expandable card or separate page)
 - Search result highlighting (matched terms highlighted in results)
 
 ### In Scope (Initial Version)
@@ -550,4 +550,4 @@ WHERE r.status = 'approved'
 
 ## Summary
 
-The presentation API provides a read-only public interface for searching approved ethnobotanical references. It supports filtering by community, plant, state, and municipality with responsive card-based results display. Performance targets are well within requirements (<2s) with proper SQLite generated-column indexing.
+The presentation API provides a read-only public interface for searching approved ethnobotanical evidences. It supports filtering by community, plant, state, and municipality with responsive card-based results display. Performance targets are well within requirements (<2s) with proper SQLite generated-column indexing.

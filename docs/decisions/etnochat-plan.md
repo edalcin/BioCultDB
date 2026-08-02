@@ -165,7 +165,7 @@ frontend/src/presentation/
 2. **`backend/src/contexts/presentation/views/painel.ejs`** - Padrao Alpine.js + layout
 3. **`frontend/src/presentation/scripts/dashboard.js`** - Padroes JavaScript
 4. **`backend/src/services/database.js`** - Padroes de queries SQL/JSON1
-5. **`backend/src/models/Reference.js`** - Esquema do banco para system prompt
+5. **`backend/src/models/Evidence.js`** - Esquema do banco para system prompt
 
 ---
 
@@ -173,7 +173,7 @@ frontend/src/presentation/
 
 O arquivo `etnochat-system.md` contera:
 - Apresentacao do etnoChat como assistente de dados etnobotanicos
-- Esquema completo do documento JSON (Reference) armazenado em biocultdb_records
+- Esquema completo do documento JSON (Evidence) armazenado em biocultdb_records
 - Lista dos 29 tipos de comunidades (Decreto 8.750/2016)
 - Instrucoes para gerar filtro JSON restrito (DSL, ver etnochat-system.md) traduzido em SQL parametrizado
 - Restricao: sempre incluir `status: "approved"` nos filtros

@@ -20,9 +20,9 @@ const { executeQuery } = require('../../src/contexts/presentation/services/etnoc
 const { Status } = require('../../src/models/Evidence');
 
 /**
- * Build a valid Reference payload (pre-insertEvidence), overridable per test.
+ * Build a valid Evidence payload (pre-insertEvidence), overridable per test.
  */
-function makeReference(overrides = {}) {
+function makeEvidence(overrides = {}) {
   return {
     titulo: 'Uso de plantas medicinais por comunidades tradicionais',
     autores: ['SILVA, J.'],
@@ -63,7 +63,7 @@ afterAll(() => {
 
 describe('services/database.js — insert/read round-trip', () => {
   test('insertEvidence persists the document and findEvidenceById reads it back', async () => {
-    const inserted = await insertEvidence(makeReference({ titulo: 'Insert Round Trip' }));
+    const inserted = await insertEvidence(makeEvidence({ titulo: 'Insert Round Trip' }));
 
     expect(inserted.id).toBeTruthy();
     expect(inserted.status).toBe(Status.APPROVED);
@@ -85,7 +85,7 @@ describe('services/database.js — insert/read round-trip', () => {
 describe('services/database.js — status transition', () => {
   test('updateEvidenceStatus persists the new status across a fresh read', async () => {
     const inserted = await insertEvidence(
-      makeReference({ titulo: 'Status Update Test', status: Status.PENDING })
+      makeEvidence({ titulo: 'Status Update Test', status: Status.PENDING })
     );
 
     const updated = await updateEvidenceStatus(inserted.id, Status.APPROVED);
@@ -96,7 +96,7 @@ describe('services/database.js — status transition', () => {
   });
 
   test('updateEvidenceStatus rejects an invalid status value', async () => {
-    const inserted = await insertEvidence(makeReference({ titulo: 'Invalid Status Test' }));
+    const inserted = await insertEvidence(makeEvidence({ titulo: 'Invalid Status Test' }));
     await expect(updateEvidenceStatus(inserted.id, 'not-a-real-status')).rejects.toThrow();
   });
 });
@@ -119,8 +119,8 @@ describe('services/statistics.js — SQL/JSON1 aggregation', () => {
       municipio: 'Y'
     };
 
-    await insertEvidence(makeReference({ titulo: 'Plant Stats Ref A', comunidades: [communityA] }));
-    await insertEvidence(makeReference({ titulo: 'Plant Stats Ref B', comunidades: [communityB] }));
+    await insertEvidence(makeEvidence({ titulo: 'Plant Stats Evidence A', comunidades: [communityA] }));
+    await insertEvidence(makeEvidence({ titulo: 'Plant Stats Evidence B', comunidades: [communityB] }));
 
     const topPlants = await getTopPlants(10, {});
     const match = topPlants.find((p) => p.nomeCientifico === 'Bidens pilosa');
@@ -134,7 +134,7 @@ describe('services/statistics.js — SQL/JSON1 aggregation', () => {
 describe('services/database.js — FTS5 search', () => {
   test('searchEvidences finds a seeded record by free-text term via FTS5', async () => {
     await insertEvidence(
-      makeReference({ titulo: 'Etnobotânica de plantas raras da Mata Atlântica' })
+      makeEvidence({ titulo: 'Etnobotânica de plantas raras da Mata Atlântica' })
     );
 
     const result = await searchEvidences({ text: 'Atlântica' }, 1, 50);

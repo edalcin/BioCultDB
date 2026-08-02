@@ -166,7 +166,9 @@ router.get('/', async (req, res) => {
 });
 
 /**
- * GET /referencia/:id - Standalone reference detail page (for BioCultTermos source links)
+ * GET /referencia/:id - Standalone evidence detail page (for BioCultTermos source links).
+ * Path intentionally NOT renamed to /evidencia/:id — it is a hardcoded cross-repo contract
+ * (bioculttermos/backend/src/contexts/admin/views/partials/source-list.ejs) (ADR-002 D13).
  */
 router.get('/referencia/:id', async (req, res, next) => {
   try {

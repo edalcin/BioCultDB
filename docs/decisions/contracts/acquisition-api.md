@@ -1,21 +1,21 @@
 # Acquisition Context API Contract
 
-**Context**: Data entry interface for researchers to submit ethnobotanical references
+**Context**: Data entry interface for researchers to submit ethnobotanical evidences
 **Port**: 3001
 **Base URL**: `http://localhost:3001`
 
 ## Endpoints
 
-### 1. Display Reference Entry Form
+### 1. Display Evidence Entry Form
 
 **Endpoint**: `GET /`
 
-**Description**: Renders the main acquisition page with empty reference entry form
+**Description**: Renders the main acquisition page with empty evidence entry form
 
 **Response**: HTML page with nested form structure
 
 **Form Structure**:
-- Reference metadata fields (titulo, autores, ano, resumo, DOI)
+- Evidence metadata fields (titulo, autores, ano, resumo, DOI)
 - Container for communities (initially 1 empty community form)
 - "Adicionar Comunidade" button
 - "Submeter Referência" button
@@ -87,11 +87,11 @@
 
 ---
 
-### 4. Submit Reference
+### 4. Submit Evidence
 
-**Endpoint**: `POST /reference/submit`
+**Endpoint**: `POST /evidence/submit`
 
-**Description**: Processes submitted reference form, validates data, inserts into `biocultdb_records` with status "pending"
+**Description**: Processes submitted evidence form, validates data, inserts into `biocultdb_records` with status "pending"
 
 **Request Body** (application/x-www-form-urlencoded):
 ```
@@ -140,7 +140,7 @@ comunidades[0][plantas][0][tipoUso]=medicinal
 
 **Endpoint**: `GET /success`
 
-**Description**: Confirmation page after successful reference submission
+**Description**: Confirmation page after successful evidence submission
 
 **Response**: HTML page
 ```html
@@ -261,7 +261,7 @@ comunidades[0][plantas][0][nomeCientifico]=Foeniculum vulgare
 
 ### Large Submissions
 
-- Typical reference: 1-5 communities, 1-10 plants per community
+- Typical evidence: 1-5 communities, 1-10 plants per community
 - Maximum reasonable: 20 communities, 50 plants each
 - Form size: ~10-50KB typical, ~500KB maximum
 - No special handling needed for stated scale
@@ -274,7 +274,7 @@ comunidades[0][plantas][0][nomeCientifico]=Foeniculum vulgare
 
 **Request**:
 ```http
-POST /reference/submit HTTP/1.1
+POST /evidence/submit HTTP/1.1
 Host: localhost:3001
 Content-Type: application/x-www-form-urlencoded
 
@@ -311,7 +311,7 @@ Location: /success
 
 ### Shared Services
 
-- Uses `models/Reference.js` for data structure
+- Uses `models/Evidence.js` for data structure
 - Uses `services/validation.js` for validation logic
 - Uses `services/database.js` for SQLite operations
 

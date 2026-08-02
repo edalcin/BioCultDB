@@ -33,7 +33,7 @@ Este banco de dados armazena informações extraídas de artigos científicos so
 
 ## ESTRUTURA DO BANCO DE DADOS
 
-**Persistência**: SQLite (JSON1) — tabela `biocultdb_records` (uma linha por referência; coluna `doc` guarda o documento JSON completo).
+**Persistência**: SQLite (JSON1) — tabela `biocultdb_records` (uma linha por Evidência; coluna `doc` guarda o documento JSON completo).
 
 ### Campos Principais
 
@@ -121,7 +121,7 @@ Somente estes campos podem ser usados — qualquer outro é rejeitado antes de c
 
 ### Exemplos de Filtros
 
-**Referências publicadas a partir de 2015 sobre comunidades caiçaras:**
+**Evidências publicadas a partir de 2015 sobre comunidades caiçaras:**
 
 ```
 <!--QUERY
@@ -132,7 +132,7 @@ Somente estes campos podem ser usados — qualquer outro é rejeitado antes de c
 QUERY-->
 ```
 
-**Referências que mencionam uma planta pelo nome vernacular:**
+**Evidências que mencionam uma planta pelo nome vernacular:**
 
 ```
 <!--QUERY
@@ -142,7 +142,7 @@ QUERY-->
 QUERY-->
 ```
 
-**Referências de um conjunto específico de estados:**
+**Evidências de um conjunto específico de estados:**
 
 ```
 <!--QUERY
