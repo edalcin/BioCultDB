@@ -26,7 +26,8 @@
 8. [Repetindo em outro Campo Semântico](#8-repetindo-em-outro-campo-semântico)
 9. [Implementação futura na interface, com Gemini](#9-implementação-futura-na-interface-com-gemini)
 10. [Registro do que foi feito nesta sessão](#10-registro-do-que-foi-feito-nesta-sessão)
-11. [Pendências e decisões em aberto](#11-pendências-e-decisões-em-aberto)
+11. [Registro de decisões](#11-registro-de-decisões)
+12. [Pendências e decisões em aberto](#12-pendências-e-decisões-em-aberto)
 
 ---
 
@@ -232,7 +233,8 @@ Aplicação direta do fluxo do Manual §7, na ordem em que cada teste é feito:
 | Termo em inglês | mesma ideia, outro idioma | rótulo **alternativo**, `language: eng` | `headache` → `dor de cabeça` |
 | Caso específico de outro | é um tipo de | **hierarquia** (`broader`) | `dor de cabeça` → `dor` |
 | Distintos mas associados | nem tipo, nem sinônimo | **relacionado (RT)** | `gripe` ↔ `resfriado` |
-| Termo composto | co-ocorrência de dois conceitos | **depreciar** apontando o principal | `gripe e tosse` → `gripe` |
+| Termo composto | nomeia dois conceitos | **rótulo oculto nos dois** + depreciar apontando o primeiro (D6) | `gripe e tosse` → oculto em `gripe` e em `tosse` |
+| Qualificador colado | um conceito + detalhe do artefato | **depreciar** apontando o núcleo (D7) | `construção (caibros e ripas…)` → `construção` |
 | Sem conteúdo informativo | não nomeia uso algum | **depreciar** → `indeterminado` | `outros`, `dúvida` |
 | Pertence a outro campo | nome vernacular no campo errado | **não tocar** | `fumo` |
 
@@ -275,6 +277,11 @@ Para cada operação `ALT` e `HID` do plano, na ordem:
 1. `POST /concepts/{alvo}/labels` com `literalForm`, `type` (`alt`/`hidden`), `language`
    (`por` ou `eng`), `accessLevel: public`.
 2. `POST /concepts/{origem}/deprecate` com `replacedById: {alvo}`.
+
+Para as 12 operações `HID2` (termos compostos, D6), o passo 1 é feito **duas vezes**, uma para cada
+conceito nomeado pelo termo, sempre com `type: hidden`; o passo 2 aponta o primeiro dos dois.
+
+Para as 32 operações `DEP`, só o passo 2.
 
 Se a resposta for `409`, reler o conceito, pegar a `version` nova e repetir — sinal de que outra
 escrita ocorreu no intervalo.
@@ -448,7 +455,7 @@ redeploy do container e a migração de código de idioma.
 | 5 | **Identificado o risco de ressurreição noturna** | `upsertConcept` casa só em `prefLabels`; documentado no §3 |
 | 6 | Backup de produção | `backup-pre-curadoria-tipouso-2026-08-06T17-45-03Z.sqlite`, `integrity_check: ok`, md5 `722f4aee…`, sem downtime |
 | 7 | Desenhada a taxonomia | 10 facetas, 37 conceitos-pai, profundidade 4, sem ciclos |
-| 8 | Classificados os 713 termos | 297 mantidos · 362 → rótulo alt · 9 → rótulo oculto · 44 depreciados · 1 intocado |
+| 8 | Classificados os 713 termos | 297 mantidos · 362 → rótulo alt · 9 → rótulo oculto · 12 compostos preservados em dois conceitos · 32 depreciados · 1 intocado |
 | 9 | Validada a consistência | 0 termos sem decisão, 0 alvos inexistentes, 0 cadeias de fusão, 0 auto-referências, 0 ciclos |
 | 10 | Gerados os artefatos | `curadoria-tipos-de-uso-proposta.md`, `curadoria/plano-tipouso.json`, este documento |
 | 11 | **Corrigida a ressurreição noturna** | `upsertConcept` passa a casar em pref + alt + hidden; 3 testes novos, verificados falhando no código anterior |
@@ -465,7 +472,141 @@ Resultado projetado da curadoria, ainda **não executada**: **713 → 328 concei
 
 ---
 
-## 11. Pendências e decisões em aberto
+## 11. Registro de decisões
+
+Toda decisão tomada nesta sessão, com a alternativa que foi recusada e o porquê. O objetivo é que o
+próximo curador não precise redescobrir o raciocínio — nem repetir a discussão.
+
+### D1 — A classificação é feita pelo agente, não por chamada ao Gemini
+
+**Contexto.** O pedido pressupunha uma chave Gemini registrada no BioCultDB. Não há: `app_config` tem
+uma única linha (`extraction_prompt`) e não existe chave no ambiente do container. O
+[ADR-002](decisions/ADR-002-extracao-por-ia.md) D5 decidiu que a chave vive no `localStorage` do
+browser e nunca é persistida.
+
+**Recusado.** Colar a chave na conversa (fica registrada no transcript) ou gravá-la em arquivo no
+servidor (cria credencial em repouso, exatamente o que o D5 evitou).
+
+**Decidido.** A classificação dos 713 termos foi produzida diretamente, sem chamar provedor algum.
+O pipeline com Gemini permanece desenhado no §9 para a implementação na interface, onde a chave vem
+do browser a cada requisição.
+
+**Consequência.** Zero credencial criada. A classificação foi feita com o Manual, o schema e o corpus
+inteiro no mesmo contexto — que é justamente o que uma sequência de 713 prompts isolados não teria.
+
+### D2 — Corrigir a ressurreição noturna na raiz, antes de curar
+
+**Contexto.** `upsertConcept` verificava a existência de um termo só entre os `prefLabels` (§3).
+Qualquer termo recolhido como rótulo alternativo ou oculto seria recriado pelo cron das 03:00.
+
+**Recusado.** Conviver com a limitação, nunca tirando um termo da posição de preferencial. Funcionaria
+sem tocar em código, mas deixaria ~416 conceitos depreciados permanentes, manteria o defeito armado
+para quem usasse "★ Tornar Preferencial" na interface — sem aviso na tela — e o mesmo defeito atinge
+os outros três campos semânticos.
+
+**Decidido.** Corrigido no submódulo (`3a277cb`), publicado (`31f84b5`) e implantado. Verificado em
+produção: aquisição completa com `criados=0` e total inalterado.
+
+**Consequência.** Fusão limpa passa a ser possível. Custo medido: ciclo de aquisição 38,2 s → 44,2 s
+(1,16×), irrelevante para um job diário fora do caminho da interface.
+
+### D3 — Idioma padronizado em ISO 639-3
+
+**Contexto.** Os rótulos gravados usavam `pt` (ISO 639-1), enquanto o modelo, a tela de edição e o
+`Manual.md` §3.2 documentavam ISO 639-3.
+
+**Recusado.** Manter `pt` e ajustar a documentação. ISO 639-1 não codifica as línguas indígenas
+(`tup`, `kgp`, `gub`) que este vocabulário existe para abrigar — adotá-lo seria travar o sistema
+justamente no caso que ele precisa atender.
+
+**Decidido.** `por` e `eng`. Código corrigido e 2601 conceitos migrados, com script idempotente.
+
+**Consequência.** Uma convenção só. Rótulos em inglês, que hoje estão marcados como português, passam
+a poder ser gravados corretamente como `eng`.
+
+### D4 — Uma árvore só, com doze facetas, e não campos semânticos separados
+
+**Contexto.** O campo mistura finalidade de uso, enfermidade tratada, ação farmacológica, parte do
+corpo e objeto produzido.
+
+**Recusado.** Separar "finalidade de uso" de "indicação terapêutica" em dois campos semânticos —
+exigiria mudar `MONITORED_FIELDS` e a origem do dado no BioCultDB, e o Manual §6.1 e §9 já desenham
+as doenças **sob** `medicinal`.
+
+**Decidido.** Dez facetas de 1º nível, com `medicinal` abrindo em `indicação terapêutica`,
+`ação farmacológica` e `forma de preparo e administração`. Poli-hierarquia permitida; profundidade
+máxima 4; verificado sem ciclos.
+
+**Consequência.** `febre` (o que a pessoa tem) e `antitérmico` (o que a planta faz) ficam em ramos
+irmãos, em vez de misturados — que é o erro mais frequente no corpus bruto.
+
+### D5 — Criar a faceta `indeterminado`
+
+**Contexto.** `POST /concepts/:id/deprecate` **exige** `replacedById`, e 11 termos (`outros`,
+`dúvida`, `não especificado`, `sem uso reportado`, `corpo`, `peito`, `pernas`, `doenças`,
+`enferrujado`, `catuaba`) não têm substituto legítimo.
+
+**Recusado.** Deixá-los `candidate` indefinidamente — que é o erro listado no Manual §10, e que os
+manteria sendo re-semeados toda noite sem nunca entrar na consulta pública.
+
+**Decidido.** Uma faceta terminal explícita, com definição que diz o que ela é: registro de uso sem
+informação suficiente para classificação.
+
+### D6 — Termos compostos preservam as duas metades
+
+**Contexto.** 12 termos nomeiam dois conceitos (`gripe e tosse`, `fígado e rins`,
+`uterus, urinary and ovary infection`…). O Manual §9 sugere depreciar apontando o principal.
+
+**Recusado.** Depreciar apontando só um: o artigo que registrou a planta dizia que ela trata **gripe e
+tosse**, e apontar só `gripe` apaga a tosse do registro.
+
+**Decidido.** O termo entra como rótulo **oculto nos dois** conceitos que ele nomeia, e a depreciação
+aponta o primeiro — a escolha do "principal" vira administrativa (a API aceita um `replacedById` só),
+não perda de dado. A unicidade de rótulo é intra-conceito, então o mesmo `literalForm` em dois
+conceitos é válido (verificado em `validation.js`).
+
+**Recusado também.** Adiar os compostos para uma revisão futura dos registros de origem: continuariam
+`candidate` e re-semeados, sem prazo.
+
+### D7 — Qualificadores entre parênteses são apenas depreciados
+
+**Contexto.** 6 termos trazem uma descrição colada ao núcleo:
+`construção (caibros e ripas com estipe)`, `utensílios (moenda de cana e mundéu com estipe)`,
+`medicinal (seiva do palmito jovem…)` e afins.
+
+**Decidido.** Depreciar apontando o núcleo (`construção`, `utensílio`, `medicinal`). Ao contrário de
+D6, aqui **não** há dois conceitos: há um conceito e um detalhe do artefato, que pertence ao registro
+de origem no BioCultDB, não ao vocabulário. Nenhum conceito se perde.
+
+### D8 — Executar pela API Admin, com o container no ar
+
+**Contexto.** O pedido original previa parar o container para não corromper o SQLite.
+
+**Recusado.** Parar o container e escrever direto no JSON: contornaria bloqueio de ciclo,
+reciprocidade BT/NT, cascata de `ancestors`, `version` e trilha de auditoria — trocando um risco
+pequeno e já mitigado (corromper o arquivo) por um grande e silencioso (corromper o vocabulário).
+
+**Decidido.** Escrita pela API Admin na porta 4001, com backup por `VACUUM INTO`, que produz snapshot
+íntegro com WAL ativo e sem downtime. Dois backups já criados e verificados.
+
+### D9 — Nenhuma relação "Sinônimo de (aceito)" neste campo
+
+**Contexto.** O Manual §6.3 oferece a relação para reconciliar conceitos já curados separadamente.
+
+**Decidido.** Não usar. Os 713 chegaram crus, sem definição, notas ou proveniência próprias — não há
+história a preservar, e o Manual §7 é explícito: prefira um conceito com vários rótulos.
+
+### D10 — `accessLevel` permanece `public` em todo o campo
+
+**Contexto.** Os princípios CARE (Manual §3.3) exigem avaliar o nível de acesso rótulo a rótulo.
+
+**Decidido.** Nenhuma reclassificação. Os 713 são termos de uso recolhidos da literatura, em português
+e inglês; nenhum é nome em língua indígena nem foi fornecido sob restrição. **Isto muda no campo
+`nomeVernacular`**, onde os nomes têm povo de origem e podem exigir `restricted` ou `sacred` — ver §8.
+
+---
+
+## 12. Pendências e decisões em aberto
 
 Nada abaixo pode ser decidido sem o curador.
 
@@ -473,8 +614,8 @@ Nada abaixo pode ser decidido sem o curador.
 2. ~~**`pt` ou `por`?**~~ — **feito**: ISO 639-3, código corrigido e 2601 conceitos migrados.
 3. **Ativar em massa?** O campo inteiro está invisível na consulta pública hoje. Recomendado: ativar
    os conceitos completos, deixar `candidate` os duvidosos.
-4. **Termos compostos** (17): depreciar para um substituto descarta a outra metade
-   (`gripe e tosse` → `gripe` perde a tosse). Alternativa: rótulo oculto nos dois conceitos.
+4. ~~**Termos compostos**~~ — **decidido** (D6/D7): os 12 que nomeiam dois conceitos viram rótulo
+   oculto em ambos; os 6 com qualificador entre parênteses são depreciados apontando o núcleo.
 5. **Revisão em bloco ou por lote temático?** Recomendado: revisar a proposta inteira uma vez e
    discutir só as divergências.
 6. **Custo do ciclo de aquisição** (44 s para 2601 termos) cresce linearmente com o vocabulário, porque

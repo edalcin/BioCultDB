@@ -1,10 +1,12 @@
 # Proposta de curadoria — Campo Semântico "Tipos de Usos de Plantas"
 
-> **Estado: PROPOSTA. Nada foi escrito na base de produção.**
+> **Estado: PROPOSTA. Nada foi escrito na tabela `etnotermos` a título de curadoria.**
 > Gerada em 2026-08-06 a partir dos 713 conceitos cujo `sourceFields` contém
 > `comunidades.plantas.tipoUso`, em `/data/biocultdb.sqlite` (produção, Unraid `Asilo`, 192.168.1.10).
-> Backup prévio: `backup-pre-curadoria-tipouso-2026-08-06T17-45-03Z.sqlite` (`integrity_check: ok`, md5 `722f4aee…`).
-> Critérios: `docs/Manual.md` (SKOS-XL, CARE). Procedimento e riscos: `docs/curadoria-tipos-de-uso-procedimento.md`.
+> Backups: `backup-pre-curadoria-tipouso-2026-08-06T17-45-03Z.sqlite` e
+> `backup-pre-deploy-2026-08-06T18-11-58Z.sqlite` (ambos `integrity_check: ok`).
+> Critérios: `docs/Manual.md` (SKOS-XL, CARE). Decisões, riscos e procedimento:
+> [`curadoria-tipos-de-uso-procedimento.md`](curadoria-tipos-de-uso-procedimento.md).
 
 ## Resumo
 
@@ -15,7 +17,8 @@
 | Conceitos-pai novos a criar | 31 |
 | Termos absorvidos como rótulo alternativo | 362 |
 | Termos absorvidos como rótulo oculto (grafia incorreta) | 9 |
-| Termos apenas depreciados (compostos / sem conteúdo) | 44 |
+| Termos compostos, preservados como rótulo oculto em **dois** conceitos | 12 |
+| Termos apenas depreciados (qualificadores e sem conteúdo) | 32 |
 | Termos intocados (pertencem a outro campo semântico) | 1 |
 | **Conceitos sobreviventes** | **328** |
 | Redução do vocabulário | **54%** |
@@ -360,15 +363,14 @@ Dez facetas de 1º nível. Profundidade máxima 4. Sem ciclos (verificado).
 | Operação | Significado | Efeito no banco |
 |---|---|---|
 | `manter` | O termo vira conceito próprio sob o pai indicado. | `POST /concepts/:id/broader` |
-| `→ rótulo alt` | Variante válida (plural, sinônimo, tradução, variante de regência). | `POST /concepts/:alvo/labels` (type=alt) + `POST /concepts/:origem/deprecate` apontando o alvo |
-| `→ rótulo oculto` | Grafia incorreta; invisível ao público, mas encontrável na busca. | idem, com `type=hidden` |
-| `depreciar →` | Termo composto ou sem conteúdo informativo; não vira rótulo. | `POST /concepts/:id/deprecate` |
+| `→ rótulo alt` | Variante válida: plural, sinônimo, tradução, variante de regência. | `POST /concepts/:alvo/labels` (`type=alt`) |
+| `→ rótulo oculto` | Grafia incorreta: invisível ao público, encontrável na busca. | `POST /concepts/:alvo/labels` (`type=hidden`) |
+| `→ rótulo oculto em dois` | Termo composto: entra como oculto nos **dois** conceitos que ele nomeia, para não perder metade da informação. A depreciação aponta o primeiro, por exigência da API. | dois `POST …/labels` + `deprecate` |
+| `depreciar →` | Qualificador colado ao termo, ou termo sem conteúdo. Não vira rótulo. | `POST /concepts/:id/deprecate` |
 | `não tocar` | O termo pertence de fato a outro campo semântico. | nenhum |
 
-> **Por que o conceito de origem é depreciado em vez de apagado:** a aquisição noturna
-> (`AcquisitionService.upsertConcept`) procura o termo apenas entre os `prefLabels`. Um conceito apagado
-> — ou que perdeu seu `prefLabel` — é recriado na madrugada seguinte. Depreciar preserva o `prefLabel`,
-> e a curadoria sobrevive. Ver §Riscos do procedimento.
+Em todos os casos de absorção, o conceito de origem é **depreciado apontando o alvo** — nunca
+apagado sem substituto, para que a trilha de proveniência sobreviva.
 
 ## Decisão termo a termo
 
@@ -425,7 +427,7 @@ Dez facetas de 1º nível. Profundidade máxima 4. Sem ciclos (verificado).
 | 49 | `as depressant` | → rótulo alt | `sedativo` |
 | 50 | `asma` | manter | `problemas respiratórios` |
 | 51 | `asma brônquica` | → rótulo alt | `asma` |
-| 52 | `asma e tosse` | depreciar → | `gripe` |
+| 52 | `asma e tosse` | → rótulo oculto em dois | `asma` + `tosse` |
 | 53 | `aumentar o leite quando estiver amamentando` | → rótulo alt | `parto` |
 | 54 | `ausência da menstruação` | → rótulo alt | `menstruação` |
 | 55 | `azia` | manter | `problemas digestivos` |
@@ -497,7 +499,7 @@ Dez facetas de 1º nível. Profundidade máxima 4. Sem ciclos (verificado).
 | 121 | `coceiras` | → rótulo alt | `coceira` |
 | 122 | `colesterol` | manter | `problemas metabólicos e endócrinos` |
 | 123 | `colesterol alto` | → rótulo alt | `colesterol` |
-| 124 | `colesterol e diabetes` | depreciar → | `diabetes` |
+| 124 | `colesterol e diabetes` | → rótulo oculto em dois | `colesterol` + `diabetes` |
 | 125 | `coluna` | manter | `problemas osteomusculares` |
 | 126 | `combate o reumatismo` | → rótulo alt | `reumatismo` |
 | 127 | `combustível` | manter | `material e tecnológico` |
@@ -605,14 +607,14 @@ Dez facetas de 1º nível. Profundidade máxima 4. Sem ciclos (verificado).
 | 229 | `dor de cabeça` | manter | `dor` |
 | 230 | `dor de dente` | manter | `dor` |
 | 231 | `dor de dente (antiinflamatório)` | → rótulo alt | `dor de dente` |
-| 232 | `dor de dente e cabeça` | depreciar → | `dor de dente` |
+| 232 | `dor de dente e cabeça` | → rótulo oculto em dois | `dor de dente` + `dor de cabeça` |
 | 233 | `dor de estomago` | → rótulo oculto | `dor no estômago` |
 | 234 | `dor de estômago` | → rótulo alt | `dor no estômago` |
 | 235 | `dor de garganta` | manter | `dor` |
 | 236 | `dor de ouvido` | manter | `dor` |
 | 237 | `dor de rins` | → rótulo alt | `dor nos rins` |
 | 238 | `dor do peito` | → rótulo alt | `dor no peito` |
-| 239 | `dor e inflamação` | depreciar → | `inflamação` |
+| 239 | `dor e inflamação` | → rótulo oculto em dois | `dor` + `inflamação` |
 | 240 | `dor lombar` | → rótulo alt | `dor nas costas` |
 | 241 | `dor na bacia` | manter | `dor` |
 | 242 | `dor na barriga` | → rótulo alt | `dor de barriga` |
@@ -682,7 +684,7 @@ Dez facetas de 1º nível. Profundidade máxima 4. Sem ciclos (verificado).
 | 306 | `estimulante sexual` | → rótulo alt | `estimulante` |
 | 307 | `estresse` | manter | `problemas neurológicos e psíquicos` |
 | 308 | `estômago` | → rótulo alt | `problemas digestivos` |
-| 309 | `estômago e fígado` | depreciar → | `problemas do fígado` |
+| 309 | `estômago e fígado` | → rótulo oculto em dois | `problemas digestivos` + `problemas do fígado` |
 | 310 | `excitante` | → rótulo alt | `estimulante` |
 | 311 | `expectorante` | manter | `ação farmacológica` |
 | 312 | `fadiga` | → rótulo alt | `cansaço` |
@@ -719,8 +721,8 @@ Dez facetas de 1º nível. Profundidade máxima 4. Sem ciclos (verificado).
 | 343 | `furúnculo` | manter | `doenças de pele` |
 | 344 | `furúnculos` | → rótulo alt | `furúnculo` |
 | 345 | `fígado` | → rótulo alt | `problemas do fígado` |
-| 346 | `fígado e estômago` | depreciar → | `problemas do fígado` |
-| 347 | `fígado e rins` | depreciar → | `problemas do fígado` |
+| 346 | `fígado e estômago` | → rótulo oculto em dois | `problemas do fígado` + `problemas digestivos` |
+| 347 | `fígado e rins` | → rótulo oculto em dois | `problemas do fígado` + `problemas renais` |
 | 348 | `fôlego` | manter | `problemas respiratórios` |
 | 349 | `garganta` | manter | `problemas otorrinolaringológicos` |
 | 350 | `garganta inflamada` | → rótulo alt | `inflamação na garganta` |
@@ -733,8 +735,8 @@ Dez facetas de 1º nível. Profundidade máxima 4. Sem ciclos (verificado).
 | 357 | `gordura no fígado` | manter | `problemas do fígado` |
 | 358 | `gota` | manter | `problemas osteomusculares` |
 | 359 | `gripe` | manter | `problemas respiratórios` |
-| 360 | `gripe e resfriado` | depreciar → | `gripe` |
-| 361 | `gripe e tosse` | depreciar → | `gripe` |
+| 360 | `gripe e resfriado` | → rótulo oculto em dois | `gripe` + `resfriado` |
+| 361 | `gripe e tosse` | → rótulo oculto em dois | `gripe` + `tosse` |
 | 362 | `gripes` | → rótulo alt | `gripe` |
 | 363 | `headache` | → rótulo alt | `dor de cabeça` |
 | 364 | `healing` | → rótulo alt | `cicatrizante` |
@@ -1043,8 +1045,8 @@ Dez facetas de 1º nível. Profundidade máxima 4. Sem ciclos (verificado).
 | 667 | `tosse forte` | → rótulo alt | `tosse` |
 | 668 | `tosses` | → rótulo alt | `tosse` |
 | 669 | `tranquilizante` | → rótulo alt | `sedativo` |
-| 670 | `tratamento de fígado e rins` | depreciar → | `problemas do fígado` |
-| 671 | `tratamento de rins e fígado` | depreciar → | `problemas do fígado` |
+| 670 | `tratamento de fígado e rins` | → rótulo oculto em dois | `problemas do fígado` + `problemas renais` |
+| 671 | `tratamento de rins e fígado` | → rótulo oculto em dois | `problemas renais` + `problemas do fígado` |
 | 672 | `tratar e curar a asma` | → rótulo alt | `asma` |
 | 673 | `trato respiratório` | → rótulo alt | `problemas respiratórios` |
 | 674 | `traumatismo` | manter | `traumatismos e ferimentos` |
@@ -1064,7 +1066,7 @@ Dez facetas de 1º nível. Profundidade máxima 4. Sem ciclos (verificado).
 | 688 | `utensílios (moenda de cana e mundéu com estipe)` | depreciar → | `utensílio` |
 | 689 | `utensílios (móveis como prateleira e estrado de cama com estipe)` | depreciar → | `utensílio` |
 | 690 | `utensílios (trançados para caçar peixe com folhas)` | depreciar → | `utensílio` |
-| 691 | `uterus, urinary and ovary infection` | depreciar → | `problemas ginecológicos e obstétricos` |
+| 691 | `uterus, urinary and ovary infection` | → rótulo oculto em dois | `problemas ginecológicos e obstétricos` + `problemas renais` |
 | 692 | `varizes` | manter | `problemas circulatórios` |
 | 693 | `veias` | → rótulo alt | `problemas circulatórios` |
 | 694 | `velas` | manter | `material e tecnológico` |
@@ -1088,34 +1090,51 @@ Dez facetas de 1º nível. Profundidade máxima 4. Sem ciclos (verificado).
 | 712 | `úlceras` | → rótulo alt | `úlcera` |
 | 713 | `útero` | manter | `problemas ginecológicos e obstétricos` |
 
+## Os 12 termos compostos
+
+| Termo composto | Rótulo oculto em | Depreciado apontando |
+|---|---|---|
+| `gripe e tosse` | `gripe` + `tosse` | `gripe` |
+| `gripe e resfriado` | `gripe` + `resfriado` | `gripe` |
+| `asma e tosse` | `asma` + `tosse` | `asma` |
+| `dor e inflamação` | `dor` + `inflamação` | `dor` |
+| `dor de dente e cabeça` | `dor de dente` + `dor de cabeça` | `dor de dente` |
+| `colesterol e diabetes` | `colesterol` + `diabetes` | `colesterol` |
+| `fígado e estômago` | `problemas do fígado` + `problemas digestivos` | `problemas do fígado` |
+| `estômago e fígado` | `problemas digestivos` + `problemas do fígado` | `problemas digestivos` |
+| `fígado e rins` | `problemas do fígado` + `problemas renais` | `problemas do fígado` |
+| `tratamento de fígado e rins` | `problemas do fígado` + `problemas renais` | `problemas do fígado` |
+| `tratamento de rins e fígado` | `problemas renais` + `problemas do fígado` | `problemas renais` |
+| `uterus, urinary and ovary infection` | `problemas ginecológicos e obstétricos` + `problemas renais` | `problemas ginecológicos e obstétricos` |
+
 ## Conceitos que mais absorvem termos
 
 | Conceito | Nº | Termos absorvidos |
 |---|---:|---|
+| `problemas renais` | 15 | `fígado e rins`, `problema de rim`, `problema nos rins`, `problema renal`, `problemas de rins`, `problemas nos rins`, `problemas nos rins e bexiga`, `problemas urinários`, `rim`, `rins`, `tratamento de fígado e rins`, `tratamento de rins e fígado`, `uropatia`, `uterus, urinary and ovary infection`, `vias urinárias` |
 | `alimentar` | 12 | `alimentação`, `alimentação (palmito)`, `alimentação (vinho dos frutos)`, `alimentação humana`, `alimento`, `alimentício`, `chá de bebê`, `comida`, `cozinha`, `fome`, `suplemento para garrafadas`, `sustento` |
 | `problemas do fígado` | 11 | `estômago e fígado`, `fígado`, `fígado e estômago`, `fígado e rins`, `para o fígado`, `problema no fígado`, `problemas com o fígado`, `problemas de fígado`, `problemas no fígado`, `tratamento de fígado e rins`, `tratamento de rins e fígado` |
-| `problemas renais` | 11 | `problema de rim`, `problema nos rins`, `problema renal`, `problemas de rins`, `problemas nos rins`, `problemas nos rins e bexiga`, `problemas urinários`, `rim`, `rins`, `uropatia`, `vias urinárias` |
 | `indeterminado` | 10 | `catuaba`, `corpo`, `doenças`, `dúvida`, `enferrujado`, `não especificado`, `outros`, `peito`, `pernas`, `sem uso reportado` |
+| `problemas digestivos` | 10 | `digestão`, `distúrbio intestinal`, `estômago`, `estômago e fígado`, `fígado e estômago`, `indigestion`, `intestino`, `intestinos`, `problemas do estômago`, `problemas estomacais` |
 | `pressão alta` | 10 | `baixa a pressão`, `baixar a pressão`, `controlar a pressão arterial`, `high blood pressure`, `hipertensão`, `hipertensão arterial`, `normalizar a pressão`, `pressão`, `regulador da pressão arterial`, `regular a pressão` |
-| `problemas digestivos` | 8 | `digestão`, `distúrbio intestinal`, `estômago`, `indigestion`, `intestino`, `intestinos`, `problemas do estômago`, `problemas estomacais` |
 | `cicatrizante` | 7 | `cicatrizar`, `cicatrizar feridas`, `cicatrizar feridas e úlceras`, `cicatrização`, `cicatrização de feridas`, `cicatrizing and muscular relaxant`, `healing` |
 | `calmante` | 7 | `acalmar`, `calmante (nervoso)`, `calmante infantil`, `calmante natural`, `calmante para o coração`, `calmante para os nervos`, `relaxar` |
 | `dor no estômago` | 7 | `dor de estomago`, `dor de estômago`, `dor no estomago`, `dores de estômago`, `dores estomacais`, `dores no estômago`, `stomache` |
 | `inflamação na garganta` | 7 | `garganta inflamada`, `infecção de garganta`, `inflamação da garganta`, `inflamação de garganta`, `inflamações na garganta`, `inflammed throat`, `problemas na garganta` |
 | `problemas respiratórios` | 7 | `doenças respiratórias`, `problemas nas vias respiratórias`, `problemas no pulmão`, `problemas pulmonares`, `pulmão`, `respiratório`, `trato respiratório` |
+| `tosse` | 7 | `aliviar tosses`, `asma e tosse`, `cough`, `gripe e tosse`, `tosse calmante`, `tosse forte`, `tosses` |
 | `menstruação` | 7 | `ausência da menstruação`, `controls the period`, `falta de menstruação`, `menstruação atrasada`, `regulador menstrual`, `regular a menstruação`, `regular menstruação` |
 | `utensílio` | 6 | `utensílio doméstico`, `utensílios`, `utensílios (colchões com folhas)`, `utensílios (moenda de cana e mundéu com estipe)`, `utensílios (móveis como prateleira e estrado de cama com estipe)`, `utensílios (trançados para caçar peixe com folhas)` |
 | `depurativo` | 6 | `afinar o sangue`, `depurativo do sangue`, `desintoxicar`, `limpar o sangue`, `purificante`, `purificar o sangue` |
+| `dor` | 6 | `dor e inflamação`, `dores em geral`, `dores no geral`, `hurts`, `pain`, `qualquer dor` |
 | `inflamação` | 6 | `dor e inflamação`, `inflamação em geral`, `inflamação no corpo`, `inflamações`, `inflammation`, `inflações` |
-| `gripe` | 6 | `asma e tosse`, `flu`, `gripe e resfriado`, `gripe e tosse`, `gripes`, `prevenir a gripe` |
 | `doenças de pele` | 6 | `doenças da pele`, `irritação da pele`, `irritação na pele`, `para limpar a pele`, `pele`, `problemas de pele` |
 | `útero` | 6 | `caroço no útero`, `dores no útero`, `infecção de útero`, `infecção uterina`, `limpeza do útero`, `limpeza uterina` |
 | `anti-inflamatório` | 5 | `anti-inflamatório geral`, `anti-inflammatory`, `antiinflamatório`, `inflamamtion`, `inflamation` |
 | `sedativo` | 5 | `as depressant`, `depressant`, `sedação`, `sonífero`, `tranquilizante` |
 | `tonificante` | 5 | `dar energia`, `energia`, `reinvigorate and gives energy`, `reinvigorate and gives you energy`, `revigorar` |
-| `dor` | 5 | `dores em geral`, `dores no geral`, `hurts`, `pain`, `qualquer dor` |
 | `verme` | 5 | `cólica provocada por vermes`, `intestinal worms`, `vermes`, `vermes intestinais`, `verminose` |
-| `tosse` | 5 | `aliviar tosses`, `cough`, `tosse calmante`, `tosse forte`, `tosses` |
+| `gripe` | 5 | `flu`, `gripe e resfriado`, `gripe e tosse`, `gripes`, `prevenir a gripe` |
 | `má digestão` | 5 | `dispepsia`, `fazer a digestão`, `indigestão`, `para digestão`, `para fazer a digestão` |
 | `pedra nos rins` | 5 | `cálculo renal`, `kidney stone`, `kidney stones`, `pedra no rim`, `pedras nos rins` |
 | `insônia` | 5 | `aliviar insônia`, `curar insônia`, `dar sono`, `dormir`, `sono` |
@@ -1125,6 +1144,7 @@ Dez facetas de 1º nível. Profundidade máxima 4. Sem ciclos (verificado).
 | `medicinal` | 4 | `manejo de reações adversas`, `medicinal (seiva do palmito jovem para desinfecção, anestésico, coagulação do sangue)`, `possível atividade antitumoral`, `saúde` |
 | `dor nas costas` | 4 | `backache`, `dor lombar`, `dor na coluna`, `dor na espinha` |
 | `cólica` | 4 | `cramps`, `cólicas`, `cólicas e dores`, `dores e cólicas` |
+| `asma` | 4 | `asma brônquica`, `asma e tosse`, `curar a asma`, `tratar e curar a asma` |
 | `apetite` | 4 | `abre o apetite`, `abrir o apetite`, `falta de apetite`, `perda de apetite` |
 | `retenção de líquidos` | 4 | `edema`, `inchaço`, `inchaço nas pernas`, `swollen` |
 | `problemas do coração` | 4 | `coração`, `doença do coração`, `problema no coração`, `problemas no coração` |
@@ -1132,16 +1152,4 @@ Dez facetas de 1º nível. Profundidade máxima 4. Sem ciclos (verificado).
 | `derrame` | 4 | `derrames`, `prevent stoke`, `prevent stroke`, `prevenção de derrame` |
 | `nervosismo` | 4 | `crises nervosas`, `nervos`, `nervoso`, `sistema nervoso` |
 | `luxação` | 4 | `entorses`, `luxações`, `torção`, `twists` |
-
-## Pontos que exigem decisão humana
-
-1. **44 rótulos em inglês** gravados com `language: "pt"` — ex.: `headache`, `flu`, `kidney stones`,
-   `uterus, urinary and ovary infection`. A proposta os absorve como rótulos do conceito português
-   equivalente; ao criá-los, o idioma deve ser corrigido para `eng`.
-2. **9 grafias incorretas** viram rótulo oculto: `inflamamtion`, `inflamation`, `dor de estomago`, `dor no estomago`, `diarréia`, `gazes`, `ictéricia`, `hemorróidas`, `prevent stoke`.
-3. **17 termos compostos** perdem informação ao serem depreciados para um único substituto —
-   ex.: `gripe e tosse` → `gripe` descarta a tosse. Alternativa: rótulo oculto em ambos os conceitos.
-4. **11 termos sem conteúdo** vão para a faceta `indeterminado`, criada porque `deprecate` **exige**
-   `replacedById` e não há substituto legítimo para `outros`, `dúvida` ou `não especificado`.
-5. **`fumo`** é nome vernacular que caiu neste campo; o conceito é válido sob `comunidades.plantas.nomeVernacular`
-   e não deve ser tocado. `artesanato` e `pesca` pertencem legitimamente a dois campos e são mantidos.
+| `colesterol` | 4 | `baixar o colesterol`, `colesterol alto`, `colesterol e diabetes`, `elimina o colesterol ruim` |

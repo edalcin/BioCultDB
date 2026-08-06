@@ -606,8 +606,11 @@
    "conceptId": "3d8bd0c9-594d-44a6-bf53-29cddc24c0d7",
    "labelId": "c1f16ca7-5de4-4e77-87b7-7bdbc7164220",
    "version": 1,
-   "op": "DEP",
-   "target": "gripe"
+   "op": "HID2",
+   "target": [
+    "asma",
+    "tosse"
+   ]
   },
   {
    "term": "aumentar o leite quando estiver amamentando",
@@ -1182,8 +1185,11 @@
    "conceptId": "0d6f60cc-3d96-429f-895f-b0324a9e0041",
    "labelId": "2b384ba0-8801-4656-99b3-67d6d795690e",
    "version": 1,
-   "op": "DEP",
-   "target": "diabetes"
+   "op": "HID2",
+   "target": [
+    "colesterol",
+    "diabetes"
+   ]
   },
   {
    "term": "coluna",
@@ -2046,8 +2052,11 @@
    "conceptId": "15ef8020-da26-40b5-adf8-8a1a7d0f284f",
    "labelId": "9acdf39d-a7c7-4897-aa27-2f5aabfd8780",
    "version": 1,
-   "op": "DEP",
-   "target": "dor de dente"
+   "op": "HID2",
+   "target": [
+    "dor de dente",
+    "dor de cabeça"
+   ]
   },
   {
    "term": "dor de estomago",
@@ -2102,8 +2111,11 @@
    "conceptId": "db902c30-1027-49ad-b42a-56dfe9c07977",
    "labelId": "44eac44a-8a2b-433a-b005-a3a4d7d91b08",
    "version": 1,
-   "op": "DEP",
-   "target": "inflamação"
+   "op": "HID2",
+   "target": [
+    "dor",
+    "inflamação"
+   ]
   },
   {
    "term": "dor lombar",
@@ -2662,8 +2674,11 @@
    "conceptId": "e503302f-09c9-4ffd-b3c2-4c13a1b8789a",
    "labelId": "86afb0b0-0461-4dac-84cc-296f20e1caa4",
    "version": 1,
-   "op": "DEP",
-   "target": "problemas do fígado"
+   "op": "HID2",
+   "target": [
+    "problemas digestivos",
+    "problemas do fígado"
+   ]
   },
   {
    "term": "excitante",
@@ -2958,16 +2973,22 @@
    "conceptId": "6d20fd78-32b6-485a-a90c-e0b299fb7474",
    "labelId": "50591ad7-69d5-418f-b2ee-c1bd31b9f709",
    "version": 1,
-   "op": "DEP",
-   "target": "problemas do fígado"
+   "op": "HID2",
+   "target": [
+    "problemas do fígado",
+    "problemas digestivos"
+   ]
   },
   {
    "term": "fígado e rins",
    "conceptId": "d43b3d1c-754c-4b98-bfd8-d5da54f43328",
    "labelId": "057ad9fc-844a-4625-b8a8-2f5464c86c2c",
    "version": 1,
-   "op": "DEP",
-   "target": "problemas do fígado"
+   "op": "HID2",
+   "target": [
+    "problemas do fígado",
+    "problemas renais"
+   ]
   },
   {
    "term": "fôlego",
@@ -3070,16 +3091,22 @@
    "conceptId": "dad1682b-14e4-4fd9-ad48-f24734a3b1ce",
    "labelId": "d443ac32-9baa-434f-8e39-b6e4a75dd68c",
    "version": 1,
-   "op": "DEP",
-   "target": "gripe"
+   "op": "HID2",
+   "target": [
+    "gripe",
+    "resfriado"
+   ]
   },
   {
    "term": "gripe e tosse",
    "conceptId": "cd46649f-9532-4649-8bce-18d6a7f30da9",
    "labelId": "d15eeaeb-6b5e-4964-8468-04d036ff0b7d",
    "version": 1,
-   "op": "DEP",
-   "target": "gripe"
+   "op": "HID2",
+   "target": [
+    "gripe",
+    "tosse"
+   ]
   },
   {
    "term": "gripes",
@@ -5550,16 +5577,22 @@
    "conceptId": "ff67422b-53c5-44d1-b626-32d959e54221",
    "labelId": "cf1b2cf4-3db5-4932-a8d1-1cbc1acea527",
    "version": 1,
-   "op": "DEP",
-   "target": "problemas do fígado"
+   "op": "HID2",
+   "target": [
+    "problemas do fígado",
+    "problemas renais"
+   ]
   },
   {
    "term": "tratamento de rins e fígado",
    "conceptId": "2fbf668d-0939-48af-9068-cfe079ed19e6",
    "labelId": "029e5e28-bd15-42c0-b4ea-c6242ea06390",
    "version": 1,
-   "op": "DEP",
-   "target": "problemas do fígado"
+   "op": "HID2",
+   "target": [
+    "problemas renais",
+    "problemas do fígado"
+   ]
   },
   {
    "term": "tratar e curar a asma",
@@ -5718,8 +5751,11 @@
    "conceptId": "4b290da1-0005-4b71-af63-c1ea15b1b92c",
    "labelId": "6320834b-f17f-44b8-b42c-94087f203130",
    "version": 1,
-   "op": "DEP",
-   "target": "problemas ginecológicos e obstétricos"
+   "op": "HID2",
+   "target": [
+    "problemas ginecológicos e obstétricos",
+    "problemas renais"
+   ]
   },
   {
    "term": "varizes",
@@ -5897,5 +5933,10 @@
    "op": "BT",
    "target": "problemas ginecológicos e obstétricos"
   }
- ]
+ ],
+ "decisions": {
+  "Q1": "classificacao feita diretamente, sem provedor de IA",
+  "Q2": "upsertConcept corrigido e implantado (pref+alt+hidden); idioma ISO 639-3",
+  "Q3": "compostos de dois conceitos viram rotulo oculto nos dois; qualificadores entre parenteses sao apenas depreciados"
+ }
 }
