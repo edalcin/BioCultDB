@@ -149,22 +149,28 @@ madrugada seguinte.**
 | Depreciar `gripes` apontando `gripe` como substituto | ✅ | o conceito depreciado **mantém** seu `prefLabel`; o upsert o encontra e não recria |
 | Adicionar `broader`, definição, nota | ✅ | não mexe em `prefLabels` |
 
-Há duas saídas, e elas levam a planos diferentes:
+Havia duas saídas. **A escolhida e já implantada foi (b): corrigir a raiz.**
 
-**(a) Conviver com a limitação.** Nunca remover um termo da posição de preferencial. O padrão de fusão
-passa a ser: *adiciona o rótulo no conceito-alvo **e** deprecia o conceito de origem apontando o alvo* —
-o termo continua existindo como preferencial de uma lápide, o cron o reconhece, e nada é recriado.
-Não exige tocar em código. **É o que a proposta atual assume.** Custo: o vocabulário fica com ~416
-conceitos depreciados convivendo com 328 vivos.
+**(a) Conviver com a limitação.** Nunca remover um termo da posição de preferencial: cada fusão vira
+*adicionar o rótulo no conceito-alvo* **e** *depreciar o conceito de origem apontando o alvo*. O termo
+sobrevive como preferencial de uma lápide, o cron o reconhece, nada é recriado. Zero código, mas o
+vocabulário termina com ~416 conceitos depreciados ao lado de 328 vivos — para sempre.
 
-**(b) Corrigir a raiz.** Fazer `upsertConcept` casar também em `altLabels` e `hiddenLabels`. É um diff
-pequeno, mas mora no submódulo `bioculttermos` (repositório separado `edalcin/BioCultTermos`), e exige
-commit lá, atualização do ponteiro do submódulo, rebuild da imagem e redeploy. Com isso, fusões
-limpas passam a ser possíveis e o vocabulário fica sem as lápides.
+**(b) Corrigir a raiz — feito.** `upsertConcept` passa a verificar a existência do termo em
+`prefLabels`, `altLabels` **e** `hiddenLabels`. Fusão limpa passa a ser possível: o termo vira rótulo
+e o conceito de origem simplesmente deixa de existir, sem lápide.
 
-> **Recomendação:** (b), e antes de qualquer curadoria. A correção é de três linhas e elimina uma classe
-> inteira de regressão silenciosa — o pior tipo, porque a interface não mostra que aconteceu.
-> Enquanto (b) não estiver em produção, executar **só** o padrão (a).
+| Item | Valor |
+|---|---|
+| Commit no submódulo | `3a277cb` (`edalcin/BioCultTermos@main`) |
+| Ponteiro do submódulo | `65a4d4f` em `edalcin/BioCultDB@main` |
+| Imagem publicada | build `31f84b5`, CI success |
+| Em produção | `BUILD_INFO.biocultdb_commit=31f84b5…`, container `healthy` |
+| Testes | 3 novos em `acquisition-service.test.js`; verificado que **falham** com o código anterior |
+| Custo | ciclo completo de aquisição: 2601 termos, consulta antiga 38,2 s → nova 44,2 s (**1,16×**) — o custo dominante é a varredura completa de tabela, que já existia |
+
+Junto foi corrigido o código de idioma (`pt` → `por`, pendência 2), no mesmo commit, com migração
+idempotente em `backend/scripts/migrate-language-pt-to-por.js`.
 
 Um terceiro cuidado, independente da escolha: **não executar a curadoria durante a janela do cron.**
 Uma execução concorrente vai colidir com o bloqueio otimista e devolver `409` no meio do lote.
@@ -430,7 +436,8 @@ rejeitar um agrupamento, os termos dependentes dele voltam à fila.
 
 ## 10. Registro do que foi feito nesta sessão
 
-Somente leitura em produção, exceto pela criação do arquivo de backup.
+Somente leitura no vocabulário de produção. As escritas feitas foram: dois arquivos de backup, o
+redeploy do container e a migração de código de idioma.
 
 | # | Ação | Resultado |
 |---|---|---|
@@ -444,10 +451,17 @@ Somente leitura em produção, exceto pela criação do arquivo de backup.
 | 8 | Classificados os 713 termos | 297 mantidos · 362 → rótulo alt · 9 → rótulo oculto · 44 depreciados · 1 intocado |
 | 9 | Validada a consistência | 0 termos sem decisão, 0 alvos inexistentes, 0 cadeias de fusão, 0 auto-referências, 0 ciclos |
 | 10 | Gerados os artefatos | `curadoria-tipos-de-uso-proposta.md`, `curadoria/plano-tipouso.json`, este documento |
+| 11 | **Corrigida a ressurreição noturna** | `upsertConcept` passa a casar em pref + alt + hidden; 3 testes novos, verificados falhando no código anterior |
+| 12 | Idioma padronizado em ISO 639-3 | `pt` → `por` no código e nos 2601 conceitos já gravados; migração idempotente (2ª execução: "Nothing to migrate") |
+| 13 | Publicada e implantada a imagem | build `31f84b5` (CI success) → container recriado, `healthy`, `BUILD_INFO` confere |
+| 14 | Smoke test da aquisição em produção | ciclo completo: `success`, **criados=0**, existentes=2769, total inalterado em 2601, 100% dos rótulos em `por` |
+| 15 | Adicionado `workflow_dispatch` ao CI | o push para `main` não disparou o build; sem ele não havia como reconstruir a imagem sem commit de fachada |
 
-**Nenhuma escrita foi feita na tabela `etnotermos`.** O vocabulário de produção está como estava.
+**Nenhuma escrita foi feita na tabela `etnotermos` a título de curadoria.** A única alteração de dados
+foi o código de idioma dos rótulos (`pt` → `por`), que é correção de convenção, não decisão curatorial:
+não toca `literalForm`, `type`, `accessLevel` nem `version`.
 
-Resultado projetado: **713 → 328 conceitos**, redução de 54%.
+Resultado projetado da curadoria, ainda **não executada**: **713 → 328 conceitos**, redução de 54%.
 
 ---
 
@@ -455,17 +469,23 @@ Resultado projetado: **713 → 328 conceitos**, redução de 54%.
 
 Nada abaixo pode ser decidido sem o curador.
 
-1. **Corrigir `upsertConcept` antes de executar?** (§3) — recomendado: sim. Sem isso, o padrão de
-   fusão fica preso ao modo (a) e o vocabulário acumula ~416 conceitos depreciados.
-2. **`pt` ou `por`?** Os 713 rótulos usam `pt` (ISO 639-1, cravado em `AcquisitionService.js:123`),
-   mas o Manual §3.2 e o comentário de `createLabel` dizem ISO 639-3. Recomendado: `por`/`eng`, que é
-   o único que codifica as línguas indígenas (`tup`, `kgp`) — com migração dos 713 rótulos existentes.
+1. ~~**Corrigir `upsertConcept`**~~ — **feito e em produção** (§3).
+2. ~~**`pt` ou `por`?**~~ — **feito**: ISO 639-3, código corrigido e 2601 conceitos migrados.
 3. **Ativar em massa?** O campo inteiro está invisível na consulta pública hoje. Recomendado: ativar
    os conceitos completos, deixar `candidate` os duvidosos.
 4. **Termos compostos** (17): depreciar para um substituto descarta a outra metade
    (`gripe e tosse` → `gripe` perde a tosse). Alternativa: rótulo oculto nos dois conceitos.
 5. **Revisão em bloco ou por lote temático?** Recomendado: revisar a proposta inteira uma vez e
    discutir só as divergências.
+6. **Custo do ciclo de aquisição** (44 s para 2601 termos) cresce linearmente com o vocabulário, porque
+   cada termo faz uma varredura completa da tabela. Não incomoda hoje — roda uma vez por dia, fora do
+   caminho da interface. Quando incomodar, a saída é uma tabela de lookup de rótulos, não ajuste da
+   consulta.
+7. ~~**Duas falhas pré-existentes** em `tests/contract/admin-concepts-api.test.js`~~ — **investigadas e
+   corrigidas** (`123131c`). Nenhuma das duas descrevia defeito de produto: uma omitia o cabeçalho
+   `Accept: application/json` e cobrava JSON de uma resposta HTML; a outra exigia um formulário de
+   adição de "Mais específico (NT)" que deixou de existir quando NT virou relação derivada. Suíte
+   agora em 233/233.
 
 ---
 
