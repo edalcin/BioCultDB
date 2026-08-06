@@ -297,7 +297,8 @@ de `ancestors` são automáticas. O bloqueio de ciclo é do sistema; a proposta 
 a fronteira é sutil — `calmante` × `sedativo` × `tranquilizante`, `dor` × `inflamação`,
 `indicação terapêutica` × `ação farmacológica`.
 
-Depois, `POST /concepts/:id/activate` nos que ficaram completos. Os duvidosos permanecem `candidate`.
+Depois, `POST /concepts/:id/activate` nos **302** conceitos inequívocos. Os **30** listados em D11
+permanecem `candidate` — e os 4 sem pai não recebem `broader` na Fase 3.
 
 ### Fase 5 — Conferir
 
@@ -604,6 +605,31 @@ história a preservar, e o Manual §7 é explícito: prefira um conceito com vá
 e inglês; nenhum é nome em língua indígena nem foi fornecido sob restrição. **Isto muda no campo
 `nomeVernacular`**, onde os nomes têm povo de origem e podem exigir `restricted` ou `sacred` — ver §8.
 
+### D11 — Ativar os inequívocos, segurar os duvidosos
+
+**Contexto.** O campo inteiro está invisível na consulta pública: 712 dos 713 são `candidate`.
+Ativar é o que faz o trabalho produzir efeito — mas eu classifiquei 713 termos e uns 30 deles
+classifiquei por inferência frágil.
+
+**Recusado.** Ativar os 332 sobreviventes: publicaria palpite como se fosse curadoria. E deixar
+tudo `candidate` para ativar numa segunda passada: como a proposta é revisada **antes** da execução,
+isso seria uma terceira leitura do mesmo material, sem ganho.
+
+**Decidido.** **302 ativados, 30 mantidos `candidate`**, pelo critério: (i) significado no contexto
+etnobotânico que não consegui determinar, (ii) destino `indeterminado`, ou (iii) nome de objeto ou
+parte do corpo sem uso declarado. Cada um vem com a justificativa na proposta.
+
+**Efeito colateral que mudou o plano.** Quatro dos duvidosos — `panos`, `batidas`,
+`apertar os dentes`, `sustento` — estavam marcados para ser **absorvidos** como rótulo de outro
+conceito. Absorver deprecia o conceito de origem, e é a única operação deste plano difícil de desfazer
+sem perder proveniência. Foram promovidos de volta a conceito próprio, **sem pai** e `candidate`.
+O caso que motivou a revisão foi `panos`: eu o havia classificado como revestimento têxtil, mas
+"pano branco" é micose — absorvê-lo em `revestimento` esconderia uma doença de pele dentro da faceta
+material.
+
+**Consequência.** Nenhum palpite meu entra na consulta pública, e nenhuma absorção é feita sobre
+termo ambíguo. Sobreviventes sobem de 328 para 332.
+
 ---
 
 ## 12. Pendências e decisões em aberto
@@ -612,8 +638,8 @@ Nada abaixo pode ser decidido sem o curador.
 
 1. ~~**Corrigir `upsertConcept`**~~ — **feito e em produção** (§3).
 2. ~~**`pt` ou `por`?**~~ — **feito**: ISO 639-3, código corrigido e 2601 conceitos migrados.
-3. **Ativar em massa?** O campo inteiro está invisível na consulta pública hoje. Recomendado: ativar
-   os conceitos completos, deixar `candidate` os duvidosos.
+3. ~~**Ativar em massa?**~~ — **decidido** (D11): 302 ativados, 30 mantidos `candidate` com
+   justificativa individual na proposta.
 4. ~~**Termos compostos**~~ — **decidido** (D6/D7): os 12 que nomeiam dois conceitos viram rótulo
    oculto em ambos; os 6 com qualificador entre parênteses são depreciados apontando o núcleo.
 5. **Revisão em bloco ou por lote temático?** Recomendado: revisar a proposta inteira uma vez e
