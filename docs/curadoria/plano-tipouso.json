@@ -1,0 +1,5901 @@
+{
+ "generatedAt": "2026-08-06",
+ "semanticField": "comunidades.plantas.tipoUso",
+ "sourceDb": "/data/biocultdb.sqlite",
+ "backup": "backup-pre-curadoria-tipouso-2026-08-06T17-45-03Z.sqlite",
+ "newConcepts": [
+  {
+   "label": "material e tecnológico",
+   "broader": null,
+   "definition": "Uso de uma planta como matéria-prima para construir, fabricar ou produzir energia."
+  },
+  {
+   "label": "ritual e espiritual",
+   "broader": null,
+   "definition": "Uso de uma planta em práticas rituais, cerimoniais, religiosas ou de cura espiritual."
+  },
+  {
+   "label": "ambiental e ecológico",
+   "broader": null,
+   "definition": "Uso de uma planta com função ambiental, ecológica, paisagística ou de manejo."
+  },
+  {
+   "label": "comercial",
+   "broader": null,
+   "definition": "Uso de uma planta destinado à venda ou à geração de renda."
+  },
+  {
+   "label": "veterinário e forrageiro",
+   "broader": null,
+   "definition": "Uso de uma planta na alimentação ou no tratamento de animais."
+  },
+  {
+   "label": "cosmético e higiene",
+   "broader": null,
+   "definition": "Uso de uma planta em cuidados pessoais, higiene e estética."
+  },
+  {
+   "label": "tóxico e defensivo",
+   "broader": null,
+   "definition": "Uso de uma planta por sua toxicidade: veneno, inseticida ou defensivo."
+  },
+  {
+   "label": "indeterminado",
+   "broader": null,
+   "definition": "Registro de uso sem informação suficiente para classificação. Destino terminal de termos vazios, duvidosos ou fora do escopo do campo."
+  },
+  {
+   "label": "indicação terapêutica",
+   "broader": "medicinal",
+   "definition": "Agrupa os conceitos que nomeiam a enfermidade, o sintoma ou a condição que a planta trata."
+  },
+  {
+   "label": "ação farmacológica",
+   "broader": "medicinal",
+   "definition": "Agrupa os conceitos que nomeiam o efeito atribuído à planta, e não a enfermidade tratada."
+  },
+  {
+   "label": "forma de preparo e administração",
+   "broader": "medicinal",
+   "definition": "Agrupa os conceitos que nomeiam o modo de preparar ou administrar a planta, e não a finalidade do uso."
+  },
+  {
+   "label": "problemas hepáticos e biliares",
+   "broader": "indicação terapêutica",
+   "definition": "Afecções do fígado e da vesícula biliar."
+  },
+  {
+   "label": "problemas renais e urinários",
+   "broader": "indicação terapêutica",
+   "definition": "Afecções dos rins e das vias urinárias."
+  },
+  {
+   "label": "problemas cardiovasculares",
+   "broader": "indicação terapêutica",
+   "definition": "Afecções do coração, da pressão arterial e da circulação."
+  },
+  {
+   "label": "problemas dermatológicos",
+   "broader": "indicação terapêutica",
+   "definition": "Afecções da pele, dos pelos e das unhas."
+  },
+  {
+   "label": "problemas ginecológicos e obstétricos",
+   "broader": "indicação terapêutica",
+   "definition": "Afecções do aparelho reprodutor feminino, gestação, parto e puerpério."
+  },
+  {
+   "label": "problemas do aparelho reprodutor masculino",
+   "broader": "indicação terapêutica",
+   "definition": "Afecções da próstata e da função sexual masculina."
+  },
+  {
+   "label": "problemas neurológicos e psíquicos",
+   "broader": "indicação terapêutica",
+   "definition": "Afecções do sistema nervoso e do estado emocional."
+  },
+  {
+   "label": "problemas osteomusculares",
+   "broader": "indicação terapêutica",
+   "definition": "Afecções de ossos, músculos, articulações e coluna."
+  },
+  {
+   "label": "problemas oftálmicos",
+   "broader": "indicação terapêutica",
+   "definition": "Afecções dos olhos e da visão."
+  },
+  {
+   "label": "problemas otorrinolaringológicos",
+   "broader": "indicação terapêutica",
+   "definition": "Afecções de ouvido, nariz e garganta."
+  },
+  {
+   "label": "problemas odontológicos",
+   "broader": "indicação terapêutica",
+   "definition": "Afecções de dentes, gengivas e boca."
+  },
+  {
+   "label": "problemas metabólicos e endócrinos",
+   "broader": "indicação terapêutica",
+   "definition": "Afecções do metabolismo e das glândulas endócrinas."
+  },
+  {
+   "label": "doenças infecciosas e parasitárias",
+   "broader": "indicação terapêutica",
+   "definition": "Enfermidades causadas por microrganismos ou parasitas."
+  },
+  {
+   "label": "problemas hematológicos",
+   "broader": "indicação terapêutica",
+   "definition": "Afecções do sangue."
+  },
+  {
+   "label": "alergias e problemas imunológicos",
+   "broader": "indicação terapêutica",
+   "definition": "Reações alérgicas e afecções da imunidade."
+  },
+  {
+   "label": "neoplasias",
+   "broader": "indicação terapêutica",
+   "definition": "Tumores benignos e malignos."
+  },
+  {
+   "label": "traumatismos e ferimentos",
+   "broader": "indicação terapêutica",
+   "definition": "Lesões físicas: cortes, fraturas, contusões e queimaduras."
+  },
+  {
+   "label": "envenenamentos e picadas",
+   "broader": "indicação terapêutica",
+   "definition": "Efeitos de peçonhas, picadas e intoxicações."
+  },
+  {
+   "label": "condições gerais e inespecíficas",
+   "broader": "indicação terapêutica",
+   "definition": "Estados difusos: fraqueza, cansaço, mal-estar, falta de apetite."
+  },
+  {
+   "label": "manejo",
+   "broader": "ambiental e ecológico",
+   "definition": "Uso de uma planta em práticas de manejo, produção de mudas e repovoamento."
+  }
+ ],
+ "promoteToParent": [
+  {
+   "label": "alimentar",
+   "broader": null,
+   "definition": "Uso de uma planta como alimento, bebida ou condimento, para pessoas."
+  },
+  {
+   "label": "problemas respiratórios",
+   "broader": "indicação terapêutica",
+   "definition": "Afecções do sistema respiratório."
+  },
+  {
+   "label": "problemas digestivos",
+   "broader": "indicação terapêutica",
+   "definition": "Afecções do sistema digestório."
+  },
+  {
+   "label": "dor",
+   "broader": "indicação terapêutica",
+   "definition": "Sensação dolorosa, em qualquer localização."
+  },
+  {
+   "label": "inflamação",
+   "broader": "indicação terapêutica",
+   "definition": "Processo inflamatório, em qualquer localização."
+  },
+  {
+   "label": "febre",
+   "broader": "indicação terapêutica",
+   "definition": "Elevação da temperatura corporal."
+  }
+ ],
+ "operations": [
+  {
+   "term": "abortivo",
+   "conceptId": "f1ea5154-ab19-4f21-9148-fdbaa72b3174",
+   "labelId": "35949346-5684-4755-86e6-668c45153796",
+   "version": 1,
+   "op": "BT",
+   "target": "ação farmacológica"
+  },
+  {
+   "term": "aborto",
+   "conceptId": "753ef6d1-23ab-47a1-aea4-aa0e356090c8",
+   "labelId": "34efffa2-b69a-40c6-b25f-45c72e0f1949",
+   "version": 1,
+   "op": "ALT",
+   "target": "abortivo"
+  },
+  {
+   "term": "abre o apetite",
+   "conceptId": "7afec4b9-fc8b-4e76-9705-6f80b9d20884",
+   "labelId": "b067017b-e3af-49f9-99e3-ea371c184466",
+   "version": 1,
+   "op": "ALT",
+   "target": "apetite"
+  },
+  {
+   "term": "abrir o apetite",
+   "conceptId": "9b2f14e8-b655-4075-8088-d26658fd18b7",
+   "labelId": "127c3732-f5c8-40a0-9392-a17ef6e36346",
+   "version": 1,
+   "op": "ALT",
+   "target": "apetite"
+  },
+  {
+   "term": "acalmar",
+   "conceptId": "13589373-06d4-4f05-9135-ab9acc6e72cd",
+   "labelId": "b244b2e7-6911-40ab-a8b0-3f1003bd3ffe",
+   "version": 1,
+   "op": "ALT",
+   "target": "calmante"
+  },
+  {
+   "term": "acidez no estômago",
+   "conceptId": "f4ceba84-2ea8-4b29-bb6c-3937d22d21d7",
+   "labelId": "907c0ef5-5741-448c-bd35-a7d2e1d25eec",
+   "version": 1,
+   "op": "ALT",
+   "target": "azia"
+  },
+  {
+   "term": "afinar o sangue",
+   "conceptId": "804e0559-b9e5-46c0-9dd6-ce2ec330cf1f",
+   "labelId": "f245f40b-aa16-4d32-81cd-f9fb05d5f9ad",
+   "version": 1,
+   "op": "ALT",
+   "target": "depurativo"
+  },
+  {
+   "term": "alergia",
+   "conceptId": "cfd177e7-8054-4ab4-98d4-93ab16adc59d",
+   "labelId": "623fc63f-16d1-49a0-bf4f-2c161723f965",
+   "version": 1,
+   "op": "BT",
+   "target": "alergias e problemas imunológicos"
+  },
+  {
+   "term": "alergias",
+   "conceptId": "5db0c4d3-39b0-4ce5-bcbb-b8494c70ffa6",
+   "labelId": "b9c6448d-19ae-44f1-95a2-393d299f5083",
+   "version": 1,
+   "op": "ALT",
+   "target": "alergia"
+  },
+  {
+   "term": "alimentar",
+   "conceptId": "42ca2043-754f-4ad0-b212-ec0f244009e6",
+   "labelId": "6df219e6-5716-4cc5-b45e-64f80f1a1fcc",
+   "version": 1,
+   "op": "BT",
+   "target": null
+  },
+  {
+   "term": "alimentação",
+   "conceptId": "df234298-d18f-4c1e-8c73-92ea576dbbfc",
+   "labelId": "60bb5a10-f0ac-49d2-adbf-0097849d3783",
+   "version": 1,
+   "op": "ALT",
+   "target": "alimentar"
+  },
+  {
+   "term": "alimentação (palmito)",
+   "conceptId": "ed284d6a-dccb-4f8b-b823-3a86244e391f",
+   "labelId": "a1537426-4c84-4d6f-ace7-b625443b93a1",
+   "version": 1,
+   "op": "DEP",
+   "target": "alimentar"
+  },
+  {
+   "term": "alimentação (vinho dos frutos)",
+   "conceptId": "b77ab254-4102-437d-8580-9d083980552b",
+   "labelId": "0ce59479-257f-408c-9533-6651e316cbdc",
+   "version": 1,
+   "op": "DEP",
+   "target": "alimentar"
+  },
+  {
+   "term": "alimentação animal",
+   "conceptId": "9a1e9f04-d365-4500-a7b2-734bdc4f91f7",
+   "labelId": "5a029505-b696-4212-a22d-956cb2e8cb1d",
+   "version": 1,
+   "op": "ALT",
+   "target": "forragem"
+  },
+  {
+   "term": "alimentação humana",
+   "conceptId": "7f7eb1ec-5c85-4556-8a75-6d405a757b95",
+   "labelId": "c3c1c478-e858-4183-b061-1b8bc8d922d1",
+   "version": 1,
+   "op": "ALT",
+   "target": "alimentar"
+  },
+  {
+   "term": "alimento",
+   "conceptId": "e6d2bc33-9a71-4ba7-96af-5c6d71f00fab",
+   "labelId": "7d19cc18-a91d-415e-aec3-d8ff25d7bfd6",
+   "version": 1,
+   "op": "ALT",
+   "target": "alimentar"
+  },
+  {
+   "term": "alimentício",
+   "conceptId": "628e8b77-79ba-4ae7-b73e-1fa61c92002e",
+   "labelId": "97607a8c-63bb-4a36-a2aa-4f278cff51e5",
+   "version": 1,
+   "op": "ALT",
+   "target": "alimentar"
+  },
+  {
+   "term": "aliviar insônia",
+   "conceptId": "08f30c2d-f7c9-4873-8c04-5580f5c3d28d",
+   "labelId": "4584c284-6dc5-4eb0-adc5-e0073a5a4c1a",
+   "version": 1,
+   "op": "ALT",
+   "target": "insônia"
+  },
+  {
+   "term": "aliviar tosses",
+   "conceptId": "20bd224c-76e1-4457-98dd-e5218cb466cd",
+   "labelId": "63b30ae1-04d9-4f87-bdb5-72167fb0190c",
+   "version": 1,
+   "op": "ALT",
+   "target": "tosse"
+  },
+  {
+   "term": "ambiental",
+   "conceptId": "eb68d0f8-024c-4e59-a1c6-f7e86d87c583",
+   "labelId": "0bb89407-b963-4cf7-bd74-9290521fadb6",
+   "version": 1,
+   "op": "BT",
+   "target": "ambiental e ecológico"
+  },
+  {
+   "term": "ameba",
+   "conceptId": "64f0382c-e41b-4307-8cd6-4176e9314f85",
+   "labelId": "621ed20d-076a-4b69-b8aa-790e285bdd99",
+   "version": 1,
+   "op": "BT",
+   "target": "doenças infecciosas e parasitárias"
+  },
+  {
+   "term": "analgésico",
+   "conceptId": "64805267-2dce-484a-89b8-1af9e46df2a9",
+   "labelId": "ef2d87b5-dad8-422a-927b-5c531a9d0769",
+   "version": 1,
+   "op": "BT",
+   "target": "ação farmacológica"
+  },
+  {
+   "term": "anemia",
+   "conceptId": "680d9e54-3be2-4f53-8fda-e4a4abe6f9de",
+   "labelId": "5752752b-7b64-49b4-99d1-3f4517c01a10",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas hematológicos"
+  },
+  {
+   "term": "anti-inflamatório",
+   "conceptId": "e12c0b62-12bb-4ceb-b174-91bb274862ea",
+   "labelId": "2e5e566f-1d09-4822-950d-3ab1b838a7cd",
+   "version": 1,
+   "op": "BT",
+   "target": "ação farmacológica"
+  },
+  {
+   "term": "anti-inflamatório geral",
+   "conceptId": "6b56be1e-da98-4b3b-9e21-114761fa5334",
+   "labelId": "4f0302db-76e8-490f-9950-156890311bee",
+   "version": 1,
+   "op": "ALT",
+   "target": "anti-inflamatório"
+  },
+  {
+   "term": "anti-inflammatory",
+   "conceptId": "046f731d-b848-4852-8f1b-bb60828eeff7",
+   "labelId": "f176270f-c867-463a-aedb-302d71e54410",
+   "version": 1,
+   "op": "ALT",
+   "target": "anti-inflamatório"
+  },
+  {
+   "term": "antibiótico",
+   "conceptId": "932b2083-6732-44ad-a6e6-8db18ec1ad08",
+   "labelId": "30ff04f5-6989-4d74-9362-98c6e121f0ba",
+   "version": 1,
+   "op": "BT",
+   "target": "ação farmacológica"
+  },
+  {
+   "term": "anticorpos",
+   "conceptId": "6865f797-fc3e-43a6-bf14-7b140b5037e5",
+   "labelId": "49db3868-03ff-4e57-b94d-396f8b2538f5",
+   "version": 1,
+   "op": "BT",
+   "target": "alergias e problemas imunológicos"
+  },
+  {
+   "term": "anticâncer",
+   "conceptId": "b61975ec-054d-424f-9467-9df4f74eb10a",
+   "labelId": "359e209d-4105-4879-b1bd-7b9aca01fa68",
+   "version": 1,
+   "op": "BT",
+   "target": "ação farmacológica"
+  },
+  {
+   "term": "antidepressivo",
+   "conceptId": "a34e1a04-e894-44f5-9e86-c471c0bb8249",
+   "labelId": "9b434a28-eeae-4ab4-86ba-1f81c84ca7bc",
+   "version": 1,
+   "op": "BT",
+   "target": "ação farmacológica"
+  },
+  {
+   "term": "antidiabético",
+   "conceptId": "e7dc2855-6279-45c9-b65a-fd5a76e34a7a",
+   "labelId": "dddbd4f0-97b6-455a-afa9-2c3450c27b61",
+   "version": 1,
+   "op": "BT",
+   "target": "ação farmacológica"
+  },
+  {
+   "term": "antiespasmódico",
+   "conceptId": "bfe61869-50c8-4c38-b8f7-903f2d2d9cf8",
+   "labelId": "82cd20f0-79f5-4a69-a06b-95320aa4b9cd",
+   "version": 1,
+   "op": "BT",
+   "target": "ação farmacológica"
+  },
+  {
+   "term": "antigripal",
+   "conceptId": "3430f812-1588-4dc0-bf6a-d49766adaaa1",
+   "labelId": "61e46446-12e7-43df-a574-0f54db950e90",
+   "version": 1,
+   "op": "BT",
+   "target": "ação farmacológica"
+  },
+  {
+   "term": "antiinflamatório",
+   "conceptId": "605b3944-2867-4f03-b20f-8b0fc32ff953",
+   "labelId": "a6d5c46e-1b35-4773-95cf-a0d386f8ea4c",
+   "version": 1,
+   "op": "ALT",
+   "target": "anti-inflamatório"
+  },
+  {
+   "term": "antisséptico",
+   "conceptId": "2a7c9a00-9ae0-4e38-a8ac-ac4aac084c03",
+   "labelId": "76180713-6019-4d8f-9c25-8c49ddfff9b5",
+   "version": 1,
+   "op": "BT",
+   "target": "ação farmacológica"
+  },
+  {
+   "term": "antitérmico",
+   "conceptId": "b1ed823b-1c1f-4416-9a5f-5cd58cca621d",
+   "labelId": "b88cd250-0229-47b6-ae1f-4b401d911dfa",
+   "version": 1,
+   "op": "BT",
+   "target": "ação farmacológica"
+  },
+  {
+   "term": "antiviral",
+   "conceptId": "949b6c42-4e50-4abc-be5b-a9b546dfaacb",
+   "labelId": "af095c6d-1759-470a-aecb-417372399a60",
+   "version": 1,
+   "op": "BT",
+   "target": "ação farmacológica"
+  },
+  {
+   "term": "apertar os dentes",
+   "conceptId": "7b82c51e-c2e9-410d-948e-c3ea2d6bc8dd",
+   "labelId": "4de61f6f-0c95-4cbd-9e73-bd2422544fdc",
+   "version": 1,
+   "op": "ALT",
+   "target": "dente"
+  },
+  {
+   "term": "apetite",
+   "conceptId": "af98a90c-e5ae-4dce-887e-ff0f1562a0f9",
+   "labelId": "cee912b2-256e-4336-9346-eebace18d201",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas digestivos"
+  },
+  {
+   "term": "arame",
+   "conceptId": "cadfcd27-27be-42f6-a44e-58a0ff049966",
+   "labelId": "fd5ade02-5a91-4be5-bf6c-9510b823332e",
+   "version": 1,
+   "op": "BT",
+   "target": "material e tecnológico"
+  },
+  {
+   "term": "ardor ao urinar",
+   "conceptId": "2e9db48f-8f69-4ff8-ac91-7901ea0b4559",
+   "labelId": "4e7cdcb7-8742-48d1-b940-d407418e7f23",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas renais"
+  },
+  {
+   "term": "ardor no estômago",
+   "conceptId": "b69f7658-3b55-43a2-9d23-0266c6017f82",
+   "labelId": "3f0d58ef-96f4-4698-a6fb-995bfac90cd7",
+   "version": 1,
+   "op": "ALT",
+   "target": "azia"
+  },
+  {
+   "term": "arranhões",
+   "conceptId": "c12bf8af-340e-4629-8c05-d68ed825b47c",
+   "labelId": "5ae8f595-2a71-464a-ac0d-53f7153b9382",
+   "version": 1,
+   "op": "ALT",
+   "target": "cortes"
+  },
+  {
+   "term": "arrepiamento",
+   "conceptId": "bc1d804d-8dc3-4a2a-918a-420b443155cd",
+   "labelId": "06baf060-33e7-4f5a-b507-8697a0228a98",
+   "version": 1,
+   "op": "BT",
+   "target": "condições gerais e inespecíficas"
+  },
+  {
+   "term": "artesanal",
+   "conceptId": "cda7f9b6-b334-40c5-ac10-8e84d3261447",
+   "labelId": "0ab49904-ab5f-4442-ad71-d0f6b7fb9fcf",
+   "version": 1,
+   "op": "ALT",
+   "target": "artesanato"
+  },
+  {
+   "term": "artesanal (confecção de artesanato com sementes)",
+   "conceptId": "f605e412-3c9f-4ce6-9c47-1f25ddc7029e",
+   "labelId": "d0d53145-c469-4bdb-b622-7f923fb8ddbc",
+   "version": 1,
+   "op": "DEP",
+   "target": "artesanato"
+  },
+  {
+   "term": "artesanato",
+   "conceptId": "80541af2-fc18-4cd8-b603-5edb83448646",
+   "labelId": "3b4dd440-2ad5-4f24-aaa7-df6784a772e5",
+   "version": 1,
+   "op": "BT",
+   "target": "material e tecnológico"
+  },
+  {
+   "term": "artrite",
+   "conceptId": "e00334c3-3bad-4bd4-9bcc-0580746bb6e6",
+   "labelId": "c3258141-6242-4f50-b5c0-e20b4c37e615",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas osteomusculares"
+  },
+  {
+   "term": "as depressant",
+   "conceptId": "52569e35-0c75-431c-8993-b2e1be40647d",
+   "labelId": "60e52408-4ca6-40b6-9ded-64a3f0de302b",
+   "version": 1,
+   "op": "ALT",
+   "target": "sedativo"
+  },
+  {
+   "term": "asma",
+   "conceptId": "630e9948-79b2-4683-a97e-6024a417feae",
+   "labelId": "f9ce1b8d-dc44-4eda-8dca-4b60471e2155",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas respiratórios"
+  },
+  {
+   "term": "asma brônquica",
+   "conceptId": "64943af6-1997-41cd-af3f-353860785e75",
+   "labelId": "9dec1bfd-9d28-4f85-a9d7-02256ed5d336",
+   "version": 1,
+   "op": "ALT",
+   "target": "asma"
+  },
+  {
+   "term": "asma e tosse",
+   "conceptId": "3d8bd0c9-594d-44a6-bf53-29cddc24c0d7",
+   "labelId": "c1f16ca7-5de4-4e77-87b7-7bdbc7164220",
+   "version": 1,
+   "op": "DEP",
+   "target": "gripe"
+  },
+  {
+   "term": "aumentar o leite quando estiver amamentando",
+   "conceptId": "561be6bc-87ad-45fe-98bd-2ce400f0fcd5",
+   "labelId": "5f1c4276-ee57-4d8e-9124-f928fe46739e",
+   "version": 1,
+   "op": "ALT",
+   "target": "parto"
+  },
+  {
+   "term": "ausência da menstruação",
+   "conceptId": "b5edc8da-31b0-438b-98eb-7c8c1172ad55",
+   "labelId": "7b356aaa-0eb3-422d-bfb4-d45fa16359ef",
+   "version": 1,
+   "op": "ALT",
+   "target": "menstruação"
+  },
+  {
+   "term": "azia",
+   "conceptId": "8b704976-567b-4cfd-9a19-ae2490933e4f",
+   "labelId": "610080a6-0420-4d7d-b46b-38ef4423a53f",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas digestivos"
+  },
+  {
+   "term": "backache",
+   "conceptId": "a9f7e814-6f82-44c2-8ba1-fd64b81466cc",
+   "labelId": "e952d9ad-0665-44be-95c2-a4995575795a",
+   "version": 1,
+   "op": "ALT",
+   "target": "dor nas costas"
+  },
+  {
+   "term": "baixa a pressão",
+   "conceptId": "b2ba5bdf-71d7-4584-bf3e-b8db07518709",
+   "labelId": "43a453bb-23ce-468b-8083-70721d4eff18",
+   "version": 1,
+   "op": "ALT",
+   "target": "pressão alta"
+  },
+  {
+   "term": "baixar a febre",
+   "conceptId": "9aec5b68-c54d-47dc-b873-201ceb0e29b5",
+   "labelId": "cbd9b4d4-78e0-45ea-aaac-888d15f1cb54",
+   "version": 1,
+   "op": "ALT",
+   "target": "febre"
+  },
+  {
+   "term": "baixar a pressão",
+   "conceptId": "68dd4bf5-ed63-4397-8fc2-60b08d14587c",
+   "labelId": "101cf191-629c-44a4-a417-de89960028fd",
+   "version": 1,
+   "op": "ALT",
+   "target": "pressão alta"
+  },
+  {
+   "term": "baixar o colesterol",
+   "conceptId": "d7a1c3dc-c275-420e-9d0d-ab8777587bd7",
+   "labelId": "8776825b-0cae-4ce7-94b5-74173f11fc60",
+   "version": 1,
+   "op": "ALT",
+   "target": "colesterol"
+  },
+  {
+   "term": "baixar os triglicerídeos",
+   "conceptId": "79b85afc-86ca-477a-9f67-5d53dd77eff9",
+   "labelId": "d5fd82d2-79e7-4046-ae27-5739c30b2432",
+   "version": 1,
+   "op": "ALT",
+   "target": "triglicerídeos"
+  },
+  {
+   "term": "baixo astral",
+   "conceptId": "30093cca-7d4a-4b4d-bc52-c357703029fa",
+   "labelId": "0405793d-3ebf-4b1f-b2f6-797584a29873",
+   "version": 1,
+   "op": "ALT",
+   "target": "depressão"
+  },
+  {
+   "term": "balanço",
+   "conceptId": "77bdee96-7824-4649-a976-e455b6e2e9b9",
+   "labelId": "bb545187-1fe3-472f-975d-5d6e3f24261f",
+   "version": 1,
+   "op": "BT",
+   "target": "material e tecnológico"
+  },
+  {
+   "term": "banho",
+   "conceptId": "3f1aae35-37fa-40cb-8460-65618b8db483",
+   "labelId": "6cab6d61-8e57-4d93-a42f-712647d1b0e8",
+   "version": 1,
+   "op": "BT",
+   "target": "ritual e espiritual"
+  },
+  {
+   "term": "banho de assento",
+   "conceptId": "fe8db362-6630-4f79-ad27-9fd48212fa10",
+   "labelId": "125431cb-d641-4145-9f83-abb001a0b82e",
+   "version": 1,
+   "op": "ALT",
+   "target": "banho"
+  },
+  {
+   "term": "bath seat",
+   "conceptId": "5a83a68b-80a9-4d24-a1fc-863f11148c45",
+   "labelId": "eb8a655b-a1b9-42a4-b147-f611ae994e3c",
+   "version": 1,
+   "op": "ALT",
+   "target": "banho"
+  },
+  {
+   "term": "batidas",
+   "conceptId": "1fe37532-6cb4-4c7e-b1c0-9b06b6881a16",
+   "labelId": "8dd8ff9e-6e24-4fc8-a733-18669dec105e",
+   "version": 1,
+   "op": "ALT",
+   "target": "palpitação do coração"
+  },
+  {
+   "term": "bexiga",
+   "conceptId": "715775be-f065-4877-8e86-a316b964fe4d",
+   "labelId": "bc7aa5c3-2248-4cf3-89d8-f4c7e1d7ac29",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas renais"
+  },
+  {
+   "term": "bicho de pé",
+   "conceptId": "f4f92a50-d0df-40c2-a76f-3ff0e6ddd30b",
+   "labelId": "55992e74-5b1c-4be5-9089-116c1343b1f5",
+   "version": 1,
+   "op": "ALT",
+   "target": "parasitas"
+  },
+  {
+   "term": "boca ferida",
+   "conceptId": "84c73933-31b5-4c0e-a7ba-c02fc42850cd",
+   "labelId": "c51b2257-1226-43ff-bba5-e14f61a69a04",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas digestivos"
+  },
+  {
+   "term": "broken bone",
+   "conceptId": "8b065a8f-bbe4-46cf-94d9-f63b9d30739c",
+   "labelId": "6a127d31-fbb4-4c85-baea-946d99175189",
+   "version": 1,
+   "op": "ALT",
+   "target": "fraturas"
+  },
+  {
+   "term": "bronquite",
+   "conceptId": "e43a9faa-c1c1-4001-9d34-a4d1793991e0",
+   "labelId": "2bc6c81e-000a-4214-94ca-3ab15e607a6d",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas respiratórios"
+  },
+  {
+   "term": "bronquite asmática",
+   "conceptId": "8e9e41a1-7ccb-4ab3-a3bc-3a1569564de9",
+   "labelId": "e7a16d18-363a-413e-ab69-e96047cb6edd",
+   "version": 1,
+   "op": "ALT",
+   "target": "bronquite"
+  },
+  {
+   "term": "bronquites",
+   "conceptId": "80ba4d90-1014-4f8f-bffd-59f26a8d1f79",
+   "labelId": "2d72a37c-1979-4f23-9061-4789cb5f0486",
+   "version": 1,
+   "op": "ALT",
+   "target": "bronquite"
+  },
+  {
+   "term": "bócio",
+   "conceptId": "c9e17d45-057e-4d5e-98b4-2fe806229496",
+   "labelId": "383ddd0b-fce6-4e59-aa26-b19c28bc457e",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas metabólicos e endócrinos"
+  },
+  {
+   "term": "cabelo",
+   "conceptId": "abaacbb9-508a-4294-b165-410652c8bfa1",
+   "labelId": "50c513f8-cacb-4992-9492-58d316d5558e",
+   "version": 1,
+   "op": "BT",
+   "target": "cosmético e higiene"
+  },
+  {
+   "term": "caibro",
+   "conceptId": "581c7c9b-1ed1-4c1d-8188-542ae8fe5d82",
+   "labelId": "03375cac-15ff-426d-bd16-eaa970c393bd",
+   "version": 1,
+   "op": "BT",
+   "target": "construção"
+  },
+  {
+   "term": "calmante",
+   "conceptId": "f5866072-7f6d-4b00-a9d4-ae2dbf9c0103",
+   "labelId": "ec3c9a61-b633-42c2-ab06-f3d0e76efd90",
+   "version": 1,
+   "op": "BT",
+   "target": "ação farmacológica"
+  },
+  {
+   "term": "calmante (nervoso)",
+   "conceptId": "7ac4a2d0-6960-4643-8415-5c581ffe10ca",
+   "labelId": "e700f3c7-d8b6-42d8-93f0-893546e108ab",
+   "version": 1,
+   "op": "DEP",
+   "target": "calmante"
+  },
+  {
+   "term": "calmante infantil",
+   "conceptId": "e5b8d79a-bdc7-4ff7-9354-3e82f84e6b4a",
+   "labelId": "fe221ced-b997-4da0-84f7-56f0ca217429",
+   "version": 1,
+   "op": "DEP",
+   "target": "calmante"
+  },
+  {
+   "term": "calmante natural",
+   "conceptId": "346bb9c8-3361-49b9-b31a-3037763a7042",
+   "labelId": "601c1bd7-1716-44c2-8544-896849d37aa7",
+   "version": 1,
+   "op": "ALT",
+   "target": "calmante"
+  },
+  {
+   "term": "calmante para o coração",
+   "conceptId": "f185e9d0-7840-4101-b4b6-59514d9d2c35",
+   "labelId": "2e06f3a1-bae5-4d50-9734-4fa9cbc7cdf7",
+   "version": 1,
+   "op": "DEP",
+   "target": "calmante"
+  },
+  {
+   "term": "calmante para os nervos",
+   "conceptId": "66b08857-564b-41fa-bc70-6eec3ec57142",
+   "labelId": "91e94fab-63d6-4c27-94b5-3c457194f037",
+   "version": 1,
+   "op": "DEP",
+   "target": "calmante"
+  },
+  {
+   "term": "calos",
+   "conceptId": "1c97beef-0878-46fc-838c-5d049251d24f",
+   "labelId": "dc66e3ae-83b1-49ae-a093-0ed37b5cab4b",
+   "version": 1,
+   "op": "BT",
+   "target": "doenças de pele"
+  },
+  {
+   "term": "canal",
+   "conceptId": "e8efc66c-8ad5-43b0-80f2-b812d210660e",
+   "labelId": "f51302b6-da5a-4be1-a4bd-ef0bd07fb1f6",
+   "version": 1,
+   "op": "BT",
+   "target": "construção"
+  },
+  {
+   "term": "cancer",
+   "conceptId": "9bb2b586-d359-4689-960d-037406c423f1",
+   "labelId": "61ea6306-61ed-44de-afc8-d6114d720b64",
+   "version": 1,
+   "op": "ALT",
+   "target": "câncer"
+  },
+  {
+   "term": "cancro",
+   "conceptId": "177ea734-29fb-403c-b30e-95110a7ca506",
+   "labelId": "2afd7e19-d97a-4a70-8313-e4957afdd181",
+   "version": 1,
+   "op": "BT",
+   "target": "doenças infecciosas e parasitárias"
+  },
+  {
+   "term": "cansado",
+   "conceptId": "e5b9b7b1-da5e-4367-a851-b55b24c25587",
+   "labelId": "2be96483-ec7c-4752-b83f-0d6f6dd9090a",
+   "version": 1,
+   "op": "ALT",
+   "target": "cansaço"
+  },
+  {
+   "term": "cansaço",
+   "conceptId": "5a1f9c55-8dfb-4909-9324-ac9ca1217361",
+   "labelId": "e11bafa8-dc88-4fe0-b204-610ca2e0f426",
+   "version": 1,
+   "op": "BT",
+   "target": "condições gerais e inespecíficas"
+  },
+  {
+   "term": "cardiorritmo",
+   "conceptId": "740cce9f-482f-4563-8b15-ba55b5cca7d7",
+   "labelId": "2f879b57-bc88-47ae-9a31-1a9b53cba902",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas do coração"
+  },
+  {
+   "term": "caroço no útero",
+   "conceptId": "938aa376-0889-4697-87db-611ab5fa401c",
+   "labelId": "11147f5c-c99f-4895-a35a-de1b153530ee",
+   "version": 1,
+   "op": "ALT",
+   "target": "útero"
+  },
+  {
+   "term": "caspa",
+   "conceptId": "f9899ca7-b15d-499e-95d0-2711dfe6ac23",
+   "labelId": "071879f8-4723-4d95-8f4e-e668831d9094",
+   "version": 1,
+   "op": "BT",
+   "target": "cabelo"
+  },
+  {
+   "term": "catarro",
+   "conceptId": "538b4c7a-73d8-4c7e-8ca1-791e6a19d1bc",
+   "labelId": "e6b9357d-9193-4389-9d48-c88a1ef617b9",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas respiratórios"
+  },
+  {
+   "term": "catarro no peito",
+   "conceptId": "77b864d6-a1f4-4b82-8123-b77e70b482af",
+   "labelId": "02f1bb1c-b2fb-4392-ae43-166cfed341dd",
+   "version": 1,
+   "op": "ALT",
+   "target": "catarro"
+  },
+  {
+   "term": "catarro pulmonar",
+   "conceptId": "f265c2ea-bee7-44f2-a2c9-eefca45e01de",
+   "labelId": "e525b5d9-0dfb-45a7-a395-6f502baf4429",
+   "version": 1,
+   "op": "ALT",
+   "target": "catarro"
+  },
+  {
+   "term": "catuaba",
+   "conceptId": "7125fefd-1b27-4d78-bcf6-728db08adf0f",
+   "labelId": "a07a42b9-eaac-4943-a464-f741772bee76",
+   "version": 1,
+   "op": "DEP",
+   "target": "indeterminado"
+  },
+  {
+   "term": "causar vômito",
+   "conceptId": "49ad1f5d-bb36-4183-bdb8-4fb65322d38b",
+   "labelId": "1ebaa132-999a-4238-a139-06d8439d7061",
+   "version": 1,
+   "op": "BT",
+   "target": "ação farmacológica"
+  },
+  {
+   "term": "caxumba",
+   "conceptId": "6a80b106-f8a0-48b9-9920-7045f969d6d2",
+   "labelId": "096a0510-fe8e-4d6c-9a37-30e947de609f",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas otorrinolaringológicos"
+  },
+  {
+   "term": "caça",
+   "conceptId": "121ae802-635a-4c0d-ac09-3b7096e2a7f4",
+   "labelId": "ee0f8d23-178c-435f-a93b-e14e0ba91cc3",
+   "version": 1,
+   "op": "BT",
+   "target": "material e tecnológico"
+  },
+  {
+   "term": "cerne",
+   "conceptId": "bca0e097-4bae-49fb-b136-5fc190a9698e",
+   "labelId": "f8f0f310-fac7-4347-9baf-0100adad5be1",
+   "version": 1,
+   "op": "BT",
+   "target": "construção"
+  },
+  {
+   "term": "cesto",
+   "conceptId": "27958227-106b-41c5-8307-61c6ea7dec77",
+   "labelId": "05dad4c5-4ef3-479e-ba22-08355cd53109",
+   "version": 1,
+   "op": "BT",
+   "target": "material e tecnológico"
+  },
+  {
+   "term": "chagas",
+   "conceptId": "ab905305-ec65-48ae-bafb-02adf5dad004",
+   "labelId": "9c8863f1-6cfc-4689-82b7-1e8324a43d34",
+   "version": 1,
+   "op": "BT",
+   "target": "doenças infecciosas e parasitárias"
+  },
+  {
+   "term": "chaqueiro",
+   "conceptId": "17c3e28c-7bb2-4f61-bea8-d9d460ab95cf",
+   "labelId": "4557e056-13ae-4fa7-8f17-db1835b71eb9",
+   "version": 1,
+   "op": "BT",
+   "target": "material e tecnológico"
+  },
+  {
+   "term": "chá",
+   "conceptId": "f89c3035-4d19-4a7c-94e7-1b75b5b1072b",
+   "labelId": "fd246721-8ba9-4fe8-bc11-d099484d5e0c",
+   "version": 1,
+   "op": "BT",
+   "target": "alimentar"
+  },
+  {
+   "term": "chá (bebida recreativa)",
+   "conceptId": "f21010c6-5545-4516-a6b5-f6e947bb9cc6",
+   "labelId": "e3f35ccf-3755-43a1-ab3f-9f7b525a97cb",
+   "version": 1,
+   "op": "ALT",
+   "target": "chá"
+  },
+  {
+   "term": "chá de bebê",
+   "conceptId": "4aa560f5-5dba-49b7-b578-9f10c51db0de",
+   "labelId": "22290e0a-ceb3-4acc-a7ad-f14ec3c8b38e",
+   "version": 1,
+   "op": "DEP",
+   "target": "alimentar"
+  },
+  {
+   "term": "cicatrizante",
+   "conceptId": "04cac26d-588a-4678-a4f4-b8fe432dd84d",
+   "labelId": "24fe19e8-f431-4d1b-81df-fbd88987a5db",
+   "version": 1,
+   "op": "BT",
+   "target": "ação farmacológica"
+  },
+  {
+   "term": "cicatrizar",
+   "conceptId": "e1fe8baa-3020-4913-ace3-71a90df48e05",
+   "labelId": "2917c321-2a0d-4101-a599-232d5bbc9f3c",
+   "version": 1,
+   "op": "ALT",
+   "target": "cicatrizante"
+  },
+  {
+   "term": "cicatrizar feridas",
+   "conceptId": "3bd5a380-7cf0-43a9-b491-4e3040e280c9",
+   "labelId": "4518c088-e883-49cf-b0b7-73c7ca215ce0",
+   "version": 1,
+   "op": "ALT",
+   "target": "cicatrizante"
+  },
+  {
+   "term": "cicatrizar feridas e úlceras",
+   "conceptId": "a0985e8e-71b2-4dde-a7ff-11bb355a13cc",
+   "labelId": "61b441be-e7cf-46b9-825d-806b97565b2a",
+   "version": 1,
+   "op": "ALT",
+   "target": "cicatrizante"
+  },
+  {
+   "term": "cicatrização",
+   "conceptId": "96ab84c0-090c-4a2f-b0bc-5d69cf2050d3",
+   "labelId": "e4baf7b6-653f-45f8-b97b-d2d98670ad63",
+   "version": 1,
+   "op": "ALT",
+   "target": "cicatrizante"
+  },
+  {
+   "term": "cicatrização de feridas",
+   "conceptId": "16dfd141-42ad-4edf-a2ed-8e97a63ac6a9",
+   "labelId": "9537832b-61f8-44e6-b7df-4a0079b46dd0",
+   "version": 1,
+   "op": "ALT",
+   "target": "cicatrizante"
+  },
+  {
+   "term": "cicatrizing and muscular relaxant",
+   "conceptId": "22e247d6-bce4-4f22-ab25-3af588d4f1e1",
+   "labelId": "2065cdb4-1c5c-4d21-839f-247efe5a4084",
+   "version": 1,
+   "op": "ALT",
+   "target": "cicatrizante"
+  },
+  {
+   "term": "circulação",
+   "conceptId": "c8dae23b-11c0-4cef-b152-baf7b1610aaa",
+   "labelId": "7add4b80-14d6-40f5-9fde-3233368c7e80",
+   "version": 1,
+   "op": "ALT",
+   "target": "problemas circulatórios"
+  },
+  {
+   "term": "circulação do sangue",
+   "conceptId": "96e872cb-e0b5-4a13-9554-951d9c7cb033",
+   "labelId": "f8e32e8f-2925-4a21-9ca2-f20848966693",
+   "version": 1,
+   "op": "ALT",
+   "target": "problemas circulatórios"
+  },
+  {
+   "term": "cirrose",
+   "conceptId": "5ea5331c-48c3-4392-b49e-935a93b7d66b",
+   "labelId": "7caff397-fceb-4b2f-904d-46d6aacc6246",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas do fígado"
+  },
+  {
+   "term": "clister",
+   "conceptId": "b89c8505-e332-4838-9813-66dedd275215",
+   "labelId": "52b9158b-64e4-4b04-8eef-792469cf6256",
+   "version": 1,
+   "op": "ALT",
+   "target": "purgante"
+  },
+  {
+   "term": "cobertura (folhas para coberturas temporárias, barracos, capovas, galinheiros, canteiros, viveiros)",
+   "conceptId": "79f5a753-93fc-49f8-ae1e-eddbb4c4edd3",
+   "labelId": "1471ce2f-6498-4847-a4af-ec3bb11233f9",
+   "version": 1,
+   "op": "DEP",
+   "target": "construção"
+  },
+  {
+   "term": "cobreiro",
+   "conceptId": "5a597d83-85b5-41b3-90b9-43519e932096",
+   "labelId": "9384d0f7-a69e-494f-8285-75774f1caf40",
+   "version": 1,
+   "op": "BT",
+   "target": "doenças de pele"
+  },
+  {
+   "term": "coceira",
+   "conceptId": "8a450126-6b21-4921-a516-1175d7eaede0",
+   "labelId": "595cd1b4-bde9-48ea-8017-0174122acf49",
+   "version": 1,
+   "op": "BT",
+   "target": "doenças de pele"
+  },
+  {
+   "term": "coceiras",
+   "conceptId": "e9781eb1-93ab-4e8e-bf92-6443b2a6bec6",
+   "labelId": "8331980e-f6b4-47df-80c7-f8f4934635fa",
+   "version": 1,
+   "op": "ALT",
+   "target": "coceira"
+  },
+  {
+   "term": "colesterol",
+   "conceptId": "a5d5f171-9c65-4abb-b230-bf832d798cf8",
+   "labelId": "4be79178-3b35-45ca-8511-7b5987cb6049",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas metabólicos e endócrinos"
+  },
+  {
+   "term": "colesterol alto",
+   "conceptId": "6f309a41-b140-48aa-b6d7-a6d33633ac2f",
+   "labelId": "b17628b9-46e7-4908-83c4-622a323649bb",
+   "version": 1,
+   "op": "ALT",
+   "target": "colesterol"
+  },
+  {
+   "term": "colesterol e diabetes",
+   "conceptId": "0d6f60cc-3d96-429f-895f-b0324a9e0041",
+   "labelId": "2b384ba0-8801-4656-99b3-67d6d795690e",
+   "version": 1,
+   "op": "DEP",
+   "target": "diabetes"
+  },
+  {
+   "term": "coluna",
+   "conceptId": "8ceb89c8-77fa-4425-8fe3-7d0eb8cbfedc",
+   "labelId": "da4ba36c-e773-495f-a3d0-614e2d6e27b9",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas osteomusculares"
+  },
+  {
+   "term": "combate o reumatismo",
+   "conceptId": "8a50580e-e177-4fa0-b7a3-4e64c4bd2610",
+   "labelId": "de6e8897-2b8b-414f-9aad-a3660bab1bd6",
+   "version": 1,
+   "op": "ALT",
+   "target": "reumatismo"
+  },
+  {
+   "term": "combustível",
+   "conceptId": "764a4987-1422-4754-b7d2-0b4a317428e3",
+   "labelId": "cfe668d3-bf85-4160-a89a-8cb23e349a93",
+   "version": 1,
+   "op": "BT",
+   "target": "material e tecnológico"
+  },
+  {
+   "term": "comercial (venda do palmito)",
+   "conceptId": "65397583-d839-4d34-ba8f-ffa35bc1352d",
+   "labelId": "3da33138-0e47-431e-aad1-be7e3c6a8cee",
+   "version": 1,
+   "op": "DEP",
+   "target": "comercial"
+  },
+  {
+   "term": "comida",
+   "conceptId": "cfe3ea00-2df5-438c-8bd8-a19c1f60178f",
+   "labelId": "62a617ae-27ac-496a-9b76-8e1669b2dfa9",
+   "version": 1,
+   "op": "ALT",
+   "target": "alimentar"
+  },
+  {
+   "term": "comércio",
+   "conceptId": "ebb763c3-2162-4b72-980f-15d60e052706",
+   "labelId": "bec6127f-7a38-41b3-a5b8-ace4ae3ecded",
+   "version": 1,
+   "op": "ALT",
+   "target": "comercial"
+  },
+  {
+   "term": "condimento",
+   "conceptId": "6c367dd4-e4f3-4040-bc57-342a4d8fadcc",
+   "labelId": "1e64627f-ab74-471e-b7d3-c2622ef592ac",
+   "version": 1,
+   "op": "BT",
+   "target": "alimentar"
+  },
+  {
+   "term": "congestão",
+   "conceptId": "92bead0b-726a-439e-8129-3b7a213ca403",
+   "labelId": "00cc238c-4cb5-4380-9219-0c2ea7219cf5",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas respiratórios"
+  },
+  {
+   "term": "conjuntivite",
+   "conceptId": "26261854-51ef-44b5-aa0f-e7bc83035e4a",
+   "labelId": "2f659c34-ebee-425a-a119-366eb6d867e0",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas oftálmicos"
+  },
+  {
+   "term": "constipação",
+   "conceptId": "5c235d3a-3a14-44b4-88f8-2718cd24f291",
+   "labelId": "d2db961c-4e16-4ebf-bf22-5dc5f91717f1",
+   "version": 1,
+   "op": "ALT",
+   "target": "prisão de ventre"
+  },
+  {
+   "term": "construção",
+   "conceptId": "3052f1ee-a064-4db4-9071-ab09d5fbec8c",
+   "labelId": "852b5406-1363-4659-b2b8-c40af511a54d",
+   "version": 1,
+   "op": "BT",
+   "target": "material e tecnológico"
+  },
+  {
+   "term": "construção (caibros e ripas com estipe)",
+   "conceptId": "bf3b6b76-0e14-4a90-a446-4af4a15a25eb",
+   "labelId": "aab4c1a5-c18d-436a-ac18-7e823a483aa9",
+   "version": 1,
+   "op": "DEP",
+   "target": "construção"
+  },
+  {
+   "term": "construção (esteios com estipe)",
+   "conceptId": "a376840a-cded-4642-aa6b-ccc92a5c390b",
+   "labelId": "8378e2da-64b6-437d-9c0c-868e9d3c7ec0",
+   "version": 1,
+   "op": "DEP",
+   "target": "construção"
+  },
+  {
+   "term": "contra feitiçaria",
+   "conceptId": "abbeb435-c000-4c24-bdfd-d2dbfd67d48e",
+   "labelId": "1cc03e66-3a34-45bc-a912-5849ec9f0aee",
+   "version": 1,
+   "op": "BT",
+   "target": "ritual e espiritual"
+  },
+  {
+   "term": "contra queda de cabelo",
+   "conceptId": "55432eb8-6cca-4c34-b4ed-1a4e562eed22",
+   "labelId": "7ab161ac-c004-42b5-ba76-d10aeefd8277",
+   "version": 1,
+   "op": "ALT",
+   "target": "queda de cabelo"
+  },
+  {
+   "term": "contraceptivo",
+   "conceptId": "faa989f0-790b-4646-b70c-965ef03e292e",
+   "labelId": "d68f0e86-49f4-4fdb-aade-0503871a0f3a",
+   "version": 1,
+   "op": "BT",
+   "target": "ação farmacológica"
+  },
+  {
+   "term": "controlar a pressão arterial",
+   "conceptId": "377483ac-3c76-434e-a92e-ad46f49bb31e",
+   "labelId": "40a80892-1281-4b46-97ed-5b999df9360d",
+   "version": 1,
+   "op": "ALT",
+   "target": "pressão alta"
+  },
+  {
+   "term": "controls the period",
+   "conceptId": "5527e39b-57f8-4a4e-a8ad-eb0f534c2adb",
+   "labelId": "cf040c05-4ade-4bce-9398-bb42cf5d6c3b",
+   "version": 1,
+   "op": "ALT",
+   "target": "menstruação"
+  },
+  {
+   "term": "contusão",
+   "conceptId": "7589a2a2-50b7-4790-90e1-eee59f3d99de",
+   "labelId": "bbab6bea-4ad3-437a-a613-9ab765d60447",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas osteomusculares"
+  },
+  {
+   "term": "contusões",
+   "conceptId": "30165ce3-5385-47e8-9161-c3213183058c",
+   "labelId": "0dd9a37e-89ee-4e5a-8f46-50ecb4572d0e",
+   "version": 1,
+   "op": "ALT",
+   "target": "contusão"
+  },
+  {
+   "term": "coqueluche",
+   "conceptId": "9960d483-be8a-41c9-ac44-d11bf8b6ce34",
+   "labelId": "d5f3c9e8-3ce9-4f80-bca2-e323257d49f5",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas respiratórios"
+  },
+  {
+   "term": "corante",
+   "conceptId": "210dda76-488b-4423-af52-5496cbba46b7",
+   "labelId": "9e177fbe-0890-4756-b1ca-8777dc126eaf",
+   "version": 1,
+   "op": "BT",
+   "target": "material e tecnológico"
+  },
+  {
+   "term": "coração",
+   "conceptId": "7e6dbd23-6e18-4df5-8f0f-7997e1c065f8",
+   "labelId": "c5237a0f-a696-4919-b120-2f1106d0a17f",
+   "version": 1,
+   "op": "ALT",
+   "target": "problemas do coração"
+  },
+  {
+   "term": "corpo",
+   "conceptId": "2b300dfb-2954-4f0b-b8fc-66787e13547e",
+   "labelId": "c75fd001-8b2c-4d02-a26c-12875a94e5c1",
+   "version": 1,
+   "op": "DEP",
+   "target": "indeterminado"
+  },
+  {
+   "term": "corpo ruim",
+   "conceptId": "a19e1218-9560-4238-b56d-8866d4b21c28",
+   "labelId": "49967e01-fa1d-4588-a227-9b6131b8590a",
+   "version": 1,
+   "op": "ALT",
+   "target": "fraqueza"
+  },
+  {
+   "term": "corrimento",
+   "conceptId": "37e8a11e-450f-4c47-b947-8b171d8b2e4e",
+   "labelId": "2dccbcb8-839d-4048-b4b4-bc2a828b4dcc",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas ginecológicos e obstétricos"
+  },
+  {
+   "term": "cortar veneno de cobra",
+   "conceptId": "260f5f91-dff2-46db-921b-34c63b639522",
+   "labelId": "6d26ad97-1fea-462f-99fe-e04684213a00",
+   "version": 1,
+   "op": "ALT",
+   "target": "picada de cobra"
+  },
+  {
+   "term": "cortes",
+   "conceptId": "810fc42e-0ef7-4c6f-b9f2-422285bb2421",
+   "labelId": "5acb638a-ec00-4122-b727-e34b2e0f13a0",
+   "version": 1,
+   "op": "BT",
+   "target": "traumatismos e ferimentos"
+  },
+  {
+   "term": "cosmético",
+   "conceptId": "987b6781-41c8-4b76-8141-3a8b911a2cec",
+   "labelId": "0f4678e0-3f57-4cfc-9545-a0538b5ff733",
+   "version": 1,
+   "op": "BT",
+   "target": "cosmético e higiene"
+  },
+  {
+   "term": "cough",
+   "conceptId": "99d26de0-60e5-43be-8d0c-0fb1427eac81",
+   "labelId": "3eb7cd4e-748a-4fcb-8f77-df7d96ef3532",
+   "version": 1,
+   "op": "ALT",
+   "target": "tosse"
+  },
+  {
+   "term": "cozinha",
+   "conceptId": "86cca66c-7f5a-4e99-a9e2-541692a08445",
+   "labelId": "053beefa-7861-4f15-98ef-65307f03bdad",
+   "version": 1,
+   "op": "DEP",
+   "target": "alimentar"
+  },
+  {
+   "term": "cramps",
+   "conceptId": "d81ccf30-5253-4d3c-91fe-187dac029e08",
+   "labelId": "041cf235-3a06-48c2-8dfb-6fc00f87bcf0",
+   "version": 1,
+   "op": "ALT",
+   "target": "cólica"
+  },
+  {
+   "term": "crescer cabelo",
+   "conceptId": "7008e46c-4498-4b30-b9de-7d738b33e4e4",
+   "labelId": "f64d6215-3acc-45be-bcc6-2fd0d0abb233",
+   "version": 1,
+   "op": "BT",
+   "target": "cabelo"
+  },
+  {
+   "term": "crises nervosas",
+   "conceptId": "f59f0e14-e6cf-4b1a-a595-39061ea44a10",
+   "labelId": "a1ec61a2-f753-4fe3-b26d-809ab08f1efe",
+   "version": 1,
+   "op": "ALT",
+   "target": "nervosismo"
+  },
+  {
+   "term": "cuidados pessoais",
+   "conceptId": "e98526e7-ecc2-4418-97e4-52bb5c477381",
+   "labelId": "d28753a4-450e-4125-a833-3a9e53522eaf",
+   "version": 1,
+   "op": "ALT",
+   "target": "higiene"
+  },
+  {
+   "term": "cura",
+   "conceptId": "73958573-54cd-4c7a-b0e9-b30e8d6565ec",
+   "labelId": "495b9511-5749-4499-996d-1187fabbc6cd",
+   "version": 1,
+   "op": "ALT",
+   "target": "remédio"
+  },
+  {
+   "term": "cura de furúnculos",
+   "conceptId": "d955414c-5b4b-4477-adf8-6be1b968008e",
+   "labelId": "b4f8546b-7e5a-4c57-b7e3-277dc4f41859",
+   "version": 1,
+   "op": "ALT",
+   "target": "furúnculo"
+  },
+  {
+   "term": "curar a asma",
+   "conceptId": "6bc9ac24-9f84-4743-86d5-e579c5154826",
+   "labelId": "8621f29b-c579-42f5-b153-70922638e13e",
+   "version": 1,
+   "op": "ALT",
+   "target": "asma"
+  },
+  {
+   "term": "curar insônia",
+   "conceptId": "c800b5d8-116b-4f9d-a27a-1b5c97bedb0a",
+   "labelId": "70d79cda-ff03-42bf-a330-f4d459a76f66",
+   "version": 1,
+   "op": "ALT",
+   "target": "insônia"
+  },
+  {
+   "term": "cálculo renal",
+   "conceptId": "1a68c8f5-efa2-4bf5-b445-38f09b849be2",
+   "labelId": "91877730-2105-4cc0-a0a3-7cac99f98af8",
+   "version": 1,
+   "op": "ALT",
+   "target": "pedra nos rins"
+  },
+  {
+   "term": "câncer",
+   "conceptId": "eb0fb4ed-6555-4766-bc88-e672f341741c",
+   "labelId": "748f8194-6a58-4068-9bf9-82aaf6e3b08a",
+   "version": 1,
+   "op": "BT",
+   "target": "neoplasias"
+  },
+  {
+   "term": "câncer de próstata",
+   "conceptId": "4fd08b2a-b92b-4d28-8722-1abbebf48e8c",
+   "labelId": "b92abc8b-32e5-40d0-8042-e53dada45a35",
+   "version": 1,
+   "op": "ALT",
+   "target": "câncer"
+  },
+  {
+   "term": "cólica",
+   "conceptId": "355ef276-4795-4d6d-a857-18798f2c2b2d",
+   "labelId": "6a2358c6-b281-47ee-81c7-93c4724fe09f",
+   "version": 1,
+   "op": "BT",
+   "target": "dor"
+  },
+  {
+   "term": "cólica de bebê",
+   "conceptId": "76d8632a-ed09-4402-92a6-1a130b12a20c",
+   "labelId": "2b5f5d49-476e-41f7-b937-3e720b0b23d9",
+   "version": 1,
+   "op": "BT",
+   "target": "cólica"
+  },
+  {
+   "term": "cólica de rins",
+   "conceptId": "f38cf2e7-500b-464a-9bc7-bacb370e310f",
+   "labelId": "c2f628e9-c4bd-467f-9a6f-7128e5666a88",
+   "version": 1,
+   "op": "ALT",
+   "target": "cólica renal"
+  },
+  {
+   "term": "cólica de útero",
+   "conceptId": "d8f67d17-2449-46ab-b368-8cd48c1926e6",
+   "labelId": "654a1d63-eb86-4828-bcf6-606b854649e7",
+   "version": 1,
+   "op": "BT",
+   "target": "cólica"
+  },
+  {
+   "term": "cólica menstrual",
+   "conceptId": "38e14f62-a5a6-4dcd-b1a5-f63ecf2f6e6a",
+   "labelId": "eeab4b2d-a147-4903-a015-82cdef81a3d6",
+   "version": 1,
+   "op": "BT",
+   "target": "cólica"
+  },
+  {
+   "term": "cólica provocada por vermes",
+   "conceptId": "f0b63a1d-ee44-406e-baf8-2839c5f47f5f",
+   "labelId": "4335baf6-6fbc-4262-a09d-952bb7560802",
+   "version": 1,
+   "op": "ALT",
+   "target": "verme"
+  },
+  {
+   "term": "cólica renal",
+   "conceptId": "b3f9723d-1e66-4d61-b973-596b91eb5fdb",
+   "labelId": "5ef61622-525a-4bce-8039-0425b4215b55",
+   "version": 1,
+   "op": "BT",
+   "target": "cólica"
+  },
+  {
+   "term": "cólica uterina",
+   "conceptId": "0fb2a215-bb85-45b9-8fd6-b8155e23ab6a",
+   "labelId": "eb25aa9f-1bb6-4515-9b01-d037c28cb245",
+   "version": 1,
+   "op": "ALT",
+   "target": "cólica de útero"
+  },
+  {
+   "term": "cólicas",
+   "conceptId": "9d7e829e-05bb-4244-b98b-af67e68c1ff9",
+   "labelId": "8da04d17-a51f-4b00-b746-b0bc8554fbbc",
+   "version": 1,
+   "op": "ALT",
+   "target": "cólica"
+  },
+  {
+   "term": "cólicas do fígado",
+   "conceptId": "d095ff84-d892-4595-8dce-d0ea50f5851d",
+   "labelId": "93ef3950-9142-49be-8a7c-abf47f5256ef",
+   "version": 1,
+   "op": "BT",
+   "target": "cólica"
+  },
+  {
+   "term": "cólicas do fígado e estômago",
+   "conceptId": "f5c9f536-e344-4790-ba7a-9be1064537ca",
+   "labelId": "d1f3cf0f-6779-41ce-b9de-7d59adacb123",
+   "version": 1,
+   "op": "ALT",
+   "target": "cólicas do fígado"
+  },
+  {
+   "term": "cólicas e dores",
+   "conceptId": "d1e0d230-41a4-4e1e-942f-daf173fcd3ee",
+   "labelId": "86273142-3b71-48ea-8b08-2ad43346043f",
+   "version": 1,
+   "op": "ALT",
+   "target": "cólica"
+  },
+  {
+   "term": "cólicas intestinais",
+   "conceptId": "d1397b1c-6e90-41f1-aa7f-1af343113504",
+   "labelId": "165b5811-a069-4f76-a806-9dce4adca02d",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas digestivos"
+  },
+  {
+   "term": "cólicas menstruais",
+   "conceptId": "7844b5c3-983f-4588-b6c8-97f1a3260d58",
+   "labelId": "faaf351a-a863-4477-9f6e-483158a9f113",
+   "version": 1,
+   "op": "ALT",
+   "target": "cólica menstrual"
+  },
+  {
+   "term": "dar energia",
+   "conceptId": "2873dbbf-5883-47e1-9529-fac5f0afb54e",
+   "labelId": "4b782241-ea89-4912-97d8-acb05dd3a37e",
+   "version": 1,
+   "op": "ALT",
+   "target": "tonificante"
+  },
+  {
+   "term": "dar sono",
+   "conceptId": "9ab083b4-7ddb-4bbd-b2c3-5ba4cd928e04",
+   "labelId": "45879f51-f6fe-4dc9-9123-37d056ef31cb",
+   "version": 1,
+   "op": "ALT",
+   "target": "insônia"
+  },
+  {
+   "term": "defumador",
+   "conceptId": "9bc8b26d-6124-4b11-be6b-95714e2bb3af",
+   "labelId": "f4772db8-dda0-4613-a595-f6a56489eada",
+   "version": 1,
+   "op": "ALT",
+   "target": "defumação"
+  },
+  {
+   "term": "defumação",
+   "conceptId": "0f0af63f-6014-491b-b7f3-33365104c7d5",
+   "labelId": "59756964-f0d4-4757-9b94-c3d552fe6726",
+   "version": 1,
+   "op": "BT",
+   "target": "ritual e espiritual"
+  },
+  {
+   "term": "dengue",
+   "conceptId": "17d61e78-2979-46ac-8f4c-2bcdb660b946",
+   "labelId": "2899d221-202d-49ac-9555-4f431f4dd4fb",
+   "version": 1,
+   "op": "BT",
+   "target": "doenças infecciosas e parasitárias"
+  },
+  {
+   "term": "dentadura",
+   "conceptId": "6102e75c-0614-4fbd-9d05-e642f8edb6af",
+   "labelId": "ed73474c-f43d-4807-b802-f1878c6ee967",
+   "version": 1,
+   "op": "BT",
+   "target": "cosmético e higiene"
+  },
+  {
+   "term": "dente",
+   "conceptId": "cf479d8a-3c7c-4879-8141-11e4d58b33f0",
+   "labelId": "9de4824c-b206-4a81-b79a-f7ca28920cf3",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas odontológicos"
+  },
+  {
+   "term": "dentição",
+   "conceptId": "1d108def-c2e1-498e-a547-31e2ecf8d50a",
+   "labelId": "a40e400f-5ecc-4b63-a114-7d3099c634fd",
+   "version": 1,
+   "op": "ALT",
+   "target": "dente"
+  },
+  {
+   "term": "depressant",
+   "conceptId": "cdaa8df8-e728-4085-9413-363a1dab7baf",
+   "labelId": "6ea0b91c-e7ac-401c-b0d8-0f1fc927d884",
+   "version": 1,
+   "op": "ALT",
+   "target": "sedativo"
+  },
+  {
+   "term": "depression",
+   "conceptId": "1f27140b-d1c0-437f-a2fd-2551c72897bd",
+   "labelId": "98e0602c-fb19-42f1-a984-b22e000ab557",
+   "version": 1,
+   "op": "ALT",
+   "target": "depressão"
+  },
+  {
+   "term": "depressão",
+   "conceptId": "5cd161b1-5034-4e35-a867-50d3599aed76",
+   "labelId": "1fe44591-5ee5-4cef-abd6-8cd8bf89788a",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas neurológicos e psíquicos"
+  },
+  {
+   "term": "depurativo",
+   "conceptId": "09c6acc1-6a03-447b-bd10-0b86a1226155",
+   "labelId": "76437cae-f3d0-4c25-9f81-948ed8b56a3b",
+   "version": 1,
+   "op": "BT",
+   "target": "ação farmacológica"
+  },
+  {
+   "term": "depurativo do sangue",
+   "conceptId": "78777926-3e08-4109-8782-e0205160c24d",
+   "labelId": "1fcc5b13-df21-4ad5-92f0-ff22ae29016b",
+   "version": 1,
+   "op": "ALT",
+   "target": "depurativo"
+  },
+  {
+   "term": "derrame",
+   "conceptId": "cbeae167-f92f-4eab-8cd0-4c903acf9b0d",
+   "labelId": "e62b9b85-363c-4335-b098-6015ec10dbbd",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas circulatórios"
+  },
+  {
+   "term": "derrames",
+   "conceptId": "e4a9f31e-88c6-4d03-9527-fb2ad6990fbf",
+   "labelId": "0d018632-704d-407d-820e-ccf4758bbf1f",
+   "version": 1,
+   "op": "ALT",
+   "target": "derrame"
+  },
+  {
+   "term": "descarrego",
+   "conceptId": "2e5bb647-f1e1-4919-aec0-9db443d95b2f",
+   "labelId": "4fa5f74f-98be-4047-8cd5-dc68bf609c6b",
+   "version": 1,
+   "op": "BT",
+   "target": "ritual e espiritual"
+  },
+  {
+   "term": "desinfetante",
+   "conceptId": "05b4780d-d863-4b25-b702-1e3039429c8f",
+   "labelId": "251b239b-00b4-425b-a3d3-c6d9305313b7",
+   "version": 1,
+   "op": "BT",
+   "target": "cosmético e higiene"
+  },
+  {
+   "term": "desintoxicar",
+   "conceptId": "f3d12636-9802-468d-bbba-ab48b2d00683",
+   "labelId": "f0ed1307-aa9c-4554-9d91-d6f5f11a9904",
+   "version": 1,
+   "op": "ALT",
+   "target": "depurativo"
+  },
+  {
+   "term": "desintoxicação alimentar",
+   "conceptId": "08910a6c-b886-49b5-aa0b-4b18a39983b9",
+   "labelId": "ac3ea2d7-05b0-490d-8d5d-fd398092ed03",
+   "version": 1,
+   "op": "ALT",
+   "target": "intoxicação"
+  },
+  {
+   "term": "desânimo",
+   "conceptId": "cd7ea02f-8adc-4112-9695-9afa31330512",
+   "labelId": "f88baae0-8c43-42dc-b48a-17a2257e4795",
+   "version": 1,
+   "op": "ALT",
+   "target": "depressão"
+  },
+  {
+   "term": "diabete",
+   "conceptId": "8e9e66a1-94bc-4bfb-8fd5-9c867859a2f1",
+   "labelId": "6952321e-b3da-4a99-876d-8dcaae254b59",
+   "version": 1,
+   "op": "ALT",
+   "target": "diabetes"
+  },
+  {
+   "term": "diabetes",
+   "conceptId": "7aa794f1-1ea0-481a-aceb-5f16c99fe8e6",
+   "labelId": "d49e0ddb-d8cb-4bbb-8482-cf6c85975e35",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas metabólicos e endócrinos"
+  },
+  {
+   "term": "diaforético",
+   "conceptId": "9ca0e6f1-73ee-4bde-9d14-1caf76a66305",
+   "labelId": "77520bef-b700-4536-a74d-991b35771302",
+   "version": 1,
+   "op": "BT",
+   "target": "ação farmacológica"
+  },
+  {
+   "term": "diarreia",
+   "conceptId": "b393c29b-0c69-4db4-ba10-e36428dc4929",
+   "labelId": "42c60ef5-975b-4349-91eb-d64b52ed89fc",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas digestivos"
+  },
+  {
+   "term": "diarréia",
+   "conceptId": "bedef812-b1e9-4c6f-b3f1-4e58516679e3",
+   "labelId": "131149f6-28fe-498e-8da0-4f684ef4da93",
+   "version": 1,
+   "op": "HID",
+   "target": "diarreia"
+  },
+  {
+   "term": "digestivo",
+   "conceptId": "eb79f609-f21a-47e4-828f-43d22f096d17",
+   "labelId": "613296d2-5ce3-49e2-89b5-e30cbc8fa936",
+   "version": 1,
+   "op": "BT",
+   "target": "ação farmacológica"
+  },
+  {
+   "term": "digestão",
+   "conceptId": "f33f4b8f-c2b6-4081-b211-9cb2fd44e09f",
+   "labelId": "1386d4de-0939-4985-bb9c-b752e3eb9d5f",
+   "version": 1,
+   "op": "ALT",
+   "target": "problemas digestivos"
+  },
+  {
+   "term": "diminuir calores da menopausa",
+   "conceptId": "f1a71d1c-8375-4aeb-afbf-df0dda55c5fa",
+   "labelId": "d71004a6-4834-4be0-8b02-e40b00965dca",
+   "version": 1,
+   "op": "ALT",
+   "target": "menopausa"
+  },
+  {
+   "term": "diminuir libido masculina",
+   "conceptId": "2a6a2acf-2fc7-40f8-bca3-7527d1d909a7",
+   "labelId": "f4baba38-a594-4224-bf66-b6eac7ce0041",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas do aparelho reprodutor masculino"
+  },
+  {
+   "term": "disenteria",
+   "conceptId": "f06ff1a9-59a7-44ae-9803-31ada1166dd6",
+   "labelId": "70ee7771-e6d8-4f54-a688-cc21217c1993",
+   "version": 1,
+   "op": "ALT",
+   "target": "diarreia"
+  },
+  {
+   "term": "disfunção erétil",
+   "conceptId": "0be38bf1-9c56-41a1-84ad-739914678172",
+   "labelId": "7836b61e-7976-426b-ba61-1f83a58cb4f3",
+   "version": 1,
+   "op": "ALT",
+   "target": "impotência"
+  },
+  {
+   "term": "dispepsia",
+   "conceptId": "aec70aec-8891-4493-b116-5070997717b5",
+   "labelId": "e886de35-026c-4af4-9942-0ac3c77e561b",
+   "version": 1,
+   "op": "ALT",
+   "target": "má digestão"
+  },
+  {
+   "term": "distúrbio intestinal",
+   "conceptId": "9bc43940-30d2-4fae-8b9c-1eb25150ad2c",
+   "labelId": "a3e32c97-15ec-44d5-b431-0763ed6fb4ea",
+   "version": 1,
+   "op": "ALT",
+   "target": "problemas digestivos"
+  },
+  {
+   "term": "diurético",
+   "conceptId": "7816db36-e7b3-4e51-91e2-f8134702c2e5",
+   "labelId": "9f2c6bb6-16da-49aa-a802-799812f0ba9a",
+   "version": 1,
+   "op": "BT",
+   "target": "ação farmacológica"
+  },
+  {
+   "term": "doce",
+   "conceptId": "84896420-4d50-4498-941b-0148f73dbb66",
+   "labelId": "eb676839-28b9-4997-8abd-1769a6607d12",
+   "version": 1,
+   "op": "BT",
+   "target": "alimentar"
+  },
+  {
+   "term": "doença do coração",
+   "conceptId": "f6a01439-4096-45f4-916a-cd2886098252",
+   "labelId": "8682b1f1-c8de-4652-9bae-161823c7206f",
+   "version": 1,
+   "op": "ALT",
+   "target": "problemas do coração"
+  },
+  {
+   "term": "doença venérea",
+   "conceptId": "65b6f6d6-cb2c-45f4-b02c-41a67ab39229",
+   "labelId": "4e7fae9c-1443-4151-82b8-0b269d7cffef",
+   "version": 1,
+   "op": "BT",
+   "target": "doenças infecciosas e parasitárias"
+  },
+  {
+   "term": "doenças",
+   "conceptId": "cc173b94-39d9-449a-9281-f9471706383e",
+   "labelId": "365f22d9-62f0-4103-ac66-85e2120dc864",
+   "version": 1,
+   "op": "DEP",
+   "target": "indeterminado"
+  },
+  {
+   "term": "doenças como o câncer",
+   "conceptId": "06a541ca-1934-4c25-b2ce-30d5dd87c50c",
+   "labelId": "50906863-19dd-4bfa-9889-be49669f30ee",
+   "version": 1,
+   "op": "ALT",
+   "target": "câncer"
+  },
+  {
+   "term": "doenças da pele",
+   "conceptId": "cc7568f0-c2cc-42ce-9ec9-1719f126161f",
+   "labelId": "0227312a-e4b0-4741-874d-fd496844e248",
+   "version": 1,
+   "op": "ALT",
+   "target": "doenças de pele"
+  },
+  {
+   "term": "doenças de pele",
+   "conceptId": "af61277d-73c1-45d5-8e3a-493ad7992c55",
+   "labelId": "4ba07d99-7384-44bc-8a13-4cb4e3aee012",
+   "version": 1,
+   "op": "BT",
+   "target": "indicação terapêutica"
+  },
+  {
+   "term": "doenças dos olhos",
+   "conceptId": "9795fba5-642e-414f-aaea-34bb054ab3e5",
+   "labelId": "104eb6a2-fd3d-46f6-b888-c7badfe9c936",
+   "version": 1,
+   "op": "ALT",
+   "target": "olho"
+  },
+  {
+   "term": "doenças respiratórias",
+   "conceptId": "0a47d463-8d88-4195-8686-a9425eb25326",
+   "labelId": "678314c2-b816-430c-9d75-c51116c3899a",
+   "version": 1,
+   "op": "ALT",
+   "target": "problemas respiratórios"
+  },
+  {
+   "term": "doenças venéreas",
+   "conceptId": "89aad2ec-6ee9-4834-a67e-b88ea2009075",
+   "labelId": "5cb21cf6-e667-44b4-8f08-cb59dadf4963",
+   "version": 1,
+   "op": "ALT",
+   "target": "doença venérea"
+  },
+  {
+   "term": "dor",
+   "conceptId": "986f2900-3c46-4bfb-9a28-785b2a31afa7",
+   "labelId": "ce7b4fd3-aed2-46c8-b0af-4bb481915468",
+   "version": 1,
+   "op": "BT",
+   "target": "indicação terapêutica"
+  },
+  {
+   "term": "dor abdominal",
+   "conceptId": "c1de576c-10f6-4676-aae6-2315f0da3f4c",
+   "labelId": "27c68e3d-5e38-4b34-bc65-7207f0a4329e",
+   "version": 1,
+   "op": "ALT",
+   "target": "dor de barriga"
+  },
+  {
+   "term": "dor corporal",
+   "conceptId": "31b032e7-5626-44bb-9312-cbd6c7ddf473",
+   "labelId": "97815a17-fb3e-46b1-8cd9-fbac70d6d903",
+   "version": 1,
+   "op": "ALT",
+   "target": "dor no corpo"
+  },
+  {
+   "term": "dor de barriga",
+   "conceptId": "3a8795de-4d43-490f-819a-126ff0ea269b",
+   "labelId": "ee017769-860b-43c2-a78d-ec5ea7d62352",
+   "version": 1,
+   "op": "BT",
+   "target": "dor"
+  },
+  {
+   "term": "dor de cabeça",
+   "conceptId": "3a77bed9-4e07-463d-8abb-cd3d5a258e26",
+   "labelId": "5b352a3b-9952-461e-b5fa-60a07d490837",
+   "version": 1,
+   "op": "BT",
+   "target": "dor"
+  },
+  {
+   "term": "dor de dente",
+   "conceptId": "b3211d33-742a-49d4-83f9-8674da7948d0",
+   "labelId": "649f67b3-0202-42d1-9aaf-ab7b3b59317f",
+   "version": 1,
+   "op": "BT",
+   "target": "dor"
+  },
+  {
+   "term": "dor de dente (antiinflamatório)",
+   "conceptId": "80178807-7bf8-4615-8bee-b791069b9c9d",
+   "labelId": "da14d81c-07ae-4049-8724-e0e34436825a",
+   "version": 1,
+   "op": "ALT",
+   "target": "dor de dente"
+  },
+  {
+   "term": "dor de dente e cabeça",
+   "conceptId": "15ef8020-da26-40b5-adf8-8a1a7d0f284f",
+   "labelId": "9acdf39d-a7c7-4897-aa27-2f5aabfd8780",
+   "version": 1,
+   "op": "DEP",
+   "target": "dor de dente"
+  },
+  {
+   "term": "dor de estomago",
+   "conceptId": "135f927e-3f16-4abd-bd73-e1dd152d26e5",
+   "labelId": "ace94504-3c69-4b45-a9f3-7cc0aa30fb7e",
+   "version": 1,
+   "op": "HID",
+   "target": "dor no estômago"
+  },
+  {
+   "term": "dor de estômago",
+   "conceptId": "b67a4f3b-fe88-4da7-bc8e-7543e88976a6",
+   "labelId": "85cd3995-23ca-47e6-8384-405f0efbabde",
+   "version": 1,
+   "op": "ALT",
+   "target": "dor no estômago"
+  },
+  {
+   "term": "dor de garganta",
+   "conceptId": "49543e8b-6133-42ab-a2dc-c936d088ad13",
+   "labelId": "c5325ed1-bc81-4b18-b212-341b36a0783c",
+   "version": 1,
+   "op": "BT",
+   "target": "dor"
+  },
+  {
+   "term": "dor de ouvido",
+   "conceptId": "2ee800a0-0ca5-4035-86b0-b8abb504921c",
+   "labelId": "124ce201-0e72-4faa-a214-363d07d6db25",
+   "version": 1,
+   "op": "BT",
+   "target": "dor"
+  },
+  {
+   "term": "dor de rins",
+   "conceptId": "3fdeb64b-aec1-42f8-be19-852f645eb4d6",
+   "labelId": "915cac2e-88c3-4889-b70e-757bc5429084",
+   "version": 1,
+   "op": "ALT",
+   "target": "dor nos rins"
+  },
+  {
+   "term": "dor do peito",
+   "conceptId": "12c10c24-719e-4556-9068-4dbee383be7e",
+   "labelId": "75c1219d-001d-46e0-bc4e-dd6ddb0a4b10",
+   "version": 1,
+   "op": "ALT",
+   "target": "dor no peito"
+  },
+  {
+   "term": "dor e inflamação",
+   "conceptId": "db902c30-1027-49ad-b42a-56dfe9c07977",
+   "labelId": "44eac44a-8a2b-433a-b005-a3a4d7d91b08",
+   "version": 1,
+   "op": "DEP",
+   "target": "inflamação"
+  },
+  {
+   "term": "dor lombar",
+   "conceptId": "eca6dcf0-daf6-4fe2-8c6b-fea3aeda5ba5",
+   "labelId": "1d5a360d-dc8b-4a2a-97b8-ff96766bb3c8",
+   "version": 1,
+   "op": "ALT",
+   "target": "dor nas costas"
+  },
+  {
+   "term": "dor na bacia",
+   "conceptId": "b4b637e0-c092-4e19-b794-26f5f2edbc26",
+   "labelId": "c9ed691a-3302-4e34-9b3f-f2be7b78db04",
+   "version": 1,
+   "op": "BT",
+   "target": "dor"
+  },
+  {
+   "term": "dor na barriga",
+   "conceptId": "357d83ad-09e7-4270-9ac3-bc03fbc97d8b",
+   "labelId": "f99c538f-bd50-4cca-96bb-98cfa7985b9b",
+   "version": 1,
+   "op": "ALT",
+   "target": "dor de barriga"
+  },
+  {
+   "term": "dor na coluna",
+   "conceptId": "762423ff-3d2a-40a8-a1b7-0843a84698d6",
+   "labelId": "9f3703b4-76be-499f-b42f-e423570f82f1",
+   "version": 1,
+   "op": "ALT",
+   "target": "dor nas costas"
+  },
+  {
+   "term": "dor na espinha",
+   "conceptId": "5d4e8f6b-943f-4542-ad3d-3333a7b0888f",
+   "labelId": "041370ad-6634-4c1f-80dd-982c24019aa5",
+   "version": 1,
+   "op": "ALT",
+   "target": "dor nas costas"
+  },
+  {
+   "term": "dor nas articulações",
+   "conceptId": "a9399499-12e0-41fa-8db8-efcfe41e5dde",
+   "labelId": "fc4c09f2-d3fa-4efe-a7e3-b49029f14775",
+   "version": 1,
+   "op": "BT",
+   "target": "dor"
+  },
+  {
+   "term": "dor nas costas",
+   "conceptId": "407e5dc8-96c8-42ba-82f9-6ae2ea6fd7f8",
+   "labelId": "1cf61249-1a65-4238-9013-e9c500b98066",
+   "version": 1,
+   "op": "BT",
+   "target": "dor"
+  },
+  {
+   "term": "dor nas juntas",
+   "conceptId": "a65bd767-0c78-4d90-978d-6af70e126868",
+   "labelId": "28a37c85-69e9-499b-a337-0a8b04f403e3",
+   "version": 1,
+   "op": "ALT",
+   "target": "dor nas articulações"
+  },
+  {
+   "term": "dor nas pernas",
+   "conceptId": "a340eaef-3582-4f46-9482-05c4c6d033fc",
+   "labelId": "36651e42-0c8e-4269-b94d-6f54dcd597f8",
+   "version": 1,
+   "op": "BT",
+   "target": "dor"
+  },
+  {
+   "term": "dor no corpo",
+   "conceptId": "5048fc3a-2d7f-4c28-bc57-84fac7db804f",
+   "labelId": "2a5e404d-0059-46f2-bea1-0a21edb47591",
+   "version": 1,
+   "op": "BT",
+   "target": "dor"
+  },
+  {
+   "term": "dor no estomago",
+   "conceptId": "554aa46f-5373-4514-aaca-f4e030e5514f",
+   "labelId": "d7ae69d9-ea09-4580-8ffb-e732468cf4df",
+   "version": 1,
+   "op": "HID",
+   "target": "dor no estômago"
+  },
+  {
+   "term": "dor no estômago",
+   "conceptId": "49cbe517-a4d5-49b5-925b-9fd95ffd2c01",
+   "labelId": "d50b960a-3328-4b7a-b777-457a4272587b",
+   "version": 1,
+   "op": "BT",
+   "target": "dor"
+  },
+  {
+   "term": "dor no fígado",
+   "conceptId": "e4a7ee9e-b2fe-411d-a37b-3ecde94a91c6",
+   "labelId": "6b494f28-da4d-4c63-8866-2083464f2860",
+   "version": 1,
+   "op": "BT",
+   "target": "dor"
+  },
+  {
+   "term": "dor no intestino",
+   "conceptId": "cd3ae5e9-e296-4734-96a2-84874760b5ef",
+   "labelId": "7e16dfe7-e82a-4896-9088-e05d641a319b",
+   "version": 1,
+   "op": "BT",
+   "target": "dor"
+  },
+  {
+   "term": "dor no peito",
+   "conceptId": "274c5a8e-cfc4-49ba-9348-64d6d44107e1",
+   "labelId": "60a22180-3052-4a32-9e93-4d5bf169aa36",
+   "version": 1,
+   "op": "BT",
+   "target": "dor"
+  },
+  {
+   "term": "dor no pulmão",
+   "conceptId": "d9a00f4e-b1c6-4f75-a965-a70f68af6860",
+   "labelId": "956b83cf-ddf6-40c6-9912-5488541d6117",
+   "version": 1,
+   "op": "BT",
+   "target": "dor"
+  },
+  {
+   "term": "dor nos ossos",
+   "conceptId": "2af668ad-81b2-4df1-bc28-db68913cbac8",
+   "labelId": "7668ff1b-aa48-424b-a846-c29419ea11c5",
+   "version": 1,
+   "op": "BT",
+   "target": "dor"
+  },
+  {
+   "term": "dor nos rins",
+   "conceptId": "f2f6286e-be95-4691-bf79-adbb38ba56f3",
+   "labelId": "203296b3-b6c1-4e3b-9fee-e747246a7991",
+   "version": 1,
+   "op": "BT",
+   "target": "dor"
+  },
+  {
+   "term": "dor para enxaqueca",
+   "conceptId": "71a6f55e-d394-4cb0-8851-ba917f71fdda",
+   "labelId": "b77a2198-f52e-4e2d-b651-8bd78151596a",
+   "version": 1,
+   "op": "ALT",
+   "target": "enxaqueca"
+  },
+  {
+   "term": "dores",
+   "conceptId": "a9d6a837-f243-4d6c-b5b1-90a3b3c49e16",
+   "labelId": "d605cacd-2762-4bf0-98bd-945b44025f71",
+   "version": 1,
+   "op": "ALT",
+   "target": "dor no corpo"
+  },
+  {
+   "term": "dores de cabeça",
+   "conceptId": "4063f1ac-e5db-44c1-9619-32b2d506f054",
+   "labelId": "bab65fb1-5f9f-42b4-8ac8-e2ecec87ae63",
+   "version": 1,
+   "op": "ALT",
+   "target": "dor de cabeça"
+  },
+  {
+   "term": "dores de estômago",
+   "conceptId": "2105ca45-448b-48e2-b3d5-40c47b2992a1",
+   "labelId": "929c8803-4106-4605-92ad-d8c60b26b831",
+   "version": 1,
+   "op": "ALT",
+   "target": "dor no estômago"
+  },
+  {
+   "term": "dores e cólicas",
+   "conceptId": "2ec87375-eaad-40dc-b06a-351a87270056",
+   "labelId": "f466d76f-3b9e-4ef3-a1f6-54a13a98d392",
+   "version": 1,
+   "op": "ALT",
+   "target": "cólica"
+  },
+  {
+   "term": "dores em geral",
+   "conceptId": "12c19057-70ca-454a-b2a9-353678db2de1",
+   "labelId": "0302f179-7d60-43b7-b148-482ba5bd4df1",
+   "version": 1,
+   "op": "ALT",
+   "target": "dor"
+  },
+  {
+   "term": "dores estomacais",
+   "conceptId": "bfb6c8c8-3e33-40c0-8644-313b19c98acd",
+   "labelId": "a2853288-39b3-4282-bcca-2aa560612dbb",
+   "version": 1,
+   "op": "ALT",
+   "target": "dor no estômago"
+  },
+  {
+   "term": "dores musculares",
+   "conceptId": "a6adcc5f-3e5b-417c-a12e-c088d324c02c",
+   "labelId": "ee3651ea-e75d-413f-ad2f-be1a14302b59",
+   "version": 1,
+   "op": "BT",
+   "target": "dor"
+  },
+  {
+   "term": "dores na bexiga",
+   "conceptId": "5911b997-3b66-4811-b234-4ad14e092058",
+   "labelId": "1d9236ae-c726-4383-bc2b-06074611a6e9",
+   "version": 1,
+   "op": "ALT",
+   "target": "bexiga"
+  },
+  {
+   "term": "dores nas articulações",
+   "conceptId": "fb9ab0f5-4be6-4d2c-99f8-19c2ec267ad1",
+   "labelId": "03f0a1f0-7479-45c2-8beb-de40f875e7a8",
+   "version": 1,
+   "op": "ALT",
+   "target": "dor nas articulações"
+  },
+  {
+   "term": "dores no corpo",
+   "conceptId": "c970621f-6a91-40f3-9e4e-2a8ede9e18e3",
+   "labelId": "59b93ff9-876d-4f60-931f-b8d74bd5b256",
+   "version": 1,
+   "op": "ALT",
+   "target": "dor no corpo"
+  },
+  {
+   "term": "dores no estômago",
+   "conceptId": "a0a58439-7ff9-486a-954c-7e90b9820bca",
+   "labelId": "1ab6aed3-e008-4ac8-9dda-701fe8c8d261",
+   "version": 1,
+   "op": "ALT",
+   "target": "dor no estômago"
+  },
+  {
+   "term": "dores no estômago e fígado",
+   "conceptId": "635d5320-2300-43f3-9d1f-245e8ca9ca86",
+   "labelId": "c0e45980-d379-490f-b6fd-5ccb9dc2126d",
+   "version": 1,
+   "op": "ALT",
+   "target": "dor no fígado"
+  },
+  {
+   "term": "dores no geral",
+   "conceptId": "f8452bec-f5ef-49d0-96a5-10f101db3186",
+   "labelId": "2432cd59-5bb5-4ff7-8521-911ca9deadcc",
+   "version": 1,
+   "op": "ALT",
+   "target": "dor"
+  },
+  {
+   "term": "dores no peito",
+   "conceptId": "282bb8de-3ab0-4232-b18f-0194dc345efd",
+   "labelId": "2e3df14a-c5f2-4018-9053-7c95368c89a5",
+   "version": 1,
+   "op": "ALT",
+   "target": "dor no peito"
+  },
+  {
+   "term": "dores no útero",
+   "conceptId": "75299796-6e51-44aa-aed0-24acfc56e518",
+   "labelId": "e670b1b2-5ab3-4061-9d54-1c3fd00e9b12",
+   "version": 1,
+   "op": "ALT",
+   "target": "útero"
+  },
+  {
+   "term": "dormir",
+   "conceptId": "17212a8a-a0f4-40cb-ad92-7011618d7a16",
+   "labelId": "780606cb-3754-4e28-98fd-aeb48a7e533e",
+   "version": 1,
+   "op": "ALT",
+   "target": "insônia"
+  },
+  {
+   "term": "dúvida",
+   "conceptId": "f6b41279-b672-4c92-9ac3-4bb6f7beaaab",
+   "labelId": "c6660e67-492a-4c90-9fbd-0d5d9d43672a",
+   "version": 1,
+   "op": "DEP",
+   "target": "indeterminado"
+  },
+  {
+   "term": "ease the heat from the menopause",
+   "conceptId": "490ad6ee-ab0f-4bd9-b6e4-15e304aa9c3f",
+   "labelId": "1fa6bde7-9494-4f6c-9722-7d975f7715a9",
+   "version": 1,
+   "op": "ALT",
+   "target": "menopausa"
+  },
+  {
+   "term": "ecológico (atração de animais para caça)",
+   "conceptId": "7165d434-665a-4aa4-8876-998224a5e945",
+   "labelId": "e7751afd-c5c8-4ef7-9b0b-02fb5fe6e1b7",
+   "version": 1,
+   "op": "ALT",
+   "target": "ambiental"
+  },
+  {
+   "term": "eczemas",
+   "conceptId": "5330c6ac-3f96-4a7a-b9de-20ba927af08e",
+   "labelId": "2abb55b2-584b-4968-bd56-3fb1b84b0826",
+   "version": 1,
+   "op": "BT",
+   "target": "doenças de pele"
+  },
+  {
+   "term": "edema",
+   "conceptId": "f1d4ebcc-1498-4204-97f7-6c84e6627f4c",
+   "labelId": "afeaed47-6536-4a7d-9b95-74984ff0d975",
+   "version": 1,
+   "op": "ALT",
+   "target": "retenção de líquidos"
+  },
+  {
+   "term": "elimina o colesterol ruim",
+   "conceptId": "a5ddbd6b-4406-4da6-8a9b-222e9cc6b787",
+   "labelId": "9518320e-3042-45dd-a782-a22eb68f17c0",
+   "version": 1,
+   "op": "ALT",
+   "target": "colesterol"
+  },
+  {
+   "term": "emagrecedor",
+   "conceptId": "eda5ddb1-bb1b-4834-9645-3625560cc13b",
+   "labelId": "561e404f-134e-4ffa-88dd-5b0d21f1279f",
+   "version": 1,
+   "op": "BT",
+   "target": "ação farmacológica"
+  },
+  {
+   "term": "emagrecer",
+   "conceptId": "763865bc-257b-432c-93af-7e47680fca0f",
+   "labelId": "bddae818-8416-41c0-a776-51df3e72cdd4",
+   "version": 1,
+   "op": "ALT",
+   "target": "emagrecedor"
+  },
+  {
+   "term": "emagrecimento",
+   "conceptId": "df729389-3ceb-447a-9cc4-be774c24af3d",
+   "labelId": "bf3ddf38-f297-4fd6-8d3d-39a86fe1fa42",
+   "version": 1,
+   "op": "ALT",
+   "target": "emagrecedor"
+  },
+  {
+   "term": "emplastro",
+   "conceptId": "ba202480-82da-4be9-a126-d82d829a72cd",
+   "labelId": "4c4b63e6-d2d2-411a-9224-9cdff918007f",
+   "version": 1,
+   "op": "BT",
+   "target": "forma de preparo e administração"
+  },
+  {
+   "term": "energia",
+   "conceptId": "03058151-69e5-4226-8167-e48e0a992e54",
+   "labelId": "f1a5614a-e014-438c-b520-9ded43c677ea",
+   "version": 1,
+   "op": "ALT",
+   "target": "tonificante"
+  },
+  {
+   "term": "enferrujado",
+   "conceptId": "bde7605a-e6b0-4279-94ed-4108ac07b1a7",
+   "labelId": "d434d953-0362-4b1d-9a48-acda7bd000d2",
+   "version": 1,
+   "op": "DEP",
+   "target": "indeterminado"
+  },
+  {
+   "term": "enjoo",
+   "conceptId": "23905524-4c38-4031-a3a7-dd7913d5cf4e",
+   "labelId": "43342f14-fddc-406a-bb16-548a44a4c4a7",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas digestivos"
+  },
+  {
+   "term": "entorses",
+   "conceptId": "ba6aaa95-1dcf-416e-963f-b71b93898e5a",
+   "labelId": "2a6d3df3-c92a-47a8-add7-80bd062d4484",
+   "version": 1,
+   "op": "ALT",
+   "target": "luxação"
+  },
+  {
+   "term": "envenenamento",
+   "conceptId": "4faf1a48-6f19-45cb-b7a4-8b6bb6628a90",
+   "labelId": "f83649a4-34ca-40b8-8122-2b37940faaca",
+   "version": 1,
+   "op": "ALT",
+   "target": "intoxicação"
+  },
+  {
+   "term": "enxaqueca",
+   "conceptId": "4eb01c54-ea28-48b8-ae4e-8eeab644143e",
+   "labelId": "435b29cf-d191-4394-99df-791a6093f0a8",
+   "version": 1,
+   "op": "BT",
+   "target": "dor"
+  },
+  {
+   "term": "epilepsia",
+   "conceptId": "304a901a-190f-4031-9d91-249b4c89549d",
+   "labelId": "7b33b9ea-4ba5-4a98-8930-290b968b8691",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas neurológicos e psíquicos"
+  },
+  {
+   "term": "equimoses",
+   "conceptId": "3590898e-bdf5-4886-a43c-d3eb889068b0",
+   "labelId": "8394df25-34b1-4a05-9dfc-4cad2edaa947",
+   "version": 1,
+   "op": "ALT",
+   "target": "contusão"
+  },
+  {
+   "term": "erupção cutânea",
+   "conceptId": "e6fad92e-67f9-465b-b9cc-92123157fcc1",
+   "labelId": "33d5c880-a8af-4ad1-bcda-5c6dde83cc81",
+   "version": 1,
+   "op": "BT",
+   "target": "doenças de pele"
+  },
+  {
+   "term": "escorbuto",
+   "conceptId": "a51ecca0-7a39-4370-80fc-c4ba924d7f75",
+   "labelId": "aa3b034c-e818-4286-9c46-c26dfdd0c36a",
+   "version": 1,
+   "op": "BT",
+   "target": "doenças infecciosas e parasitárias"
+  },
+  {
+   "term": "escoriações",
+   "conceptId": "75da7f99-4847-465e-925c-46aba9bde334",
+   "labelId": "0945a4dc-67cb-4264-9b15-23e6ff67d703",
+   "version": 1,
+   "op": "ALT",
+   "target": "cortes"
+  },
+  {
+   "term": "escorregadio",
+   "conceptId": "dd1e642b-1e28-49f8-a198-9f857f3baa7a",
+   "labelId": "fcaeb321-7974-4dcd-bdc3-55f28ab68b3e",
+   "version": 1,
+   "op": "ALT",
+   "target": "lubrificante"
+  },
+  {
+   "term": "esfolantes",
+   "conceptId": "b808bc3e-8613-4937-a2b8-291b4fdff95f",
+   "labelId": "a9c1d6c3-f81a-49d5-b663-e1866ae92247",
+   "version": 1,
+   "op": "BT",
+   "target": "ação farmacológica"
+  },
+  {
+   "term": "esgotamento",
+   "conceptId": "d381302f-a59e-4906-9915-f6d88ced2a5b",
+   "labelId": "5659b92b-8080-4601-8324-db62a0d401ad",
+   "version": 1,
+   "op": "ALT",
+   "target": "cansaço"
+  },
+  {
+   "term": "esgotamento físico",
+   "conceptId": "fe44d366-e5ed-48b5-a39d-1d0071b54c69",
+   "labelId": "9b7f9952-970e-4c0d-a2f5-6c659355a7f8",
+   "version": 1,
+   "op": "ALT",
+   "target": "cansaço"
+  },
+  {
+   "term": "espectro",
+   "conceptId": "1bc83a25-3c25-470c-941a-9c4e2b87feeb",
+   "labelId": "df9ee27a-9905-4f00-951b-28f2dff75e0b",
+   "version": 1,
+   "op": "BT",
+   "target": "ritual e espiritual"
+  },
+  {
+   "term": "espinha",
+   "conceptId": "2288e318-b0e1-49b6-a50a-c1379c91ecba",
+   "labelId": "85e6993e-7842-4f10-bfc0-f721429f2b9f",
+   "version": 1,
+   "op": "BT",
+   "target": "doenças de pele"
+  },
+  {
+   "term": "espinhela caída",
+   "conceptId": "dda9cc9d-eeec-4f33-adff-9fdeb4250c67",
+   "labelId": "8d78637e-1e40-4e83-92a4-722595b41c0b",
+   "version": 1,
+   "op": "BT",
+   "target": "dor"
+  },
+  {
+   "term": "espiritual",
+   "conceptId": "ef2c9dfe-28e5-46be-a7cc-ab4e47319d43",
+   "labelId": "34e590e8-f57f-4f72-8b32-12a87f8ca9fc",
+   "version": 1,
+   "op": "BT",
+   "target": "ritual e espiritual"
+  },
+  {
+   "term": "esquecimento",
+   "conceptId": "553f2b71-8a49-48af-a7e3-2249c4987937",
+   "labelId": "af976ca7-ace7-4520-8fd0-0eb027dc1cc2",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas neurológicos e psíquicos"
+  },
+  {
+   "term": "estimulante",
+   "conceptId": "773c2109-4b35-42df-aa36-4075d47d74f8",
+   "labelId": "81aa1a58-afaf-4ab4-969b-2c4b1546efa4",
+   "version": 1,
+   "op": "BT",
+   "target": "ação farmacológica"
+  },
+  {
+   "term": "estimulante sexual",
+   "conceptId": "2b992eec-7397-411e-a7d9-15ee88dde519",
+   "labelId": "ee5a703a-808d-455f-baa3-57365ab32ccf",
+   "version": 1,
+   "op": "ALT",
+   "target": "estimulante"
+  },
+  {
+   "term": "estresse",
+   "conceptId": "472a996e-eb37-49ad-a39c-fded3872c774",
+   "labelId": "24495783-00f1-4ad8-aa9e-cd2fd9f5ced4",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas neurológicos e psíquicos"
+  },
+  {
+   "term": "estômago",
+   "conceptId": "f2ead338-b9c4-435f-8aaa-bb853d69c081",
+   "labelId": "b3ca9517-7c0e-405c-9e66-751fc1edab8d",
+   "version": 1,
+   "op": "ALT",
+   "target": "problemas digestivos"
+  },
+  {
+   "term": "estômago e fígado",
+   "conceptId": "e503302f-09c9-4ffd-b3c2-4c13a1b8789a",
+   "labelId": "86afb0b0-0461-4dac-84cc-296f20e1caa4",
+   "version": 1,
+   "op": "DEP",
+   "target": "problemas do fígado"
+  },
+  {
+   "term": "excitante",
+   "conceptId": "cd5bf618-23f4-475f-89ec-d11feb199d6a",
+   "labelId": "5b6cfa96-70e5-4787-87e2-49f55e79e08e",
+   "version": 1,
+   "op": "ALT",
+   "target": "estimulante"
+  },
+  {
+   "term": "expectorante",
+   "conceptId": "d4171850-27d9-48e0-8da9-4b472918eb0a",
+   "labelId": "9b156e09-d12e-4919-8ab9-3f10a86ded8f",
+   "version": 1,
+   "op": "BT",
+   "target": "ação farmacológica"
+  },
+  {
+   "term": "fadiga",
+   "conceptId": "a929f82f-acd3-408f-a064-47cd7d0d0282",
+   "labelId": "8561aa67-88f7-4a33-a009-29f05f6b2655",
+   "version": 1,
+   "op": "ALT",
+   "target": "cansaço"
+  },
+  {
+   "term": "falta de apetite",
+   "conceptId": "c2080712-1467-4fd1-a8c3-edd340383efc",
+   "labelId": "a97a166e-1ea3-49e0-9ed0-d4a9f5a2596d",
+   "version": 1,
+   "op": "ALT",
+   "target": "apetite"
+  },
+  {
+   "term": "falta de ar",
+   "conceptId": "743a1b0c-83cd-4c95-8bbb-38d7aafd4363",
+   "labelId": "eaabf094-4a8a-4eeb-8497-40c7207321fd",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas respiratórios"
+  },
+  {
+   "term": "falta de memória",
+   "conceptId": "fc5b266b-758f-4ad5-b7e9-8f5616b4c0d9",
+   "labelId": "209ba222-b6b3-44b7-a605-949174b988be",
+   "version": 1,
+   "op": "ALT",
+   "target": "esquecimento"
+  },
+  {
+   "term": "falta de menstruação",
+   "conceptId": "95f978d2-fac5-4ffd-bff9-299d2f273f46",
+   "labelId": "d2e31978-e98a-4201-8435-e676675a0fd5",
+   "version": 1,
+   "op": "ALT",
+   "target": "menstruação"
+  },
+  {
+   "term": "fazer a digestão",
+   "conceptId": "da7299ba-3b3d-419c-b5d0-0a1da89b43e6",
+   "labelId": "b86b05fd-78d9-425f-9671-7267c5d6edeb",
+   "version": 1,
+   "op": "ALT",
+   "target": "má digestão"
+  },
+  {
+   "term": "febre",
+   "conceptId": "97b88d6c-d98d-41bc-9759-b6d105b790a4",
+   "labelId": "1ee1d4bd-0cdc-4fec-b6eb-2cc76d979074",
+   "version": 1,
+   "op": "BT",
+   "target": "indicação terapêutica"
+  },
+  {
+   "term": "febres",
+   "conceptId": "f4923560-442f-46cd-aa17-947ead15b08f",
+   "labelId": "2c12eac5-3375-4de0-8ae9-ee6222e6cf2e",
+   "version": 1,
+   "op": "ALT",
+   "target": "febre"
+  },
+  {
+   "term": "ferida",
+   "conceptId": "7f6ca337-8ff6-46a8-b92a-bafdfab193a6",
+   "labelId": "89eb2909-041e-47fa-9c47-544144887af2",
+   "version": 1,
+   "op": "BT",
+   "target": "traumatismos e ferimentos"
+  },
+  {
+   "term": "feridas",
+   "conceptId": "c9d862b4-75a4-4477-a882-e2643a4f8d1b",
+   "labelId": "0d07ef73-55df-47be-b716-0f539ea286b0",
+   "version": 1,
+   "op": "ALT",
+   "target": "ferida"
+  },
+  {
+   "term": "ferimento",
+   "conceptId": "4225dbf7-f60a-4a8e-9906-b6c989d7d618",
+   "labelId": "fc944262-1d7e-426f-ab27-ab05e247f611",
+   "version": 1,
+   "op": "BT",
+   "target": "traumatismos e ferimentos"
+  },
+  {
+   "term": "ferimentos",
+   "conceptId": "d5fecd53-0bb7-4f18-9cbd-a08d180d01c4",
+   "labelId": "77a54308-a977-40e8-9302-bbed2b736c3d",
+   "version": 1,
+   "op": "ALT",
+   "target": "ferimento"
+  },
+  {
+   "term": "fever",
+   "conceptId": "ad25d266-8019-4365-a217-9e648d88d446",
+   "labelId": "042ff646-a843-4cba-8abd-575df3730895",
+   "version": 1,
+   "op": "ALT",
+   "target": "febre"
+  },
+  {
+   "term": "fio",
+   "conceptId": "9d0aec65-e137-4d1a-8c82-ce0fdea6a69d",
+   "labelId": "295969a0-6a8e-49fb-b223-5dc9bdc7cc36",
+   "version": 1,
+   "op": "BT",
+   "target": "material e tecnológico"
+  },
+  {
+   "term": "fisioterápico",
+   "conceptId": "6c8108b3-1e47-4acb-934f-f1ed5c695e10",
+   "labelId": "e49d02b5-5c15-44d9-be4c-8d6817441090",
+   "version": 1,
+   "op": "BT",
+   "target": "ação farmacológica"
+  },
+  {
+   "term": "flatulência",
+   "conceptId": "22fd75b6-a64e-4374-afc8-bcdf25b1f75e",
+   "labelId": "87d95d79-182e-4d23-883b-bbc877df6d3e",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas digestivos"
+  },
+  {
+   "term": "flu",
+   "conceptId": "7db5df3a-69bb-4698-9769-d84b6e3c7cad",
+   "labelId": "5663e073-9f4c-43b1-9f0e-ae4b1372050f",
+   "version": 1,
+   "op": "ALT",
+   "target": "gripe"
+  },
+  {
+   "term": "fome",
+   "conceptId": "72014a60-6ce2-4df3-a143-7cceb2247301",
+   "labelId": "46024c10-5dab-4491-ba6d-8dbe2be25899",
+   "version": 1,
+   "op": "ALT",
+   "target": "alimentar"
+  },
+  {
+   "term": "fonte genética",
+   "conceptId": "de7ebdae-0126-4bea-8423-e616b8e898fb",
+   "labelId": "698f61a2-5712-4077-ba81-28a5ae854d76",
+   "version": 1,
+   "op": "BT",
+   "target": "ambiental e ecológico"
+  },
+  {
+   "term": "forragem",
+   "conceptId": "657d5252-f67d-4024-8184-a9756c4075ae",
+   "labelId": "4992c326-0cab-431d-9f72-89b4733b7fdf",
+   "version": 1,
+   "op": "BT",
+   "target": "veterinário e forrageiro"
+  },
+  {
+   "term": "forragem (folhas para burros e cavalos)",
+   "conceptId": "812a9eab-8f84-45c2-8519-cf2e7263eed7",
+   "labelId": "992f3eec-1a85-4e4e-a3e1-1fcbe20781c2",
+   "version": 1,
+   "op": "ALT",
+   "target": "forragem"
+  },
+  {
+   "term": "fortalecer os ossos",
+   "conceptId": "67a0a636-89db-457e-8c15-c2707e45d8d9",
+   "labelId": "cf9c40b2-ecc3-4dd7-b1e9-5fb591dc5a12",
+   "version": 1,
+   "op": "ALT",
+   "target": "ossos"
+  },
+  {
+   "term": "fortificante",
+   "conceptId": "5452369f-ba6b-4ca0-ac6c-01dc9ebf7943",
+   "labelId": "66a72a62-5125-4231-b5e2-098167c37423",
+   "version": 1,
+   "op": "BT",
+   "target": "ação farmacológica"
+  },
+  {
+   "term": "fortificar a memória",
+   "conceptId": "a95cab0d-e1a3-4568-8550-e294d519117c",
+   "labelId": "0ab6e6ba-1e27-40d8-96a1-a33eaf88633e",
+   "version": 1,
+   "op": "ALT",
+   "target": "esquecimento"
+  },
+  {
+   "term": "fraqueza",
+   "conceptId": "8356edc1-4c88-42cc-a541-6a842179cc28",
+   "labelId": "764602f4-82d7-4598-81b0-3641a94817ee",
+   "version": 1,
+   "op": "BT",
+   "target": "condições gerais e inespecíficas"
+  },
+  {
+   "term": "fraqueza em geral",
+   "conceptId": "4cad490d-8cf2-4a6b-b8dd-ffac887cb0ea",
+   "labelId": "c581341f-1e4f-48fa-a0e5-774bd6799c5a",
+   "version": 1,
+   "op": "ALT",
+   "target": "fraqueza"
+  },
+  {
+   "term": "fraturas",
+   "conceptId": "f633e207-096a-43a2-9603-586426b3c552",
+   "labelId": "c749f26c-9eac-4ece-bf70-67c45088a354",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas osteomusculares"
+  },
+  {
+   "term": "frieira",
+   "conceptId": "20485731-e1ce-4e47-b123-68742d467334",
+   "labelId": "a85517eb-5cd9-4a5d-b074-f5153e55c910",
+   "version": 1,
+   "op": "BT",
+   "target": "doenças de pele"
+  },
+  {
+   "term": "frieiras",
+   "conceptId": "1bb57d83-b92d-4b36-b1fe-4a3ef9d49092",
+   "labelId": "d1ec76e7-fdcd-45a9-90de-00a73c16e291",
+   "version": 1,
+   "op": "ALT",
+   "target": "frieira"
+  },
+  {
+   "term": "frio",
+   "conceptId": "0c6883f3-0c2c-47da-b11b-70f96f8a653a",
+   "labelId": "d568f13f-cfc2-4e77-a6f6-092f5e5bd3f4",
+   "version": 1,
+   "op": "BT",
+   "target": "condições gerais e inespecíficas"
+  },
+  {
+   "term": "fumo",
+   "conceptId": "dad8ae8e-b9a0-46d9-a22d-b074df64b0e0",
+   "labelId": "59ddfc7b-9a24-4290-b746-d91a48132202",
+   "version": 1,
+   "op": "SKIP",
+   "target": null
+  },
+  {
+   "term": "furúnculo",
+   "conceptId": "068aa509-0bce-470c-ab4e-a1159a79501c",
+   "labelId": "629a706b-8123-420d-8914-b92830fb916e",
+   "version": 1,
+   "op": "BT",
+   "target": "doenças de pele"
+  },
+  {
+   "term": "furúnculos",
+   "conceptId": "215b25a7-f560-4ffe-a2d0-b1bf9b995d39",
+   "labelId": "380d9dbb-3a0c-447c-a937-43dd5cc69d87",
+   "version": 1,
+   "op": "ALT",
+   "target": "furúnculo"
+  },
+  {
+   "term": "fígado",
+   "conceptId": "e3ee53d0-b05a-401d-9f7a-37c1eb9c1028",
+   "labelId": "fbd3da40-04f8-4f4a-988a-8773ebd6a0cf",
+   "version": 1,
+   "op": "ALT",
+   "target": "problemas do fígado"
+  },
+  {
+   "term": "fígado e estômago",
+   "conceptId": "6d20fd78-32b6-485a-a90c-e0b299fb7474",
+   "labelId": "50591ad7-69d5-418f-b2ee-c1bd31b9f709",
+   "version": 1,
+   "op": "DEP",
+   "target": "problemas do fígado"
+  },
+  {
+   "term": "fígado e rins",
+   "conceptId": "d43b3d1c-754c-4b98-bfd8-d5da54f43328",
+   "labelId": "057ad9fc-844a-4625-b8a8-2f5464c86c2c",
+   "version": 1,
+   "op": "DEP",
+   "target": "problemas do fígado"
+  },
+  {
+   "term": "fôlego",
+   "conceptId": "7a07169a-9c7c-480d-9aa9-0c82a5bcdb3f",
+   "labelId": "92db3c68-9716-4260-8812-2baa29fd45da",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas respiratórios"
+  },
+  {
+   "term": "garganta",
+   "conceptId": "f1234bd0-b589-4bbe-90e5-32fe183d7b74",
+   "labelId": "a114a6f9-413e-4561-a52a-b9ef6f0f752d",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas otorrinolaringológicos"
+  },
+  {
+   "term": "garganta inflamada",
+   "conceptId": "ebdbc3e9-d6de-4376-8e30-9bdf2e7d50fe",
+   "labelId": "9523c711-e4e5-4703-bcd8-852129628575",
+   "version": 1,
+   "op": "ALT",
+   "target": "inflamação na garganta"
+  },
+  {
+   "term": "gargarejos para inflamação na garganta",
+   "conceptId": "727f23d4-4a4f-44cb-bff5-cd77a15f73c5",
+   "labelId": "e1ce4084-14e9-43d8-8472-3b4571c28af5",
+   "version": 1,
+   "op": "BT",
+   "target": "forma de preparo e administração"
+  },
+  {
+   "term": "gases",
+   "conceptId": "992cd3a8-43b3-4596-9a4a-74ffe861dffa",
+   "labelId": "a286de21-e856-4536-a3c7-ccb44f3c6859",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas digestivos"
+  },
+  {
+   "term": "gases e cólicas abdominais",
+   "conceptId": "e04495be-3f67-45af-8b4e-472a071d456a",
+   "labelId": "ed3e116b-dc75-44f1-9ec3-df60747a9c54",
+   "version": 1,
+   "op": "ALT",
+   "target": "gases"
+  },
+  {
+   "term": "gastrite",
+   "conceptId": "f2c12c10-3193-464a-83a8-2017a844d30a",
+   "labelId": "14fa51bb-ebf4-49a7-8e29-5ade39eb9eef",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas digestivos"
+  },
+  {
+   "term": "gazes",
+   "conceptId": "a6acf3aa-f038-49fc-aeb8-a57f0c796316",
+   "labelId": "4e3dcf77-af77-4eb4-a86d-96b110c8577f",
+   "version": 1,
+   "op": "HID",
+   "target": "gases"
+  },
+  {
+   "term": "gengiva",
+   "conceptId": "a878ebd4-631c-4ead-ad3d-f7e52f8d5adc",
+   "labelId": "3b3c4568-5284-407b-b4e5-cade2b54ef23",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas odontológicos"
+  },
+  {
+   "term": "gordura no fígado",
+   "conceptId": "f7f349ee-13eb-4deb-806c-c62131d18f5e",
+   "labelId": "20895faf-35bd-4280-b137-51de162222e8",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas do fígado"
+  },
+  {
+   "term": "gota",
+   "conceptId": "c40e6885-4741-448c-8a53-0bd6752a192d",
+   "labelId": "6643c656-8a8d-41c9-b41e-986c246b0378",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas osteomusculares"
+  },
+  {
+   "term": "gripe",
+   "conceptId": "20107bb5-77f2-49f3-bca6-801fc8cc81d6",
+   "labelId": "87dec7ff-4f1d-4685-8e00-3361a84dfe4d",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas respiratórios"
+  },
+  {
+   "term": "gripe e resfriado",
+   "conceptId": "dad1682b-14e4-4fd9-ad48-f24734a3b1ce",
+   "labelId": "d443ac32-9baa-434f-8e39-b6e4a75dd68c",
+   "version": 1,
+   "op": "DEP",
+   "target": "gripe"
+  },
+  {
+   "term": "gripe e tosse",
+   "conceptId": "cd46649f-9532-4649-8bce-18d6a7f30da9",
+   "labelId": "d15eeaeb-6b5e-4964-8468-04d036ff0b7d",
+   "version": 1,
+   "op": "DEP",
+   "target": "gripe"
+  },
+  {
+   "term": "gripes",
+   "conceptId": "e7e15884-fc79-4bfb-81b0-0e2ad491adea",
+   "labelId": "326aea56-694c-467a-9af6-63c1d749326c",
+   "version": 1,
+   "op": "ALT",
+   "target": "gripe"
+  },
+  {
+   "term": "headache",
+   "conceptId": "69c10a97-0804-436f-9072-1719e2a1171e",
+   "labelId": "dffb31b9-62d3-4a4e-9e4d-53db55c51922",
+   "version": 1,
+   "op": "ALT",
+   "target": "dor de cabeça"
+  },
+  {
+   "term": "healing",
+   "conceptId": "1194a589-1738-41fc-94d5-badd4b40029d",
+   "labelId": "ea3bc651-4547-4a7a-8718-306e77c30b4e",
+   "version": 1,
+   "op": "ALT",
+   "target": "cicatrizante"
+  },
+  {
+   "term": "hemorragia",
+   "conceptId": "3450645b-8e5f-4166-be55-ec1873fd74f8",
+   "labelId": "310937dc-67db-410b-8994-33a331acbbda",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas circulatórios"
+  },
+  {
+   "term": "hemorroidas",
+   "conceptId": "eaafbac8-a32b-4df9-a413-7e0d165bd6e3",
+   "labelId": "df8127e4-caeb-4947-9946-527dc50841a9",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas circulatórios"
+  },
+  {
+   "term": "hemorróidas",
+   "conceptId": "27b12c0f-3438-4b95-bb16-f730d4aec50a",
+   "labelId": "154348d3-9e0f-4751-8e6d-012c9c02a932",
+   "version": 1,
+   "op": "HID",
+   "target": "hemorroidas"
+  },
+  {
+   "term": "hepatite",
+   "conceptId": "cf7fbe2c-75f6-4f47-b3cb-5a482cb07d5d",
+   "labelId": "582802b8-a091-4443-bcb9-c6cdda315703",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas do fígado"
+  },
+  {
+   "term": "herpes",
+   "conceptId": "8145aa38-9b2a-401c-836c-d4272df9f781",
+   "labelId": "5f196659-986e-48b1-a9e8-61d1c3034c31",
+   "version": 1,
+   "op": "BT",
+   "target": "doenças de pele"
+  },
+  {
+   "term": "high blood pressure",
+   "conceptId": "b5cca356-d529-49a3-9169-f68ccdc5bf2d",
+   "labelId": "3ffc7541-7bb1-4629-8ce9-d5210f9a6883",
+   "version": 1,
+   "op": "ALT",
+   "target": "pressão alta"
+  },
+  {
+   "term": "higiene",
+   "conceptId": "0f332a7c-8a4b-4213-8e1e-b216cb5e8fa5",
+   "labelId": "cdd5b1f6-feca-4881-b393-2a60aad611c3",
+   "version": 1,
+   "op": "BT",
+   "target": "cosmético e higiene"
+  },
+  {
+   "term": "hipertensão",
+   "conceptId": "027b7fdf-55ce-4747-b64f-e4bb677a6843",
+   "labelId": "3c3915b7-fe3f-4ff0-b279-8f3399206677",
+   "version": 1,
+   "op": "ALT",
+   "target": "pressão alta"
+  },
+  {
+   "term": "hipertensão arterial",
+   "conceptId": "28356689-f301-4c78-96bb-60ee15e56003",
+   "labelId": "e7cf71c2-f117-47fd-a5aa-84edd9c31b92",
+   "version": 1,
+   "op": "ALT",
+   "target": "pressão alta"
+  },
+  {
+   "term": "hipotensão",
+   "conceptId": "b662d9b4-6275-46ca-84e2-b587fa93f8b6",
+   "labelId": "4fba016e-094f-4d16-b279-4005950a6282",
+   "version": 1,
+   "op": "ALT",
+   "target": "pressão baixa"
+  },
+  {
+   "term": "hoarseness",
+   "conceptId": "717b853e-35f5-4bea-9921-7ff69e30caf2",
+   "labelId": "6e0dcf11-209a-4712-87ed-03761ca22de5",
+   "version": 1,
+   "op": "ALT",
+   "target": "rouquidão"
+  },
+  {
+   "term": "hurts",
+   "conceptId": "c3bc7f69-b5d4-4b5b-8244-430dcdb2ff4c",
+   "labelId": "32b60ea6-847e-4b38-a6fa-88e6d2d215eb",
+   "version": 1,
+   "op": "ALT",
+   "target": "dor"
+  },
+  {
+   "term": "icterícia",
+   "conceptId": "c7051ee2-63c4-4209-ac61-9a70b60c9ea0",
+   "labelId": "ac062b5f-bc70-4bb0-938c-9d1d63a53a39",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas do fígado"
+  },
+  {
+   "term": "ictéricia",
+   "conceptId": "b2a9a041-af14-4dfe-9e36-f048337e50b8",
+   "labelId": "3659270d-ee62-498e-a9d1-d0abd9cd075c",
+   "version": 1,
+   "op": "HID",
+   "target": "icterícia"
+  },
+  {
+   "term": "impingem",
+   "conceptId": "9d9bf591-103f-4d0d-b96d-b1509ced4548",
+   "labelId": "b8919502-0a1d-4cb7-a994-0bf09f0bd168",
+   "version": 1,
+   "op": "BT",
+   "target": "doenças de pele"
+  },
+  {
+   "term": "impotência",
+   "conceptId": "2233cb6e-338b-42b7-8379-87962fcaf2ab",
+   "labelId": "9791cd9b-f41c-4ba5-a32d-117c36dc0298",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas do aparelho reprodutor masculino"
+  },
+  {
+   "term": "impotência sexual",
+   "conceptId": "ffbdf2c0-4dd7-4992-bc1e-bf74759fc607",
+   "labelId": "b6ff2c44-8a40-495f-a9b0-b979d0c59a03",
+   "version": 1,
+   "op": "ALT",
+   "target": "impotência"
+  },
+  {
+   "term": "impurezas do sangue",
+   "conceptId": "9595413d-8c1b-4ed5-8800-cd69dfcf1da6",
+   "labelId": "381cbc02-8f1c-4ab0-afb2-6e5a22b6e21d",
+   "version": 1,
+   "op": "ALT",
+   "target": "sangue"
+  },
+  {
+   "term": "inchaço",
+   "conceptId": "61bf6bb7-05bb-414d-8a51-50516e7bc529",
+   "labelId": "7a84ad2e-a7cd-444e-945b-a2b6d768d3d9",
+   "version": 1,
+   "op": "ALT",
+   "target": "retenção de líquidos"
+  },
+  {
+   "term": "inchaço nas pernas",
+   "conceptId": "4ee6576b-ce37-40d5-8780-18866dccc44b",
+   "labelId": "906ac98b-336e-4388-9d6f-397b4c8226c7",
+   "version": 1,
+   "op": "ALT",
+   "target": "retenção de líquidos"
+  },
+  {
+   "term": "incontinência urinária",
+   "conceptId": "33a2e66a-2523-497d-ae25-16b28f70a9b2",
+   "labelId": "a8eb0a89-c457-4609-83f7-ed08532c8a66",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas renais"
+  },
+  {
+   "term": "indigestion",
+   "conceptId": "0bebf5be-2877-48d7-b933-c061aa00e8d9",
+   "labelId": "590a7968-1b68-43fb-b774-003cb2b1c600",
+   "version": 1,
+   "op": "ALT",
+   "target": "problemas digestivos"
+  },
+  {
+   "term": "indigestão",
+   "conceptId": "96a19646-91b7-49cc-9a10-8ef9ef743b29",
+   "labelId": "327d4b2f-3e66-4f53-870c-eca2cfa57a42",
+   "version": 1,
+   "op": "ALT",
+   "target": "má digestão"
+  },
+  {
+   "term": "infecção",
+   "conceptId": "9251420e-910d-4010-9194-bf9d94bedeaf",
+   "labelId": "7b5aee08-d18a-44f4-91dc-31800bcdb00d",
+   "version": 1,
+   "op": "BT",
+   "target": "doenças infecciosas e parasitárias"
+  },
+  {
+   "term": "infecção de garganta",
+   "conceptId": "260db0de-0683-4e13-9343-5baa5333a1ca",
+   "labelId": "c9993017-905e-4138-be09-320df8f5e1f6",
+   "version": 1,
+   "op": "ALT",
+   "target": "inflamação na garganta"
+  },
+  {
+   "term": "infecção de ovário",
+   "conceptId": "009cfd5c-5863-430d-a2fc-9703defebbb0",
+   "labelId": "f75c1c46-543e-4c51-a8c3-a009e8e8846c",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas ginecológicos e obstétricos"
+  },
+  {
+   "term": "infecção de pele",
+   "conceptId": "4dcc3777-2514-4e45-9aff-5d8c63211c43",
+   "labelId": "04e5cce6-5d44-44a6-9f11-b166fd1d2adb",
+   "version": 1,
+   "op": "BT",
+   "target": "doenças de pele"
+  },
+  {
+   "term": "infecção de urina",
+   "conceptId": "726f939a-006a-4827-9385-756d3bd032c7",
+   "labelId": "d9113cfa-6097-4f96-b4b8-772d175ab64e",
+   "version": 1,
+   "op": "ALT",
+   "target": "infecção urinária"
+  },
+  {
+   "term": "infecção de útero",
+   "conceptId": "c164fc3c-4c7b-4cbe-beb2-e1c359764a7c",
+   "labelId": "c017c278-9921-42b8-a9e7-5e6258c0da0c",
+   "version": 1,
+   "op": "ALT",
+   "target": "útero"
+  },
+  {
+   "term": "infecção intestinal",
+   "conceptId": "c1ed3f61-3f47-43de-8a5d-5d0d090542c6",
+   "labelId": "6f4cae6d-032a-4658-8259-471f34b00a1a",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas digestivos"
+  },
+  {
+   "term": "infecção no intestino",
+   "conceptId": "b5605ec3-6b77-4d68-b454-4a570c8cb65c",
+   "labelId": "70da711b-8f67-40b6-83c5-56daf054b7d8",
+   "version": 1,
+   "op": "ALT",
+   "target": "infecção intestinal"
+  },
+  {
+   "term": "infecção no sangue",
+   "conceptId": "8717602b-6fd7-4604-8eed-23aaffb92ef5",
+   "labelId": "de820944-421f-46c7-afcc-31a4ae305f73",
+   "version": 1,
+   "op": "ALT",
+   "target": "infecção"
+  },
+  {
+   "term": "infecção pulmonar",
+   "conceptId": "9c7597a0-68fe-4f8d-81da-532d72f62bc6",
+   "labelId": "e42f7634-344c-4fa8-b52f-2c516baddcb9",
+   "version": 1,
+   "op": "ALT",
+   "target": "pneumonia"
+  },
+  {
+   "term": "infecção renal",
+   "conceptId": "82c4f81c-9e31-4459-918b-5feeb0cda0d4",
+   "labelId": "f89672d7-a411-4a7c-be40-dd7257607c31",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas renais"
+  },
+  {
+   "term": "infecção urinaria",
+   "conceptId": "1f2a8414-6e26-4435-a419-7bf7f8acd54e",
+   "labelId": "66484a58-a955-430f-914d-a4a44c8131f5",
+   "version": 1,
+   "op": "ALT",
+   "target": "infecção urinária"
+  },
+  {
+   "term": "infecção urinária",
+   "conceptId": "dc649008-9855-4f94-890c-9d692c00479e",
+   "labelId": "e5886199-4f74-4a5b-abc4-a849491f5254",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas renais"
+  },
+  {
+   "term": "infecção uterina",
+   "conceptId": "a441221c-1dd1-4228-9503-d49520ad34ac",
+   "labelId": "2ad27d10-985f-4e4a-a9f3-40f07ee2dbdc",
+   "version": 1,
+   "op": "ALT",
+   "target": "útero"
+  },
+  {
+   "term": "infecções",
+   "conceptId": "9f846bfc-c1fe-4663-92a2-58c5d343560c",
+   "labelId": "7f02111e-2b39-40f8-b8a1-ccd27b78f8c1",
+   "version": 1,
+   "op": "ALT",
+   "target": "infecção"
+  },
+  {
+   "term": "infertilidade",
+   "conceptId": "eadde047-9acc-4e32-b7e9-4bae17c68141",
+   "labelId": "49a06b13-11c1-461b-b7da-191b20d998dc",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas ginecológicos e obstétricos"
+  },
+  {
+   "term": "infertility",
+   "conceptId": "ae8db8aa-8f1c-4099-9d08-a7293329f531",
+   "labelId": "aaadcaf5-187d-477a-894d-e2d158d24c83",
+   "version": 1,
+   "op": "ALT",
+   "target": "infertilidade"
+  },
+  {
+   "term": "inflamamtion",
+   "conceptId": "fe18816e-e7b0-432f-9d65-fa6c6f8641ee",
+   "labelId": "fdd23c89-3463-4647-8a74-1011f8f65e8b",
+   "version": 1,
+   "op": "HID",
+   "target": "anti-inflamatório"
+  },
+  {
+   "term": "inflamation",
+   "conceptId": "12124192-6c87-4e60-8fab-974546aefc17",
+   "labelId": "9dbf9355-4e33-46d9-a518-4152fac1dffe",
+   "version": 1,
+   "op": "HID",
+   "target": "anti-inflamatório"
+  },
+  {
+   "term": "inflamação",
+   "conceptId": "b64cbb8a-46c4-49a1-bf05-46c622a7f561",
+   "labelId": "a3914018-59c4-4812-91fd-b76ada4532c4",
+   "version": 1,
+   "op": "BT",
+   "target": "indicação terapêutica"
+  },
+  {
+   "term": "inflamação da bexiga e rins",
+   "conceptId": "9cb7c061-93ff-4f42-abbb-f6e322b7027b",
+   "labelId": "6fb68a02-c7cd-47ba-a87b-ef673fff21c7",
+   "version": 1,
+   "op": "ALT",
+   "target": "inflamação na bexiga"
+  },
+  {
+   "term": "inflamação da garganta",
+   "conceptId": "ae952371-61b5-49fd-ba52-8c585b314c9e",
+   "labelId": "6eb8f6a5-66f3-45bf-84fb-dcac312ded97",
+   "version": 1,
+   "op": "ALT",
+   "target": "inflamação na garganta"
+  },
+  {
+   "term": "inflamação de garganta",
+   "conceptId": "bb1f3791-b85a-40e8-8d85-38b172c21756",
+   "labelId": "4f04ae6f-f814-4eb3-a6a7-2a957568ea33",
+   "version": 1,
+   "op": "ALT",
+   "target": "inflamação na garganta"
+  },
+  {
+   "term": "inflamação de útero",
+   "conceptId": "396c522d-fbe1-48a7-95e3-a35630c50841",
+   "labelId": "5b95379e-da37-4c65-8371-5c68ab26f36f",
+   "version": 1,
+   "op": "ALT",
+   "target": "inflamação do útero"
+  },
+  {
+   "term": "inflamação do estômago",
+   "conceptId": "1b16b81e-d111-4ff8-a8a0-10771a9cda3b",
+   "labelId": "43d8e624-3bd3-4bb2-8dbd-8df786be8da6",
+   "version": 1,
+   "op": "BT",
+   "target": "inflamação"
+  },
+  {
+   "term": "inflamação do útero",
+   "conceptId": "01eacaa8-07e2-43ee-ac77-136b6dcd2594",
+   "labelId": "a2ac725f-2adc-4111-b5f7-13f4660efb5c",
+   "version": 1,
+   "op": "BT",
+   "target": "inflamação"
+  },
+  {
+   "term": "inflamação e doenças do fígado",
+   "conceptId": "91a45107-37e9-4f3b-91e5-2db075bd9fa4",
+   "labelId": "7b203fcf-8308-4ecc-8a58-1268e4aa1a66",
+   "version": 1,
+   "op": "ALT",
+   "target": "inflamação no fígado"
+  },
+  {
+   "term": "inflamação em geral",
+   "conceptId": "c898ed07-199f-492c-b1b8-e6319ce00588",
+   "labelId": "e53858e7-8553-48a5-8c6f-d80b40394073",
+   "version": 1,
+   "op": "ALT",
+   "target": "inflamação"
+  },
+  {
+   "term": "inflamação intestinal",
+   "conceptId": "992f05f4-a559-4fd7-894f-d1f052b6e37f",
+   "labelId": "f5c617b5-3ad6-4842-b361-5966609fdc33",
+   "version": 1,
+   "op": "BT",
+   "target": "inflamação"
+  },
+  {
+   "term": "inflamação na bexiga",
+   "conceptId": "479b9180-f07e-4533-aac7-75e868edd538",
+   "labelId": "1fbbea6e-fa93-4875-a80d-276801fa0a1a",
+   "version": 1,
+   "op": "BT",
+   "target": "inflamação"
+  },
+  {
+   "term": "inflamação na garganta",
+   "conceptId": "4ba70d0c-7197-46f5-8a01-9da40419b48a",
+   "labelId": "80acb97c-3ba5-4c00-9505-6ffd3f49fa0a",
+   "version": 1,
+   "op": "BT",
+   "target": "inflamação"
+  },
+  {
+   "term": "inflamação no corpo",
+   "conceptId": "ac6470e6-31a2-4a39-a381-ce818073a889",
+   "labelId": "bab0304b-6861-47cd-852c-4b1b0c19f473",
+   "version": 1,
+   "op": "ALT",
+   "target": "inflamação"
+  },
+  {
+   "term": "inflamação no fígado",
+   "conceptId": "1414426c-8198-4134-a80a-4c49d4bdad6f",
+   "labelId": "98f7a493-77bb-44cd-a91f-951becd307c3",
+   "version": 1,
+   "op": "BT",
+   "target": "inflamação"
+  },
+  {
+   "term": "inflamação no útero",
+   "conceptId": "b0d1719a-dce1-4d07-8584-777bf3f35d31",
+   "labelId": "aefd169c-e76e-4241-8185-719c08a956ae",
+   "version": 1,
+   "op": "ALT",
+   "target": "inflamação do útero"
+  },
+  {
+   "term": "inflamação nos dentes",
+   "conceptId": "d9ee134d-41ae-4a4d-a6fc-a0371008bbdc",
+   "labelId": "473d61ab-f8d5-4bf0-a327-68b47b796e9f",
+   "version": 1,
+   "op": "BT",
+   "target": "inflamação"
+  },
+  {
+   "term": "inflamação ovariana",
+   "conceptId": "99526ab4-1bb4-458b-9b0e-f07a2d04706d",
+   "labelId": "987e4282-4908-4ab4-9bde-4d3b88ab26cc",
+   "version": 1,
+   "op": "BT",
+   "target": "inflamação"
+  },
+  {
+   "term": "inflamações",
+   "conceptId": "84e57d87-52d7-4a7d-8416-80a8b9851ed2",
+   "labelId": "c81d019d-33ab-4f9e-bc45-67e86a33bd52",
+   "version": 1,
+   "op": "ALT",
+   "target": "inflamação"
+  },
+  {
+   "term": "inflamações de ferida",
+   "conceptId": "f8995181-e42a-4d68-8a52-654fb8614e67",
+   "labelId": "a3bcf879-572b-48a1-9809-bdbab1ba8ea6",
+   "version": 1,
+   "op": "ALT",
+   "target": "ferida"
+  },
+  {
+   "term": "inflamações na garganta",
+   "conceptId": "77ecc87f-29b0-4efc-aff7-4f4c77d3f99f",
+   "labelId": "b3c470e6-b97f-44e3-bf4f-07662e304132",
+   "version": 1,
+   "op": "ALT",
+   "target": "inflamação na garganta"
+  },
+  {
+   "term": "inflammation",
+   "conceptId": "11a00d1b-4edc-4e85-a7eb-5c8806d629f4",
+   "labelId": "5e64d69a-4eb2-4903-8c75-e5eb01efd929",
+   "version": 1,
+   "op": "ALT",
+   "target": "inflamação"
+  },
+  {
+   "term": "inflammed throat",
+   "conceptId": "2d6337d0-2219-40e7-aa0c-0fb5414f6c47",
+   "labelId": "a4fe7fd7-6590-4030-b934-245348c1e4e6",
+   "version": 1,
+   "op": "ALT",
+   "target": "inflamação na garganta"
+  },
+  {
+   "term": "inflações",
+   "conceptId": "57e60a88-6dac-4562-bd1a-fddf16ceb335",
+   "labelId": "27ba6ae7-4f2a-415f-90f8-0a86320a82bc",
+   "version": 1,
+   "op": "ALT",
+   "target": "inflamação"
+  },
+  {
+   "term": "inseticida",
+   "conceptId": "dd20f909-7505-4700-9cd7-9e6d21c42a18",
+   "labelId": "fd685f55-94b0-4613-8819-262b6b3509da",
+   "version": 1,
+   "op": "BT",
+   "target": "tóxico e defensivo"
+  },
+  {
+   "term": "insônia",
+   "conceptId": "107b2aae-14bd-48ff-9608-5acd63463210",
+   "labelId": "e294125e-1ea2-4f0f-adce-c32dd051c640",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas neurológicos e psíquicos"
+  },
+  {
+   "term": "intestinal worms",
+   "conceptId": "663d8912-a52f-48e3-ab79-f0fb9a0cc656",
+   "labelId": "72ad7840-0c00-4d4b-91c9-2292d2ac6afd",
+   "version": 1,
+   "op": "ALT",
+   "target": "verme"
+  },
+  {
+   "term": "intestino",
+   "conceptId": "bfddaf10-2483-40d5-b159-cffd8d2c69e8",
+   "labelId": "e9bed330-5d1b-47a4-9492-f30b98aa0120",
+   "version": 1,
+   "op": "ALT",
+   "target": "problemas digestivos"
+  },
+  {
+   "term": "intestino preso",
+   "conceptId": "11b677c3-1944-4b44-8b02-b65d680c1136",
+   "labelId": "6171859c-328f-4aad-8a39-53c86c7415bd",
+   "version": 1,
+   "op": "ALT",
+   "target": "prisão de ventre"
+  },
+  {
+   "term": "intestinos",
+   "conceptId": "c3fb7e4c-8112-4ad7-8ce3-7424dc6300d1",
+   "labelId": "22671e97-3f9d-4dfa-bff5-f85e2fbb4958",
+   "version": 1,
+   "op": "ALT",
+   "target": "problemas digestivos"
+  },
+  {
+   "term": "intoxicação",
+   "conceptId": "6bf77e72-edda-45bf-b3b5-6d7e97df0f12",
+   "labelId": "f45fb8b1-f5c0-49c6-a56d-56caa744fb93",
+   "version": 1,
+   "op": "BT",
+   "target": "envenenamentos e picadas"
+  },
+  {
+   "term": "intoxicação do fígado",
+   "conceptId": "8e03ee54-ad2e-4547-9e26-0e9e0c1a6e7e",
+   "labelId": "4bb24530-d59d-4233-8a73-04fcee3c53f7",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas do fígado"
+  },
+  {
+   "term": "início de pneumonia",
+   "conceptId": "39d5ea10-cb7b-4d46-9484-fa04b3c933d0",
+   "labelId": "14983d01-6be3-4cf3-a977-fb759a495b2f",
+   "version": 1,
+   "op": "ALT",
+   "target": "pneumonia"
+  },
+  {
+   "term": "irritação da pele",
+   "conceptId": "6ec2a254-a54e-410d-bcce-055895a406de",
+   "labelId": "31e9a6e9-2f6e-4d18-9b9e-315060c6f9fb",
+   "version": 1,
+   "op": "ALT",
+   "target": "doenças de pele"
+  },
+  {
+   "term": "irritação na pele",
+   "conceptId": "5e1e1f91-09d8-469a-8c1d-bb263aabcbf6",
+   "labelId": "aff16a41-929e-48d7-95c7-faef36a16b14",
+   "version": 1,
+   "op": "ALT",
+   "target": "doenças de pele"
+  },
+  {
+   "term": "kidney stone",
+   "conceptId": "3937b43f-fda2-4faa-b918-fb32bbf8620b",
+   "labelId": "f136921e-2d32-456c-9b9c-897cdcd2d3c2",
+   "version": 1,
+   "op": "ALT",
+   "target": "pedra nos rins"
+  },
+  {
+   "term": "kidney stones",
+   "conceptId": "907de1b6-7664-439c-b8b1-0e0119dbc9fc",
+   "labelId": "689d9bee-8a88-419b-85d3-38416a53773a",
+   "version": 1,
+   "op": "ALT",
+   "target": "pedra nos rins"
+  },
+  {
+   "term": "kills the larva of dengue",
+   "conceptId": "89af83d7-4c01-4eda-bdfb-460b1f4d6e1b",
+   "labelId": "343b2418-1f35-4247-9b54-c4048ec9d437",
+   "version": 1,
+   "op": "ALT",
+   "target": "inseticida"
+  },
+  {
+   "term": "labirintite",
+   "conceptId": "ce69fc6d-062c-49fb-b91e-5f21dbf50695",
+   "labelId": "e31ae5b2-f31c-4861-8f0e-efe5234430f1",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas neurológicos e psíquicos"
+  },
+  {
+   "term": "labyrinthitis",
+   "conceptId": "cb4b6d33-b0cb-4b7a-96e8-f38e728c7bdf",
+   "labelId": "ef34232d-c776-4564-a779-34f94922b5e0",
+   "version": 1,
+   "op": "ALT",
+   "target": "labirintite"
+  },
+  {
+   "term": "lavar as mãos",
+   "conceptId": "7a2f41b8-6f36-4954-a8d0-a5fc596be92e",
+   "labelId": "c375c559-2fc0-43e4-8bb1-4be0b4408668",
+   "version": 1,
+   "op": "ALT",
+   "target": "higiene"
+  },
+  {
+   "term": "lavar feridas",
+   "conceptId": "dcd174b3-d7ae-4bea-a712-e6613427bb58",
+   "labelId": "50110515-a3ba-4fc5-bace-3b966a2bdd35",
+   "version": 1,
+   "op": "ALT",
+   "target": "ferida"
+  },
+  {
+   "term": "laxante",
+   "conceptId": "16ebff02-cc3c-45d0-a218-325c137b302d",
+   "labelId": "d84e8446-f2f9-4368-a13e-73c4c70f477f",
+   "version": 1,
+   "op": "BT",
+   "target": "ação farmacológica"
+  },
+  {
+   "term": "lenha",
+   "conceptId": "697ba0e5-1d28-4ab6-990c-5886a98e12cd",
+   "labelId": "3e439a16-6c7e-4680-9ca3-98a24666ba3e",
+   "version": 1,
+   "op": "ALT",
+   "target": "combustível"
+  },
+  {
+   "term": "limpar o sangue",
+   "conceptId": "701143bc-62d1-4193-836b-a5c11508d376",
+   "labelId": "0cf49ac0-7e23-44e0-ab43-19a1ce46e1a0",
+   "version": 1,
+   "op": "ALT",
+   "target": "depurativo"
+  },
+  {
+   "term": "limpeza",
+   "conceptId": "f827404f-07b8-475f-8d9e-36423f63477a",
+   "labelId": "a02b196b-d115-4f90-877a-f251e0a8b8c5",
+   "version": 1,
+   "op": "ALT",
+   "target": "higiene"
+  },
+  {
+   "term": "limpeza do útero",
+   "conceptId": "22a78ed1-aed8-49dc-91ab-d70a417fbda6",
+   "labelId": "2e413201-a8e1-4461-80e3-e3556c361ddc",
+   "version": 1,
+   "op": "ALT",
+   "target": "útero"
+  },
+  {
+   "term": "limpeza uterina",
+   "conceptId": "e868a672-d45e-4294-be30-24ce796dc196",
+   "labelId": "2afb888e-ecc1-4155-ac4c-53622b8b0884",
+   "version": 1,
+   "op": "ALT",
+   "target": "útero"
+  },
+  {
+   "term": "linfoma",
+   "conceptId": "d00be566-e625-4e4c-9d06-5531e35819cb",
+   "labelId": "bf3a12d0-3d5b-40d3-b649-fc903cadc933",
+   "version": 1,
+   "op": "BT",
+   "target": "neoplasias"
+  },
+  {
+   "term": "litúrgico",
+   "conceptId": "10b4d342-b16b-4fcc-b3ee-63229b427cb6",
+   "labelId": "fff46b19-bf44-48cc-919b-253e10d04a5a",
+   "version": 1,
+   "op": "BT",
+   "target": "ritual e espiritual"
+  },
+  {
+   "term": "lubrificante",
+   "conceptId": "0104bd1c-82ae-40fd-b1d8-d80d645a855f",
+   "labelId": "314cc64c-659f-46d2-b093-ea811c7ae34a",
+   "version": 1,
+   "op": "BT",
+   "target": "material e tecnológico"
+  },
+  {
+   "term": "luxação",
+   "conceptId": "6a6c74c4-c761-4281-9f82-49627ea82ee8",
+   "labelId": "9b2d7048-ff3e-4370-9798-7e26acbdba83",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas osteomusculares"
+  },
+  {
+   "term": "luxações",
+   "conceptId": "88958068-9eb4-406f-84a0-bfe551cdf167",
+   "labelId": "ceed4a00-5edd-469e-a075-1cb7b7bb6aa8",
+   "version": 1,
+   "op": "ALT",
+   "target": "luxação"
+  },
+  {
+   "term": "lúdico",
+   "conceptId": "7f29dcc0-07dd-480c-b4ca-8b3114b4f148",
+   "labelId": "086e40af-7008-4384-b1ca-2cc5040dd6e3",
+   "version": 1,
+   "op": "BT",
+   "target": "ritual e espiritual"
+  },
+  {
+   "term": "machucado",
+   "conceptId": "ec45df59-0961-4760-8abd-b4dc2ad32ac6",
+   "labelId": "a3096353-7026-424c-a0bb-04f49a860d70",
+   "version": 1,
+   "op": "ALT",
+   "target": "contusão"
+  },
+  {
+   "term": "machucados",
+   "conceptId": "aca9e716-79af-4c64-9f26-309aaad7fe3a",
+   "labelId": "6611f1e1-7607-4376-b3ce-fc379faa6e66",
+   "version": 1,
+   "op": "ALT",
+   "target": "contusão"
+  },
+  {
+   "term": "madeira",
+   "conceptId": "50601d50-4a45-4de2-bdaa-e804e8100c26",
+   "labelId": "b8c5a831-8416-43f6-b20b-7ce2403b29c6",
+   "version": 1,
+   "op": "BT",
+   "target": "material e tecnológico"
+  },
+  {
+   "term": "mal de parkinson",
+   "conceptId": "76e67893-efe0-48d5-9bc3-baf9dc14169b",
+   "labelId": "a91c7cc7-de95-4824-b595-d93574727e8a",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas neurológicos e psíquicos"
+  },
+  {
+   "term": "mal estar",
+   "conceptId": "fee9ae09-89e8-4701-a0ff-41aa1f4b3cae",
+   "labelId": "ba4859b7-d050-4a6d-bf13-8ed36eb3d425",
+   "version": 1,
+   "op": "ALT",
+   "target": "fraqueza"
+  },
+  {
+   "term": "malária",
+   "conceptId": "f6aaed5b-137d-47d8-845c-bd040539118e",
+   "labelId": "d611dc55-832b-46ec-b7c1-77f28a578720",
+   "version": 1,
+   "op": "BT",
+   "target": "doenças infecciosas e parasitárias"
+  },
+  {
+   "term": "mancha na pele",
+   "conceptId": "4d89a45a-ad5d-46c4-bebc-3b99fd5f1cd6",
+   "labelId": "6615ecbf-66f5-4c1d-a8af-6696c6e968bb",
+   "version": 1,
+   "op": "BT",
+   "target": "doenças de pele"
+  },
+  {
+   "term": "manejo (sementes para produção de mudas e repovoamento)",
+   "conceptId": "16a26f2b-04e4-402e-a726-1eed69451f8c",
+   "labelId": "ee9a5490-4e87-4c56-9d03-df7f15c7b25f",
+   "version": 1,
+   "op": "ALT",
+   "target": "manejo"
+  },
+  {
+   "term": "manejo de reações adversas",
+   "conceptId": "89c02e1f-f42d-4a51-8a7d-b213d2d09203",
+   "labelId": "8ac3027c-3644-4d8a-bd9d-0c1bde9d7aa7",
+   "version": 1,
+   "op": "DEP",
+   "target": "medicinal"
+  },
+  {
+   "term": "manufatura",
+   "conceptId": "4aef7663-c115-4853-9f9f-fd47eae03f2b",
+   "labelId": "5aa2f2ce-9029-4cb1-ba50-4a4ca1ab7884",
+   "version": 1,
+   "op": "ALT",
+   "target": "artesanato"
+  },
+  {
+   "term": "matar larva da dengue",
+   "conceptId": "0ac6d872-638f-4552-96c7-47d26416bf9b",
+   "labelId": "1715059f-999e-4b50-b558-281367b1bf67",
+   "version": 1,
+   "op": "ALT",
+   "target": "inseticida"
+  },
+  {
+   "term": "mau hálito",
+   "conceptId": "4f4299c2-fa40-4cff-9e20-2faade8aed7d",
+   "labelId": "e818250f-939b-4271-b3b8-e00b5de904e1",
+   "version": 1,
+   "op": "BT",
+   "target": "cosmético e higiene"
+  },
+  {
+   "term": "medicinal",
+   "conceptId": "fd58fbcd-1b92-4eac-b7de-eeb4e9c49769",
+   "labelId": "4774e098-4e0d-41e3-823d-de1e032d62b9",
+   "version": 2,
+   "op": "BT",
+   "target": null
+  },
+  {
+   "term": "medicinal (seiva do palmito jovem para desinfecção, anestésico, coagulação do sangue)",
+   "conceptId": "4b2304fc-573e-4702-99da-2ec4d36a7c31",
+   "labelId": "d2e7285d-f638-462e-a5e8-717b62fda779",
+   "version": 1,
+   "op": "DEP",
+   "target": "medicinal"
+  },
+  {
+   "term": "memória",
+   "conceptId": "6418ffde-c90a-4fb3-9a7f-7a58e39d0f40",
+   "labelId": "10fecb57-552d-4843-ba67-cdddc3f900e9",
+   "version": 1,
+   "op": "ALT",
+   "target": "esquecimento"
+  },
+  {
+   "term": "menopausa",
+   "conceptId": "27b92a45-0628-40b1-9c6e-32031501caef",
+   "labelId": "be24754d-2a36-4df5-8c37-5059921cc746",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas ginecológicos e obstétricos"
+  },
+  {
+   "term": "menstruação",
+   "conceptId": "8284d578-ebb3-4fbb-ab98-86662440dca0",
+   "labelId": "bf7b9e3a-b746-4a3e-8e63-ef0a1a06a156",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas ginecológicos e obstétricos"
+  },
+  {
+   "term": "menstruação atrasada",
+   "conceptId": "b76b10a4-035e-4d75-b352-f889172adb78",
+   "labelId": "fe6a3078-688a-499b-ac1e-1895b5e0a111",
+   "version": 1,
+   "op": "ALT",
+   "target": "menstruação"
+  },
+  {
+   "term": "menstruação dolorosa",
+   "conceptId": "f2a7766a-f1bd-4306-b738-086a9b70808c",
+   "labelId": "807333ba-412f-4452-ab65-f3307e00b7c6",
+   "version": 1,
+   "op": "ALT",
+   "target": "cólica menstrual"
+  },
+  {
+   "term": "micoses",
+   "conceptId": "0c7cc09c-7482-478b-94b3-900905765645",
+   "labelId": "d24cda56-13c6-4212-94ec-b592ae88ab3c",
+   "version": 1,
+   "op": "BT",
+   "target": "doenças de pele"
+  },
+  {
+   "term": "mioma",
+   "conceptId": "220c8e85-d368-48d9-b520-fdb957e3c8ec",
+   "labelId": "6b7bdc4b-0a91-4af5-ae6e-9f26ef2d093f",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas ginecológicos e obstétricos"
+  },
+  {
+   "term": "mordida de cobra",
+   "conceptId": "f91a0bff-5e4b-4046-9252-cb75e6adc670",
+   "labelId": "126ac657-0299-41dd-9ec3-c9556584be67",
+   "version": 1,
+   "op": "ALT",
+   "target": "picada de cobra"
+  },
+  {
+   "term": "mucosite oral",
+   "conceptId": "b7b9e64e-2a25-49f4-91b3-228660928382",
+   "labelId": "b6221e23-8a63-40cd-b305-2fa45164359d",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas digestivos"
+  },
+  {
+   "term": "má circulação do sangue",
+   "conceptId": "68d59883-1bb6-4ecf-ad25-1c862a728548",
+   "labelId": "41e48598-e7fc-4913-8b57-c8285263f7f3",
+   "version": 1,
+   "op": "ALT",
+   "target": "problemas circulatórios"
+  },
+  {
+   "term": "má digestão",
+   "conceptId": "1632bfee-5d41-4fad-b476-7baf7dd4d47f",
+   "labelId": "9e3d7fec-84bc-414e-8f7e-867f6f2fe25e",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas digestivos"
+  },
+  {
+   "term": "mágico",
+   "conceptId": "e388dc01-12d8-440b-94de-be37400ac2f8",
+   "labelId": "23c97003-f437-427d-8c05-a0fec89aa236",
+   "version": 1,
+   "op": "BT",
+   "target": "ritual e espiritual"
+  },
+  {
+   "term": "místico",
+   "conceptId": "794c8f5f-541d-4fa4-bba6-41c0f14697ed",
+   "labelId": "7003577f-11c4-44f3-8bbc-7cf946bdda8e",
+   "version": 1,
+   "op": "BT",
+   "target": "ritual e espiritual"
+  },
+  {
+   "term": "móveis",
+   "conceptId": "aa65020f-5fc7-469b-bea6-eb6593c11fb1",
+   "labelId": "c6985940-421d-4e4b-81f3-8807062c5951",
+   "version": 1,
+   "op": "BT",
+   "target": "material e tecnológico"
+  },
+  {
+   "term": "músculos",
+   "conceptId": "2553ff54-1499-44c3-ac3f-a7f161c54f78",
+   "labelId": "d4b75eb9-4834-48dc-8dd8-f853f3c73a0f",
+   "version": 1,
+   "op": "ALT",
+   "target": "dores musculares"
+  },
+  {
+   "term": "nervos",
+   "conceptId": "8b59ab7f-63df-4dbd-97a3-6b4880dde884",
+   "labelId": "bfaddd7b-9bec-419c-aeb2-0d51fd6b1526",
+   "version": 1,
+   "op": "ALT",
+   "target": "nervosismo"
+  },
+  {
+   "term": "nervosismo",
+   "conceptId": "e65d051e-ae46-4a7f-9320-a9908c951d82",
+   "labelId": "d27c53b2-6bc5-4a49-b3a0-544cdaea86bc",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas neurológicos e psíquicos"
+  },
+  {
+   "term": "nervoso",
+   "conceptId": "7fa358c1-bca7-4df3-ae71-e024288b6c4c",
+   "labelId": "cb1692af-64f8-451a-88f5-d0e2a034da7d",
+   "version": 1,
+   "op": "ALT",
+   "target": "nervosismo"
+  },
+  {
+   "term": "nevralgia",
+   "conceptId": "837c9c16-5008-426f-9568-812d26d0e39d",
+   "labelId": "f4e8af5b-445d-4986-bb0c-906443d49b15",
+   "version": 1,
+   "op": "BT",
+   "target": "dor"
+  },
+  {
+   "term": "normalizar a pressão",
+   "conceptId": "adce6d3f-4753-4714-891a-6d17b433a419",
+   "labelId": "764c22d7-c019-4e55-bca5-3e0fdefd37c3",
+   "version": 1,
+   "op": "ALT",
+   "target": "pressão alta"
+  },
+  {
+   "term": "náusea",
+   "conceptId": "900e32cd-9366-4116-b8b5-6b7ccbadb1ab",
+   "labelId": "184cbccc-dbba-4b5e-abd3-76a81945ac1f",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas digestivos"
+  },
+  {
+   "term": "náuseas",
+   "conceptId": "6b4a15f9-c5bb-496f-9172-096855436a16",
+   "labelId": "5b263c57-7067-4035-9a2e-f387c7c8b0f1",
+   "version": 1,
+   "op": "ALT",
+   "target": "náusea"
+  },
+  {
+   "term": "não especificado",
+   "conceptId": "a733211e-d1f5-4760-8b99-5d320cae8cb3",
+   "labelId": "6410fdfc-0c82-4d4f-b853-61da8ea32577",
+   "version": 1,
+   "op": "DEP",
+   "target": "indeterminado"
+  },
+  {
+   "term": "olho",
+   "conceptId": "ad1c45d8-1f86-48db-87e0-cadab0dcbe31",
+   "labelId": "3bb87aa1-749f-41f3-bdb0-437ffbeb5693",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas oftálmicos"
+  },
+  {
+   "term": "olho gordo",
+   "conceptId": "1a814a9d-3bb0-4d90-b095-631b888c871d",
+   "labelId": "815037b8-23c8-4b62-b4ac-15f1f1356cc6",
+   "version": 1,
+   "op": "BT",
+   "target": "ritual e espiritual"
+  },
+  {
+   "term": "ornamental",
+   "conceptId": "8c70949b-cf9e-47ee-9fbe-f7e4a66a35fa",
+   "labelId": "c4c41802-1424-42f8-9d62-9be071b71d23",
+   "version": 1,
+   "op": "BT",
+   "target": "ambiental e ecológico"
+  },
+  {
+   "term": "ossos",
+   "conceptId": "4bcc9440-bed7-402d-b619-f7b459da36ea",
+   "labelId": "e2b12eda-a27e-4baf-befe-1ba0ec531f68",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas osteomusculares"
+  },
+  {
+   "term": "outros",
+   "conceptId": "bf73c17e-6487-44b4-be0b-dc92944aa524",
+   "labelId": "5428901b-ad44-4ad6-98a7-f7ee8b03128c",
+   "version": 1,
+   "op": "DEP",
+   "target": "indeterminado"
+  },
+  {
+   "term": "ouvido",
+   "conceptId": "e71ae7da-f46b-4c03-a2bf-fd5073541b9f",
+   "labelId": "c0860f91-714e-4c4b-86ac-928d838b73f5",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas otorrinolaringológicos"
+  },
+  {
+   "term": "pain",
+   "conceptId": "f7b7b918-1dc2-42ec-9eb2-3e2bc213f96d",
+   "labelId": "a8d5c725-fa68-4a42-8896-4712ffbece21",
+   "version": 1,
+   "op": "ALT",
+   "target": "dor"
+  },
+  {
+   "term": "pain in the articulation",
+   "conceptId": "5de9f288-2896-4b9e-8e8f-e2af2a91a0c3",
+   "labelId": "ae16c568-437b-49f1-8b6c-6d02196c59e7",
+   "version": 1,
+   "op": "ALT",
+   "target": "dor nas articulações"
+  },
+  {
+   "term": "paisagístico",
+   "conceptId": "66c294fd-3e26-43e8-8adc-a0a82a9e5eff",
+   "labelId": "6f23a0d7-2784-4b28-950b-eca7b0379027",
+   "version": 1,
+   "op": "BT",
+   "target": "ambiental e ecológico"
+  },
+  {
+   "term": "palpitação do coração",
+   "conceptId": "78d9c486-7c8a-4c2d-8412-f66c63649bc0",
+   "labelId": "76600143-b476-451a-ae45-cb4ecd079c20",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas do coração"
+  },
+  {
+   "term": "palpitação no coração",
+   "conceptId": "6f5b9ad0-c5c1-4172-b112-993fd08ed913",
+   "labelId": "60bc97ea-7d66-4165-bbf5-9b40c30520a2",
+   "version": 1,
+   "op": "ALT",
+   "target": "palpitação do coração"
+  },
+  {
+   "term": "palpitações",
+   "conceptId": "5a196980-7665-46ee-a14a-a4229b109de3",
+   "labelId": "96698c5d-33f0-451a-9a70-a5c9525b0030",
+   "version": 1,
+   "op": "ALT",
+   "target": "palpitação do coração"
+  },
+  {
+   "term": "pancadas",
+   "conceptId": "31c8e0e2-7d9f-4b8e-a7ee-446a3d7039f1",
+   "labelId": "776260ee-1b59-4b86-ae6d-7121fed23a6f",
+   "version": 1,
+   "op": "ALT",
+   "target": "contusão"
+  },
+  {
+   "term": "panos",
+   "conceptId": "a1712749-30d2-4954-a6de-75e880660f7d",
+   "labelId": "275a1079-ed9f-4bf1-9ca1-4e0a3799dfc5",
+   "version": 1,
+   "op": "ALT",
+   "target": "revestimento"
+  },
+  {
+   "term": "para digestão",
+   "conceptId": "f7870749-a4d4-466b-9ede-0048f376d539",
+   "labelId": "61695a0a-f210-489f-bd5b-45a1aed3fea6",
+   "version": 1,
+   "op": "ALT",
+   "target": "má digestão"
+  },
+  {
+   "term": "para fazer a digestão",
+   "conceptId": "78243cbe-31a7-46d0-8dff-0ea505f71dde",
+   "labelId": "8bcb9755-5610-4e12-9b88-5f0314decd99",
+   "version": 1,
+   "op": "ALT",
+   "target": "má digestão"
+  },
+  {
+   "term": "para limpar a pele",
+   "conceptId": "152182c9-1192-42a5-8bb3-99544dcfa44a",
+   "labelId": "7dafb3eb-5dd7-4b65-8520-0a2509fb684a",
+   "version": 1,
+   "op": "ALT",
+   "target": "doenças de pele"
+  },
+  {
+   "term": "para o fígado",
+   "conceptId": "0d5e269e-54d7-4d75-82a8-5faca5d2be3b",
+   "labelId": "7e9a88a6-8486-4f92-a14c-c6a95679795a",
+   "version": 1,
+   "op": "ALT",
+   "target": "problemas do fígado"
+  },
+  {
+   "term": "para queimaduras",
+   "conceptId": "8402e27a-6df7-4b0b-9c42-9d107d575275",
+   "labelId": "50c60323-0a13-4730-b9e9-a27d52dcd7e4",
+   "version": 1,
+   "op": "ALT",
+   "target": "queimadura"
+  },
+  {
+   "term": "para recuperar do cansaço",
+   "conceptId": "f4e4a3d2-a3c9-4b87-a7c1-2fa315c228f3",
+   "labelId": "8e21ebf3-58d4-4cff-9627-b328c05186c1",
+   "version": 1,
+   "op": "ALT",
+   "target": "cansaço"
+  },
+  {
+   "term": "paralisia",
+   "conceptId": "219f0cb1-4857-42e5-a28c-d2f6e7e0ab0f",
+   "labelId": "c78f763b-b091-4fa0-8515-f16a41f979ed",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas neurológicos e psíquicos"
+  },
+  {
+   "term": "parasitas",
+   "conceptId": "6e4f0d64-0ad0-4dc5-a6b3-33b3539fdde8",
+   "labelId": "3f6e636f-d788-4a06-bb78-c90fb417639c",
+   "version": 1,
+   "op": "BT",
+   "target": "doenças infecciosas e parasitárias"
+  },
+  {
+   "term": "parto",
+   "conceptId": "df69a4e3-70e9-455c-8c2a-65c56c596f3a",
+   "labelId": "645884c2-642f-469e-b9ed-9cf9ca079b57",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas ginecológicos e obstétricos"
+  },
+  {
+   "term": "pedra na vesícula",
+   "conceptId": "47484bb0-e60e-457b-9421-7b556fdcfef3",
+   "labelId": "e2b82f99-2cdc-4586-bd0c-b82ede02a6b0",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas do fígado"
+  },
+  {
+   "term": "pedra no rim",
+   "conceptId": "15e10b42-0ce5-40de-afaf-7282d80ba9e6",
+   "labelId": "2de2c686-6c62-435b-a672-0b50118c8035",
+   "version": 1,
+   "op": "ALT",
+   "target": "pedra nos rins"
+  },
+  {
+   "term": "pedra nos rins",
+   "conceptId": "438fdd4c-3eb2-4528-860f-d2b18b6996bd",
+   "labelId": "07f91350-06eb-4916-990c-6be51048281c",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas renais"
+  },
+  {
+   "term": "pedras nos rins",
+   "conceptId": "162210a4-341f-4e64-8579-62e651f24c90",
+   "labelId": "ac0bccd3-c5aa-4020-a07e-7a2578807e79",
+   "version": 1,
+   "op": "ALT",
+   "target": "pedra nos rins"
+  },
+  {
+   "term": "peito",
+   "conceptId": "a388d0fe-435c-4de5-81f8-197cffdfbf44",
+   "labelId": "df4bbed9-6d9b-44f7-ab33-6e899dce4d27",
+   "version": 1,
+   "op": "DEP",
+   "target": "indeterminado"
+  },
+  {
+   "term": "pele",
+   "conceptId": "094ed108-d0d5-4250-a36c-286ccfaa6d6d",
+   "labelId": "d4e336ca-bcb2-4814-9487-0ae685a8ca42",
+   "version": 1,
+   "op": "ALT",
+   "target": "doenças de pele"
+  },
+  {
+   "term": "perda de apetite",
+   "conceptId": "b580d4a8-f842-428d-8d1f-e22fbc3fb310",
+   "labelId": "d99f6524-b019-44d9-951a-d43766a9cbfd",
+   "version": 1,
+   "op": "ALT",
+   "target": "apetite"
+  },
+  {
+   "term": "perda de peso",
+   "conceptId": "38be3588-4007-4565-b8b5-22d54f7c33b8",
+   "labelId": "3868e44c-ab73-40f1-99b8-08a0bfc1b1a6",
+   "version": 1,
+   "op": "ALT",
+   "target": "emagrecedor"
+  },
+  {
+   "term": "pernas",
+   "conceptId": "b71e05fc-1050-497f-a243-9eba869f5792",
+   "labelId": "d3448efd-261e-4d01-b004-a87c962fd535",
+   "version": 1,
+   "op": "DEP",
+   "target": "indeterminado"
+  },
+  {
+   "term": "pesca",
+   "conceptId": "26c037de-1a51-419b-8e6f-2fb53b0567a3",
+   "labelId": "88a5b644-d6c3-4d14-93df-df57fe7c305f",
+   "version": 1,
+   "op": "BT",
+   "target": "material e tecnológico"
+  },
+  {
+   "term": "picada de abelha",
+   "conceptId": "2e824892-9a50-4a5f-b408-a4d7d4eb782d",
+   "labelId": "ab30199d-2a50-46cd-9c90-d279057db5a1",
+   "version": 1,
+   "op": "ALT",
+   "target": "picada de insetos"
+  },
+  {
+   "term": "picada de aranha",
+   "conceptId": "816a8391-5a2c-4caf-a407-50d8465db4c8",
+   "labelId": "e3609430-a029-4c18-9506-ba7324af248a",
+   "version": 1,
+   "op": "ALT",
+   "target": "picada de insetos"
+  },
+  {
+   "term": "picada de cobra",
+   "conceptId": "d451c08e-4766-4174-bf56-4f8223a88963",
+   "labelId": "26b7874d-59ce-4f3a-b892-acbb94a32f70",
+   "version": 1,
+   "op": "BT",
+   "target": "envenenamentos e picadas"
+  },
+  {
+   "term": "picada de insetos",
+   "conceptId": "19accd3f-0662-4d0c-9d05-620eda3c0964",
+   "labelId": "fc924139-6a5b-4b3e-aa35-0245047b5423",
+   "version": 1,
+   "op": "BT",
+   "target": "envenenamentos e picadas"
+  },
+  {
+   "term": "picada de mosquito",
+   "conceptId": "c8700632-71e1-47a6-add8-c7ea850028ef",
+   "labelId": "8d983e33-44b8-4884-a5e3-b329684eaf12",
+   "version": 1,
+   "op": "ALT",
+   "target": "picada de insetos"
+  },
+  {
+   "term": "picadas",
+   "conceptId": "5de527aa-99aa-42eb-82c6-1180b79eeab2",
+   "labelId": "b0cacfa1-8462-471f-accb-8af4c0bd5bf1",
+   "version": 1,
+   "op": "ALT",
+   "target": "picada de insetos"
+  },
+  {
+   "term": "picadas de insetos",
+   "conceptId": "7a81269b-b48a-4782-b9ce-dd7b4474488d",
+   "labelId": "60c58cd3-ce3d-482d-b195-9bbba65e3dc6",
+   "version": 1,
+   "op": "ALT",
+   "target": "picada de insetos"
+  },
+  {
+   "term": "pigmentação",
+   "conceptId": "758fd566-dbcb-4a08-8a1e-83e4f2e4918c",
+   "labelId": "be04ce76-3b93-4a14-a236-ec76b8c31bed",
+   "version": 1,
+   "op": "BT",
+   "target": "cosmético e higiene"
+  },
+  {
+   "term": "piolho",
+   "conceptId": "ec3b7de6-ece8-4765-acdf-b3d937e548d5",
+   "labelId": "b343e742-eb79-490a-8b59-f977988a9333",
+   "version": 1,
+   "op": "ALT",
+   "target": "parasitas"
+  },
+  {
+   "term": "piorreia",
+   "conceptId": "29afd579-c0b3-4325-a1ac-826e87479f52",
+   "labelId": "94633f0c-c6f9-4e9c-963a-98ce7e8f9dbc",
+   "version": 1,
+   "op": "ALT",
+   "target": "gengiva"
+  },
+  {
+   "term": "pneumonia",
+   "conceptId": "3e7d830b-86ff-4f27-b8bd-9053c35ad704",
+   "labelId": "f38087df-562d-4f0d-b874-c00b8582ce25",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas respiratórios"
+  },
+  {
+   "term": "ponta de flecha",
+   "conceptId": "21fbf7e3-ffb6-4241-a53f-f0d64d51d8c3",
+   "labelId": "bddd8385-b738-4e1a-ace3-519ab14218fd",
+   "version": 1,
+   "op": "BT",
+   "target": "material e tecnológico"
+  },
+  {
+   "term": "pontada",
+   "conceptId": "9add4156-cce9-44c7-85ec-02240951cb59",
+   "labelId": "0734befc-fc6d-49d7-ac71-ab171fb9a780",
+   "version": 1,
+   "op": "BT",
+   "target": "dor"
+  },
+  {
+   "term": "pontadas (pneumonia)",
+   "conceptId": "a0d31df6-1cd7-4f55-b61e-3af47f537b3f",
+   "labelId": "50a2b902-18ba-48f4-9177-f527980dbccb",
+   "version": 1,
+   "op": "ALT",
+   "target": "pneumonia"
+  },
+  {
+   "term": "porrete",
+   "conceptId": "1b690814-5119-4f7c-ba8c-7c69a20622b5",
+   "labelId": "63ff10d2-c408-49d3-918a-8097088ef907",
+   "version": 1,
+   "op": "BT",
+   "target": "material e tecnológico"
+  },
+  {
+   "term": "possível atividade antitumoral",
+   "conceptId": "d7461b15-b40c-4f99-8507-a4b91004392f",
+   "labelId": "3bc1e452-20c0-4a23-8463-6223566a4eee",
+   "version": 1,
+   "op": "DEP",
+   "target": "medicinal"
+  },
+  {
+   "term": "postema",
+   "conceptId": "64226fd0-f6e7-4038-9409-5e7fd1085626",
+   "labelId": "ca51c0b0-0d2d-4a9c-9523-582b6ffdc53d",
+   "version": 1,
+   "op": "BT",
+   "target": "doenças de pele"
+  },
+  {
+   "term": "postpartum confinement",
+   "conceptId": "12e377e6-d690-4f10-9977-ed39ba7826f2",
+   "labelId": "2bdd5de8-accb-4157-b5c7-1d897914ba00",
+   "version": 1,
+   "op": "ALT",
+   "target": "parto"
+  },
+  {
+   "term": "pressão",
+   "conceptId": "e2b9525a-e9a1-44ff-aef7-f792d41de44a",
+   "labelId": "381b0a57-559b-417f-999c-667293be0cd6",
+   "version": 1,
+   "op": "ALT",
+   "target": "pressão alta"
+  },
+  {
+   "term": "pressão alta",
+   "conceptId": "d957ba42-21aa-4249-9b3e-c4fbcc6bd87e",
+   "labelId": "060e2ba9-ffad-40ae-ad75-ed512fd67dbd",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas circulatórios"
+  },
+  {
+   "term": "pressão baixa",
+   "conceptId": "c33f3ba9-8a66-4c26-b27c-cba35526cb84",
+   "labelId": "12cf819c-b494-43c8-b8da-526ef2d3edf1",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas circulatórios"
+  },
+  {
+   "term": "prevenir a gripe",
+   "conceptId": "b40cd52f-b341-46fd-a5f0-adfdaff7e358",
+   "labelId": "5bf5f623-fb31-4832-8188-88c59d95ee28",
+   "version": 1,
+   "op": "ALT",
+   "target": "gripe"
+  },
+  {
+   "term": "prevent stoke",
+   "conceptId": "da75c38b-2371-4868-a0f9-314484a47d80",
+   "labelId": "78872e62-4902-4296-aa36-2675e2bb634b",
+   "version": 1,
+   "op": "HID",
+   "target": "derrame"
+  },
+  {
+   "term": "prevent stroke",
+   "conceptId": "e2e90889-86bc-4f2a-a12a-dcd3c621126a",
+   "labelId": "6378af69-96c5-46fb-a5d7-786e358f0d85",
+   "version": 1,
+   "op": "ALT",
+   "target": "derrame"
+  },
+  {
+   "term": "prevenção de derrame",
+   "conceptId": "98eb0535-b3ba-4e1f-ad94-76231418414f",
+   "labelId": "8686f487-568d-4207-93af-e2bf0987ea5a",
+   "version": 1,
+   "op": "ALT",
+   "target": "derrame"
+  },
+  {
+   "term": "prisão de ventre",
+   "conceptId": "9b1574b0-f014-4cc4-aa71-3cfe057fcf4d",
+   "labelId": "f22293ff-8b93-410a-ad1b-24083669a77a",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas digestivos"
+  },
+  {
+   "term": "problema de rim",
+   "conceptId": "0f46f00f-8900-4221-bdbb-bb4c4de567e0",
+   "labelId": "83d62a0e-cab4-4c77-9928-3fb1eb996448",
+   "version": 1,
+   "op": "ALT",
+   "target": "problemas renais"
+  },
+  {
+   "term": "problema no coração",
+   "conceptId": "fa6e662b-aeaa-4baf-84ee-7ae0342b6ddd",
+   "labelId": "0850b111-c722-4f00-b358-386f393a4297",
+   "version": 1,
+   "op": "ALT",
+   "target": "problemas do coração"
+  },
+  {
+   "term": "problema no fígado",
+   "conceptId": "cf0f1029-4ed8-447d-809c-5dea8ace031b",
+   "labelId": "c703c32d-fdca-48af-87e5-70e5fd8e4d88",
+   "version": 1,
+   "op": "ALT",
+   "target": "problemas do fígado"
+  },
+  {
+   "term": "problema nos rins",
+   "conceptId": "76618cec-a5ab-4acd-9156-27888b395ca6",
+   "labelId": "c8009960-4629-41b3-8957-2e6bf28aa217",
+   "version": 1,
+   "op": "ALT",
+   "target": "problemas renais"
+  },
+  {
+   "term": "problema renal",
+   "conceptId": "b0d50324-1dc2-454a-931f-71094a716749",
+   "labelId": "6bc3c9e9-492c-42c8-827a-cb9415b8d450",
+   "version": 1,
+   "op": "ALT",
+   "target": "problemas renais"
+  },
+  {
+   "term": "problemas circulatórios",
+   "conceptId": "ef59d24c-fa89-47ac-a84e-39f0ab4b229b",
+   "labelId": "71ea2626-4167-450a-990d-0db3dbd1d8a5",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas cardiovasculares"
+  },
+  {
+   "term": "problemas com o fígado",
+   "conceptId": "1ded1c0f-6bf4-4475-8c29-5275d687934b",
+   "labelId": "a63e0f36-ffd5-4d61-9f74-b2f41c8af62b",
+   "version": 1,
+   "op": "ALT",
+   "target": "problemas do fígado"
+  },
+  {
+   "term": "problemas de dentição",
+   "conceptId": "cdabbd84-29c0-44d3-a24e-4a3bc065f866",
+   "labelId": "264726dd-aaa3-46e7-acac-201b19c192a0",
+   "version": 1,
+   "op": "ALT",
+   "target": "dente"
+  },
+  {
+   "term": "problemas de fígado",
+   "conceptId": "66219edd-6a54-4542-816a-bb44e79165a8",
+   "labelId": "1c66e590-be0a-4940-ad15-81e8432762e6",
+   "version": 1,
+   "op": "ALT",
+   "target": "problemas do fígado"
+  },
+  {
+   "term": "problemas de pele",
+   "conceptId": "cd7dad91-c1b0-42db-902b-c1a92f26e08d",
+   "labelId": "4920d07b-cd23-4f66-bf99-023f28748162",
+   "version": 1,
+   "op": "ALT",
+   "target": "doenças de pele"
+  },
+  {
+   "term": "problemas de próstata",
+   "conceptId": "23616863-a2af-449b-80f2-41727409ee54",
+   "labelId": "4c1bb831-f354-49ed-94b2-34cf993a6c7f",
+   "version": 1,
+   "op": "ALT",
+   "target": "próstata"
+  },
+  {
+   "term": "problemas de rins",
+   "conceptId": "07354e8d-94f8-4b00-8f36-50445fd2f3e3",
+   "labelId": "8a3bfd61-6171-4693-8459-26dedfe9e6d6",
+   "version": 1,
+   "op": "ALT",
+   "target": "problemas renais"
+  },
+  {
+   "term": "problemas digestivos",
+   "conceptId": "395e4907-faaa-464b-85c6-1c11db3b5bbd",
+   "labelId": "e475c35f-41ae-4cc2-8055-07c781070a34",
+   "version": 1,
+   "op": "BT",
+   "target": "indicação terapêutica"
+  },
+  {
+   "term": "problemas do coração",
+   "conceptId": "03dfabf1-9993-4dc5-bfcc-e32f169b2ced",
+   "labelId": "f9ab7b04-5bc8-4cef-a9f1-26db5f75c247",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas cardiovasculares"
+  },
+  {
+   "term": "problemas do estômago",
+   "conceptId": "cfee4d88-73de-421a-b1d5-2eeae041d9e1",
+   "labelId": "800e7102-d66f-401d-a3cb-b06d82c60cc1",
+   "version": 1,
+   "op": "ALT",
+   "target": "problemas digestivos"
+  },
+  {
+   "term": "problemas do fígado",
+   "conceptId": "472fcc55-2853-4e9c-a8b7-d56a66188bc2",
+   "labelId": "91bd2fd0-f82c-480e-8a16-8aab0452485b",
+   "version": 1,
+   "op": "BT",
+   "target": "indicação terapêutica"
+  },
+  {
+   "term": "problemas estomacais",
+   "conceptId": "43260480-1947-43d4-a645-faea4e99c983",
+   "labelId": "7dd8d218-6bab-4d83-a910-bb0a9d1c5604",
+   "version": 1,
+   "op": "ALT",
+   "target": "problemas digestivos"
+  },
+  {
+   "term": "problemas na bexiga",
+   "conceptId": "8ab21d26-f578-4c7d-bacb-02552431d3a5",
+   "labelId": "40c46538-360a-4e6f-beec-c9662f3c7f5e",
+   "version": 1,
+   "op": "ALT",
+   "target": "bexiga"
+  },
+  {
+   "term": "problemas na coluna",
+   "conceptId": "f3707346-4618-42da-83b5-3812ab7e2688",
+   "labelId": "ea23126e-29d2-4de7-8f03-2344976d1d9d",
+   "version": 1,
+   "op": "ALT",
+   "target": "coluna"
+  },
+  {
+   "term": "problemas na garganta",
+   "conceptId": "e32cfb0f-4207-4cde-902b-7c5f47126d73",
+   "labelId": "2f3f2c81-53fe-48b6-a44b-eb26d04e2368",
+   "version": 1,
+   "op": "ALT",
+   "target": "inflamação na garganta"
+  },
+  {
+   "term": "problemas na próstata",
+   "conceptId": "20c836a7-1ae9-4921-8e04-408591be255f",
+   "labelId": "ea7cf80e-2b89-4ec7-b452-e4f6869109db",
+   "version": 1,
+   "op": "ALT",
+   "target": "próstata"
+  },
+  {
+   "term": "problemas nas vias respiratórias",
+   "conceptId": "2a5a9806-6c03-47e9-8362-6769c4fa39cb",
+   "labelId": "2328f57f-ddb7-4bef-a076-d5ce14cb0a72",
+   "version": 1,
+   "op": "ALT",
+   "target": "problemas respiratórios"
+  },
+  {
+   "term": "problemas no coração",
+   "conceptId": "b54b7d25-aa94-4609-ada3-269faff7d66f",
+   "labelId": "879a1ca4-42dd-4c8e-9793-56b19a2ce2d1",
+   "version": 1,
+   "op": "ALT",
+   "target": "problemas do coração"
+  },
+  {
+   "term": "problemas no fígado",
+   "conceptId": "fa68adf8-503a-4484-9bfa-69132f42e4f4",
+   "labelId": "06df02c7-23ba-4433-a8aa-6f34589c4b76",
+   "version": 1,
+   "op": "ALT",
+   "target": "problemas do fígado"
+  },
+  {
+   "term": "problemas no pulmão",
+   "conceptId": "7b4abdfa-265b-4485-9bfe-f40c9d5535c5",
+   "labelId": "586b2c94-ae9e-4dfe-aee5-86dbfbe5b39a",
+   "version": 1,
+   "op": "ALT",
+   "target": "problemas respiratórios"
+  },
+  {
+   "term": "problemas nos rins",
+   "conceptId": "07ed9ef3-2804-42ee-897a-38a407b2924e",
+   "labelId": "bc87c26e-0137-489b-a193-0310eb2a6014",
+   "version": 1,
+   "op": "ALT",
+   "target": "problemas renais"
+  },
+  {
+   "term": "problemas nos rins e bexiga",
+   "conceptId": "8de15e6e-ab23-4a90-be43-5f181b5f702b",
+   "labelId": "7306e33e-8570-4488-a5ea-fc273872dc00",
+   "version": 1,
+   "op": "ALT",
+   "target": "problemas renais"
+  },
+  {
+   "term": "problemas pulmonares",
+   "conceptId": "447e13ae-c3b1-41a8-8408-133ac49b3b6e",
+   "labelId": "51366655-30e8-405f-b17b-94b4602d33c4",
+   "version": 1,
+   "op": "ALT",
+   "target": "problemas respiratórios"
+  },
+  {
+   "term": "problemas renais",
+   "conceptId": "2a09ce7f-1a6e-42f7-a580-660a19f25e29",
+   "labelId": "d0209394-51e8-4cc6-b5f6-8b03d68082c8",
+   "version": 1,
+   "op": "BT",
+   "target": "indicação terapêutica"
+  },
+  {
+   "term": "problemas respiratórios",
+   "conceptId": "5bbc60f3-5ea6-4047-95c0-65a5f3b1f20a",
+   "labelId": "3c886c00-7419-47d7-a1fc-db3f4c9195f1",
+   "version": 1,
+   "op": "BT",
+   "target": "indicação terapêutica"
+  },
+  {
+   "term": "problemas urinários",
+   "conceptId": "8310278a-9a57-4e61-b7f4-4cb329298055",
+   "labelId": "0a92f92c-2c1c-44bc-b954-d038a590070d",
+   "version": 1,
+   "op": "ALT",
+   "target": "problemas renais"
+  },
+  {
+   "term": "próstata",
+   "conceptId": "9d97c42a-c5bf-4c82-bde8-1813fd062842",
+   "labelId": "c87315cf-ea16-4597-8557-e60425692910",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas do aparelho reprodutor masculino"
+  },
+  {
+   "term": "psoríase",
+   "conceptId": "5f94c38e-42bd-4d74-a01d-46c9d69ed720",
+   "labelId": "6d54113e-7d46-475c-bde7-508ca9f71620",
+   "version": 1,
+   "op": "BT",
+   "target": "doenças de pele"
+  },
+  {
+   "term": "pulmão",
+   "conceptId": "7d85e747-10a5-4633-b311-f696352e61b7",
+   "labelId": "db039ccd-0baf-4a90-b2e4-f07842f73702",
+   "version": 1,
+   "op": "ALT",
+   "target": "problemas respiratórios"
+  },
+  {
+   "term": "purgante",
+   "conceptId": "f59a06b6-9e6e-420a-8c05-9257cac4d99a",
+   "labelId": "a9794004-7343-4f80-8d40-f0271b2d2ec9",
+   "version": 1,
+   "op": "BT",
+   "target": "ação farmacológica"
+  },
+  {
+   "term": "purificante",
+   "conceptId": "4bc8fed0-3890-43c7-bfa4-eaae9e68385c",
+   "labelId": "2c37865c-c787-4638-8a82-e09a502616ea",
+   "version": 1,
+   "op": "ALT",
+   "target": "depurativo"
+  },
+  {
+   "term": "purificar o sangue",
+   "conceptId": "db5a1de0-786d-4176-8f65-189ce063a9d3",
+   "labelId": "78f5c6fd-a77b-4f82-ab2c-d7a7a6e68cba",
+   "version": 1,
+   "op": "ALT",
+   "target": "depurativo"
+  },
+  {
+   "term": "qualquer dor",
+   "conceptId": "539673b5-fad4-4857-8c69-e73b7d2ab3a2",
+   "labelId": "a7f2b690-9340-4d9d-b245-deeaf0e6954d",
+   "version": 1,
+   "op": "ALT",
+   "target": "dor"
+  },
+  {
+   "term": "queda de cabelo",
+   "conceptId": "7d2df17a-c412-4609-b2ee-ba21c3b14882",
+   "labelId": "7b772120-98ac-4f09-8f27-afce00d63e3b",
+   "version": 1,
+   "op": "BT",
+   "target": "cabelo"
+  },
+  {
+   "term": "queimadura",
+   "conceptId": "818f0f14-044d-482b-aeee-3edb848e40f8",
+   "labelId": "8c8a93bc-684b-4562-8ea3-a4ad7d7b7142",
+   "version": 1,
+   "op": "BT",
+   "target": "traumatismos e ferimentos"
+  },
+  {
+   "term": "queimaduras",
+   "conceptId": "7aa76c54-62c7-4692-9e64-24bd46ae182c",
+   "labelId": "ab9acd6c-92c5-49bd-a8e7-9d07781da79b",
+   "version": 1,
+   "op": "ALT",
+   "target": "queimadura"
+  },
+  {
+   "term": "queimar as verrugas",
+   "conceptId": "a4bb16e8-3019-419b-9df9-850aea3beb4c",
+   "labelId": "019137dd-e320-484a-bee6-4083f2c294da",
+   "version": 1,
+   "op": "ALT",
+   "target": "verrugas"
+  },
+  {
+   "term": "queixo",
+   "conceptId": "c823aaf0-772f-4f71-a53d-9e314e086c27",
+   "labelId": "d59a3bb1-d47d-41dc-86bb-284d6c9a192d",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas odontológicos"
+  },
+  {
+   "term": "quengo",
+   "conceptId": "0164d31a-f665-4f11-827f-724067510789",
+   "labelId": "c3bddbba-b485-4c58-818c-45b01f8ae3d6",
+   "version": 1,
+   "op": "BT",
+   "target": "material e tecnológico"
+  },
+  {
+   "term": "químico",
+   "conceptId": "0a245eaa-b96d-48c3-be9f-9a4da7057c82",
+   "labelId": "00be7462-f22e-4c39-a58e-3662cf540f7c",
+   "version": 1,
+   "op": "BT",
+   "target": "material e tecnológico"
+  },
+  {
+   "term": "ralação",
+   "conceptId": "f37b3ac2-4447-442d-881f-81cb6d291e78",
+   "labelId": "85e88325-ed1a-4741-9889-97dc931e054f",
+   "version": 1,
+   "op": "BT",
+   "target": "material e tecnológico"
+  },
+  {
+   "term": "raquitismo",
+   "conceptId": "aaec797f-742f-4138-a3ba-d7688b6c28ac",
+   "labelId": "57932017-9a21-4936-b070-634ba6aa0f24",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas osteomusculares"
+  },
+  {
+   "term": "reconstituinte",
+   "conceptId": "7b93bdb2-f18b-401d-b48c-c1fa14be80d8",
+   "labelId": "16fea48f-fa12-4fcb-8480-bf5e6ed7c018",
+   "version": 1,
+   "op": "BT",
+   "target": "ação farmacológica"
+  },
+  {
+   "term": "reduce the male libido",
+   "conceptId": "87c81bfe-1bd6-43e5-8b35-c2d4d463529a",
+   "labelId": "eed6f2a1-e483-49ef-8b72-be9068bde76f",
+   "version": 1,
+   "op": "ALT",
+   "target": "diminuir libido masculina"
+  },
+  {
+   "term": "refrescante",
+   "conceptId": "8d856c0a-0301-4905-99e2-fcb775f5dcc6",
+   "labelId": "0dace40e-cdc6-4102-b8c9-fa76c40e4739",
+   "version": 1,
+   "op": "BT",
+   "target": "ação farmacológica"
+  },
+  {
+   "term": "regulador da pressão arterial",
+   "conceptId": "3b03fdcd-eb03-4abe-a7ff-bc9cb48b1851",
+   "labelId": "6e4afac9-2ece-4b64-b8d4-dd8c7df1f51d",
+   "version": 1,
+   "op": "ALT",
+   "target": "pressão alta"
+  },
+  {
+   "term": "regulador menstrual",
+   "conceptId": "b4ada046-32da-4c96-965c-9c019c4d0ce0",
+   "labelId": "94f67fc0-426e-4914-85b2-393b5e285370",
+   "version": 1,
+   "op": "ALT",
+   "target": "menstruação"
+  },
+  {
+   "term": "regular a menstruação",
+   "conceptId": "221777d7-5545-45f1-8371-0e75b3c7e76f",
+   "labelId": "42f23af0-793b-4c60-b50b-a1eebfb0172e",
+   "version": 1,
+   "op": "ALT",
+   "target": "menstruação"
+  },
+  {
+   "term": "regular a pressão",
+   "conceptId": "d814d486-42ac-44ef-b180-5157252b7ae1",
+   "labelId": "0014e29e-71b1-4d93-b015-5bf889f692a8",
+   "version": 1,
+   "op": "ALT",
+   "target": "pressão alta"
+  },
+  {
+   "term": "regular menstruação",
+   "conceptId": "e5689cae-b745-4817-8439-205cf50972df",
+   "labelId": "bb64cc30-f573-4069-9d8e-06dafbca7aad",
+   "version": 1,
+   "op": "ALT",
+   "target": "menstruação"
+  },
+  {
+   "term": "reinvigorate and gives energy",
+   "conceptId": "a44f1dac-3186-4756-a6db-656866450d22",
+   "labelId": "aef69787-0d22-45c8-aaa4-9693b8333083",
+   "version": 1,
+   "op": "ALT",
+   "target": "tonificante"
+  },
+  {
+   "term": "reinvigorate and gives you energy",
+   "conceptId": "b740fc1d-df05-475c-830b-bedf7c854707",
+   "labelId": "572295e1-a44b-4190-9b3f-985a7350d7a7",
+   "version": 1,
+   "op": "ALT",
+   "target": "tonificante"
+  },
+  {
+   "term": "relaxante",
+   "conceptId": "1e182edf-f2dd-45ff-a1a7-6cb6632aaa91",
+   "labelId": "8c970743-66b7-4837-8c96-799d855e7869",
+   "version": 1,
+   "op": "BT",
+   "target": "ação farmacológica"
+  },
+  {
+   "term": "relaxante muscular",
+   "conceptId": "d01deb52-10b1-4376-b92d-2a2b8057b35c",
+   "labelId": "399a7611-04a0-45c7-910d-efec47472f8d",
+   "version": 1,
+   "op": "ALT",
+   "target": "relaxante"
+  },
+  {
+   "term": "relaxar",
+   "conceptId": "54ae5872-5e24-406e-8a0b-cd8b0f17f1dd",
+   "labelId": "a2ab86fa-9bfa-4f92-9755-db3110aa473e",
+   "version": 1,
+   "op": "ALT",
+   "target": "calmante"
+  },
+  {
+   "term": "remediar",
+   "conceptId": "cce43730-b8a1-4536-94fe-47eea176f360",
+   "labelId": "532b44b6-a324-457c-ac61-87d8cb4a65ec",
+   "version": 1,
+   "op": "ALT",
+   "target": "remédio"
+  },
+  {
+   "term": "remédio",
+   "conceptId": "f3e8ea93-611e-47f4-9b8e-4dae921f3067",
+   "labelId": "bf4dae6f-9213-4f5d-9c78-5459e0efe4b8",
+   "version": 1,
+   "op": "BT",
+   "target": "ação farmacológica"
+  },
+  {
+   "term": "resfriado",
+   "conceptId": "c9c6a75f-c7b8-4498-a571-be2587abe556",
+   "labelId": "e3edee67-4bfb-4c58-b74b-dba31ab9b6df",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas respiratórios"
+  },
+  {
+   "term": "resfriados",
+   "conceptId": "bee2a90e-7341-4344-bb99-a24e4e1b75ed",
+   "labelId": "211427ab-c2c0-43e8-a2a1-4c3b4b638345",
+   "version": 1,
+   "op": "ALT",
+   "target": "resfriado"
+  },
+  {
+   "term": "resguardo pós-parto",
+   "conceptId": "19e6430b-2e9b-41f9-8719-a2d7da568ed3",
+   "labelId": "70d5414a-0ffc-4c23-9272-2778258c18a7",
+   "version": 1,
+   "op": "ALT",
+   "target": "parto"
+  },
+  {
+   "term": "respiratório",
+   "conceptId": "176cc06c-a08a-47bd-a7cb-4178ea122c34",
+   "labelId": "e51d5a30-142b-48dd-93fb-449fb2fc2da2",
+   "version": 1,
+   "op": "ALT",
+   "target": "problemas respiratórios"
+  },
+  {
+   "term": "ressecamento",
+   "conceptId": "3e43d45a-a2b7-40b4-8ec6-a0943ca25339",
+   "labelId": "f5420752-c0dc-4215-8cdd-a2fbbcd7f39a",
+   "version": 1,
+   "op": "BT",
+   "target": "doenças de pele"
+  },
+  {
+   "term": "retenção de líquidos",
+   "conceptId": "b7dc2bcd-2ceb-4761-acae-035873cccdfd",
+   "labelId": "5a35f4b4-e4de-4956-8491-0fb33fda5a62",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas renais"
+  },
+  {
+   "term": "reumatismo",
+   "conceptId": "e011fc25-fb40-4985-bfa7-e636d38f65df",
+   "labelId": "f465242a-4646-4fef-a77e-e6c395aeaf79",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas osteomusculares"
+  },
+  {
+   "term": "revestimento",
+   "conceptId": "06735c66-9bea-4d5a-a5dc-c6b5c293cd46",
+   "labelId": "05ad2120-c5a8-47df-9b06-404eead32cb7",
+   "version": 1,
+   "op": "BT",
+   "target": "construção"
+  },
+  {
+   "term": "revigorar",
+   "conceptId": "bac2f1fc-eb55-4c86-a9e7-60e6350e3ade",
+   "labelId": "d6bafea8-0779-4ce3-9eb7-9292110c8241",
+   "version": 1,
+   "op": "ALT",
+   "target": "tonificante"
+  },
+  {
+   "term": "rim",
+   "conceptId": "acae59f2-0a3e-46e7-b99a-7fcaba6a5972",
+   "labelId": "d486ef8f-20a7-411d-b15c-498b5af9d2b3",
+   "version": 1,
+   "op": "ALT",
+   "target": "problemas renais"
+  },
+  {
+   "term": "rins",
+   "conceptId": "e2c27ff0-637f-4184-8450-4b19eb04b527",
+   "labelId": "7c3671e3-cebf-45ea-be6a-7a31dc2df52e",
+   "version": 1,
+   "op": "ALT",
+   "target": "problemas renais"
+  },
+  {
+   "term": "ritual",
+   "conceptId": "11a2acf9-8004-43d7-9c1a-ab3fa6b86115",
+   "labelId": "4359bc22-3cb2-4126-ab22-6ad0fdbdeeae",
+   "version": 1,
+   "op": "BT",
+   "target": "ritual e espiritual"
+  },
+  {
+   "term": "ritualístico",
+   "conceptId": "82ee458f-1bda-412d-a311-654993f6a906",
+   "labelId": "5090ccdf-8375-455e-8f26-a4c6137a623c",
+   "version": 1,
+   "op": "ALT",
+   "target": "ritual"
+  },
+  {
+   "term": "ronquidão",
+   "conceptId": "44e2c27e-72ae-427e-bcf2-0641bb4bd4eb",
+   "labelId": "35e0372e-19f5-42ea-99be-c133a3b50729",
+   "version": 1,
+   "op": "ALT",
+   "target": "rouquidão"
+  },
+  {
+   "term": "rouquidão",
+   "conceptId": "15d832ca-0053-4203-8aa1-e4e1599c549b",
+   "labelId": "06a99792-ff45-4d9d-8802-ceb9ca1d8780",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas respiratórios"
+  },
+  {
+   "term": "sangramento",
+   "conceptId": "c2e46f0d-b1cf-42b7-bc11-d9f4ca6d991d",
+   "labelId": "22b241a7-6e58-4350-9d6b-41165bf699fc",
+   "version": 1,
+   "op": "BT",
+   "target": "traumatismos e ferimentos"
+  },
+  {
+   "term": "sangue",
+   "conceptId": "ba9dd671-1ee2-446f-be12-4d54123590ae",
+   "labelId": "9dd2140b-6a8f-41e2-8860-3ae4c3bde730",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas hematológicos"
+  },
+  {
+   "term": "sapinho",
+   "conceptId": "8786a9f8-bb1b-49b2-a7c6-544fe5402230",
+   "labelId": "300cbf3b-f982-4231-a2ad-7663967af124",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas digestivos"
+  },
+  {
+   "term": "sarampo",
+   "conceptId": "7a42c62b-b9fd-4b7b-9373-795b9c04e70d",
+   "labelId": "dea67de2-6e3a-4518-858a-a33abd117a15",
+   "version": 1,
+   "op": "BT",
+   "target": "doenças infecciosas e parasitárias"
+  },
+  {
+   "term": "sarna",
+   "conceptId": "98382d8c-2734-4a1a-9358-d8f06cd49781",
+   "labelId": "065d04e3-fabd-4091-babd-140155ca1f6a",
+   "version": 1,
+   "op": "BT",
+   "target": "doenças infecciosas e parasitárias"
+  },
+  {
+   "term": "saúde",
+   "conceptId": "fb7db47e-b67d-49df-b6c5-c89e19a23ba1",
+   "labelId": "eeb8e8d5-b2a1-4d99-9d75-fea73195125d",
+   "version": 1,
+   "op": "DEP",
+   "target": "medicinal"
+  },
+  {
+   "term": "secreção",
+   "conceptId": "233008d2-d53d-4a02-b61e-5e7d88312306",
+   "labelId": "e23ba62a-82c9-4288-8feb-675ea859ed29",
+   "version": 1,
+   "op": "ALT",
+   "target": "catarro"
+  },
+  {
+   "term": "sedativo",
+   "conceptId": "2d2466a0-cbb8-4214-bf0f-78cddab9af36",
+   "labelId": "7d7141fa-f772-40f5-bc52-97db2e5ca7ff",
+   "version": 1,
+   "op": "BT",
+   "target": "ação farmacológica"
+  },
+  {
+   "term": "sedação",
+   "conceptId": "762b1748-338e-4b78-ab55-a126a8db79f1",
+   "labelId": "a1143004-eb1d-485c-9421-be958f270292",
+   "version": 1,
+   "op": "ALT",
+   "target": "sedativo"
+  },
+  {
+   "term": "seio",
+   "conceptId": "157bcf48-64e6-4e10-b402-efec3fbd33dd",
+   "labelId": "42b4ecd9-9ce4-400c-b6ce-5c7bb54dff67",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas ginecológicos e obstétricos"
+  },
+  {
+   "term": "sem uso reportado",
+   "conceptId": "7f91dace-2ec6-4462-aa8b-4beda6d59635",
+   "labelId": "35db5b03-4c1c-4f82-ad62-e6ebb819a559",
+   "version": 1,
+   "op": "DEP",
+   "target": "indeterminado"
+  },
+  {
+   "term": "sinusite",
+   "conceptId": "129ccd4c-6b8a-470a-a477-6edf5eab2203",
+   "labelId": "5a2d37a4-7248-4d1b-bf7c-031d73cc1789",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas respiratórios"
+  },
+  {
+   "term": "sistema nervoso",
+   "conceptId": "57a2ef80-0296-414d-b936-c9ded00c97a0",
+   "labelId": "1b00694f-5d76-4b3f-b2c3-4e3f3c0be91c",
+   "version": 1,
+   "op": "ALT",
+   "target": "nervosismo"
+  },
+  {
+   "term": "soluço",
+   "conceptId": "d5d1154d-d39b-412f-947b-aab7bcbcdd15",
+   "labelId": "3d9b7ad5-ed42-46ea-b802-260bfa6bd96d",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas digestivos"
+  },
+  {
+   "term": "sono",
+   "conceptId": "06cc5972-abbb-42db-8fb8-231795fac6da",
+   "labelId": "6a9daccb-2179-447b-8981-57e8b595e6d9",
+   "version": 1,
+   "op": "ALT",
+   "target": "insônia"
+  },
+  {
+   "term": "sonífero",
+   "conceptId": "8c907a3d-5a95-4ca6-be59-f630912ea283",
+   "labelId": "66318158-94e5-4e85-989d-6766c7ed225a",
+   "version": 1,
+   "op": "ALT",
+   "target": "sedativo"
+  },
+  {
+   "term": "stomache",
+   "conceptId": "c720e26d-cbe6-4746-b7ac-7388ae583c42",
+   "labelId": "0f2b4748-ba80-4ed6-b8ae-099441491ae7",
+   "version": 1,
+   "op": "ALT",
+   "target": "dor no estômago"
+  },
+  {
+   "term": "sudorífico",
+   "conceptId": "eda7e7a1-29b8-468a-b9d7-df5848b82fc4",
+   "labelId": "85531412-8b73-48e9-8a1e-7c5872ef8493",
+   "version": 1,
+   "op": "ALT",
+   "target": "diaforético"
+  },
+  {
+   "term": "suor",
+   "conceptId": "de212b7c-fc23-41ad-86a7-333b1d33e06b",
+   "labelId": "840d8754-be78-4e00-9f2a-2271112e3adf",
+   "version": 1,
+   "op": "BT",
+   "target": "condições gerais e inespecíficas"
+  },
+  {
+   "term": "suplemento para garrafadas",
+   "conceptId": "b491eb5a-b1e3-4cb5-bacb-2fa2aa51ba55",
+   "labelId": "ccb2540a-267e-4726-aa19-1bd4a97ae8b5",
+   "version": 1,
+   "op": "DEP",
+   "target": "alimentar"
+  },
+  {
+   "term": "sustento",
+   "conceptId": "25448d16-d97b-4521-ac32-82ef0794cb87",
+   "labelId": "96208a82-3107-416c-b9fe-603537de94aa",
+   "version": 1,
+   "op": "ALT",
+   "target": "alimentar"
+  },
+  {
+   "term": "swollen",
+   "conceptId": "b4725923-3f08-427f-928a-0841a93e69a7",
+   "labelId": "b19c59a0-a965-4281-a552-b934cbc12350",
+   "version": 1,
+   "op": "ALT",
+   "target": "retenção de líquidos"
+  },
+  {
+   "term": "taquicardia",
+   "conceptId": "26b6f3cf-22a3-4e01-9a0f-c180469a8515",
+   "labelId": "0cb0b88e-895d-47a9-baf2-03151ee9096a",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas do coração"
+  },
+  {
+   "term": "tecnologia",
+   "conceptId": "b28f1f26-be93-4fe9-9474-af3c9f7cea52",
+   "labelId": "d656a524-dd33-451a-8c6e-23ffda485507",
+   "version": 1,
+   "op": "BT",
+   "target": "material e tecnológico"
+  },
+  {
+   "term": "tecnologia social",
+   "conceptId": "ed28abcf-a595-4f6a-bec5-9e3e8ada2873",
+   "labelId": "70f9bfbb-ee72-4f63-a6ae-3682e460ce87",
+   "version": 1,
+   "op": "ALT",
+   "target": "tecnologia"
+  },
+  {
+   "term": "tecnológica",
+   "conceptId": "a8c62b35-77e8-430b-9512-5af9bf3fe298",
+   "labelId": "ebb865b9-aab2-4aea-b12c-5058c71dd064",
+   "version": 1,
+   "op": "ALT",
+   "target": "tecnologia"
+  },
+  {
+   "term": "tecnológico",
+   "conceptId": "9f7f6490-89ec-4c00-802a-ee4e82cb3311",
+   "labelId": "df69e969-73ed-4a07-a27b-68dd608ff051",
+   "version": 1,
+   "op": "ALT",
+   "target": "tecnologia"
+  },
+  {
+   "term": "tifo",
+   "conceptId": "91a196bc-c0c3-407c-a663-21db8535b44a",
+   "labelId": "013d9a21-bb2a-48a6-919d-83572ba574c9",
+   "version": 1,
+   "op": "BT",
+   "target": "doenças infecciosas e parasitárias"
+  },
+  {
+   "term": "to fever",
+   "conceptId": "f678c040-e1a0-4e83-b847-fd157f94e981",
+   "labelId": "dc1d3c59-ac22-48ef-ae68-716ff84d1031",
+   "version": 1,
+   "op": "ALT",
+   "target": "antitérmico"
+  },
+  {
+   "term": "tonificante",
+   "conceptId": "530483c3-4311-4d9c-89ce-d827f431497f",
+   "labelId": "b29c7411-9990-401b-aa8f-c5f33af387a6",
+   "version": 1,
+   "op": "BT",
+   "target": "ação farmacológica"
+  },
+  {
+   "term": "tontura",
+   "conceptId": "b1fff197-c346-4f57-8379-48d6bffa45ee",
+   "labelId": "e95fa937-5772-4249-bab5-5b0a11400f8f",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas neurológicos e psíquicos"
+  },
+  {
+   "term": "torção",
+   "conceptId": "1b0277f4-a045-47ca-a783-17bee354d4a7",
+   "labelId": "67636379-06d2-416d-b155-5e9e561df238",
+   "version": 1,
+   "op": "ALT",
+   "target": "luxação"
+  },
+  {
+   "term": "tosse",
+   "conceptId": "309e756e-058a-4b6a-b505-4beb84bf8eb0",
+   "labelId": "c3688b7b-bb6e-4c46-8563-f0e42176c5ff",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas respiratórios"
+  },
+  {
+   "term": "tosse calmante",
+   "conceptId": "434ef399-360e-438c-9c1e-5ae80d6df6cd",
+   "labelId": "21ae95d9-3fd9-4452-9af8-c6b1a7772fa1",
+   "version": 1,
+   "op": "ALT",
+   "target": "tosse"
+  },
+  {
+   "term": "tosse forte",
+   "conceptId": "93223dce-ca1b-43ce-b6e5-ed8f99c40b90",
+   "labelId": "216c2ea1-b11f-460e-a5c0-91403c431163",
+   "version": 1,
+   "op": "ALT",
+   "target": "tosse"
+  },
+  {
+   "term": "tosses",
+   "conceptId": "36db6ab0-e274-422b-8d05-ee93b6a5571b",
+   "labelId": "7d496c8b-8762-43ff-ba54-b221c34fdcb8",
+   "version": 1,
+   "op": "ALT",
+   "target": "tosse"
+  },
+  {
+   "term": "tranquilizante",
+   "conceptId": "9abd2bd1-d49f-403b-b16f-ad9a6b7d4a22",
+   "labelId": "12417214-14b5-4946-b01e-9575ef6e32c0",
+   "version": 1,
+   "op": "ALT",
+   "target": "sedativo"
+  },
+  {
+   "term": "tratamento de fígado e rins",
+   "conceptId": "ff67422b-53c5-44d1-b626-32d959e54221",
+   "labelId": "cf1b2cf4-3db5-4932-a8d1-1cbc1acea527",
+   "version": 1,
+   "op": "DEP",
+   "target": "problemas do fígado"
+  },
+  {
+   "term": "tratamento de rins e fígado",
+   "conceptId": "2fbf668d-0939-48af-9068-cfe079ed19e6",
+   "labelId": "029e5e28-bd15-42c0-b4ea-c6242ea06390",
+   "version": 1,
+   "op": "DEP",
+   "target": "problemas do fígado"
+  },
+  {
+   "term": "tratar e curar a asma",
+   "conceptId": "7e5f8752-2fe4-44b1-87ed-c15daf564183",
+   "labelId": "9e16376a-53c2-4bd4-a893-1cbb02d5690d",
+   "version": 1,
+   "op": "ALT",
+   "target": "asma"
+  },
+  {
+   "term": "trato respiratório",
+   "conceptId": "97e0f68b-f611-45ed-9868-013ebb9a70f5",
+   "labelId": "a233db68-d02a-42bb-b344-2548f4d45c54",
+   "version": 1,
+   "op": "ALT",
+   "target": "problemas respiratórios"
+  },
+  {
+   "term": "traumatismo",
+   "conceptId": "4a5aa126-1031-4ad8-8b42-153b050b9416",
+   "labelId": "4c1abb8d-6c80-46b7-b1fe-2ba9e07ec032",
+   "version": 1,
+   "op": "BT",
+   "target": "traumatismos e ferimentos"
+  },
+  {
+   "term": "triglicerídeos",
+   "conceptId": "ff3b1ab0-0762-4465-926e-dedbf4832c28",
+   "labelId": "9e111ff1-a51b-4c48-a2f6-0faf9de73a6e",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas metabólicos e endócrinos"
+  },
+  {
+   "term": "tuberculose",
+   "conceptId": "ea8a40c2-a3d4-41fd-8143-a55f14e5289d",
+   "labelId": "cdc987e1-4cab-4929-9786-bdbcc3a14471",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas respiratórios"
+  },
+  {
+   "term": "tumor",
+   "conceptId": "36dbbd97-35b8-484c-b140-82e495374c44",
+   "labelId": "04044428-f08c-4f2f-9c96-fbd71be6c721",
+   "version": 1,
+   "op": "BT",
+   "target": "neoplasias"
+  },
+  {
+   "term": "tumores",
+   "conceptId": "f2495f6f-809a-42d1-a2b5-9fa9c73c0691",
+   "labelId": "07fe73e1-1b6c-4789-8fb6-81a235412a2c",
+   "version": 1,
+   "op": "ALT",
+   "target": "tumor"
+  },
+  {
+   "term": "twists",
+   "conceptId": "0778331f-1f63-4b26-893a-27a7242c1588",
+   "labelId": "af28572b-525c-4029-8e3a-3ba545765b0f",
+   "version": 1,
+   "op": "ALT",
+   "target": "luxação"
+  },
+  {
+   "term": "tóxico",
+   "conceptId": "4ac33d38-c3ab-46ca-81ec-1f51f3508a28",
+   "labelId": "a699ca9e-1de4-4bab-a92a-98617aa60c54",
+   "version": 1,
+   "op": "BT",
+   "target": "tóxico e defensivo"
+  },
+  {
+   "term": "urina trancada",
+   "conceptId": "bec5f55f-9b7c-47fc-8ffe-452ccf08bb2e",
+   "labelId": "49c325bc-4a43-4213-9ec3-96567c18b0e2",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas renais"
+  },
+  {
+   "term": "uropatia",
+   "conceptId": "28eda79c-034f-4a86-913c-39f8589d30e1",
+   "labelId": "5d877b47-7e95-4029-8219-2e8cd5dbe97c",
+   "version": 1,
+   "op": "ALT",
+   "target": "problemas renais"
+  },
+  {
+   "term": "urticária",
+   "conceptId": "78b8bef7-fa5e-456f-a021-64a8fd37a9fe",
+   "labelId": "e16c583f-f960-45ef-8ed6-fb8974ef1d44",
+   "version": 1,
+   "op": "BT",
+   "target": "doenças de pele"
+  },
+  {
+   "term": "utensílio",
+   "conceptId": "91c4a705-9388-47a8-b0d3-f3b7d3035929",
+   "labelId": "c819aa8a-f1c1-4710-967c-82f3782c679f",
+   "version": 1,
+   "op": "BT",
+   "target": "material e tecnológico"
+  },
+  {
+   "term": "utensílio doméstico",
+   "conceptId": "c576e4fe-778c-403f-bcca-b2dbc555687c",
+   "labelId": "220d35b9-d5b5-430c-b70b-f1289ed75436",
+   "version": 1,
+   "op": "ALT",
+   "target": "utensílio"
+  },
+  {
+   "term": "utensílios",
+   "conceptId": "7e30418c-7373-4dc3-a893-15d052c7f2d1",
+   "labelId": "0b04cd3e-1e39-4740-873a-b9844691ce7b",
+   "version": 1,
+   "op": "ALT",
+   "target": "utensílio"
+  },
+  {
+   "term": "utensílios (colchões com folhas)",
+   "conceptId": "c7b741cc-8398-4218-ba41-a2c63167d03e",
+   "labelId": "38f0492d-428b-4c27-b15b-97eeb2acf858",
+   "version": 1,
+   "op": "DEP",
+   "target": "utensílio"
+  },
+  {
+   "term": "utensílios (moenda de cana e mundéu com estipe)",
+   "conceptId": "15d1545f-376a-4367-9db9-b47a5d816097",
+   "labelId": "76b05882-533d-4f17-ba46-f2b7c10fe14e",
+   "version": 1,
+   "op": "DEP",
+   "target": "utensílio"
+  },
+  {
+   "term": "utensílios (móveis como prateleira e estrado de cama com estipe)",
+   "conceptId": "a7288708-ad7e-483a-843e-a5f2c6f819db",
+   "labelId": "15360f4f-a209-4b30-97ce-77a0a613a73f",
+   "version": 1,
+   "op": "DEP",
+   "target": "utensílio"
+  },
+  {
+   "term": "utensílios (trançados para caçar peixe com folhas)",
+   "conceptId": "a415fc94-5f59-4b7a-85ef-7f64c79819c2",
+   "labelId": "9939f86b-ab29-4eb2-b93b-d9b0e6fb45f8",
+   "version": 1,
+   "op": "DEP",
+   "target": "utensílio"
+  },
+  {
+   "term": "uterus, urinary and ovary infection",
+   "conceptId": "4b290da1-0005-4b71-af63-c1ea15b1b92c",
+   "labelId": "6320834b-f17f-44b8-b42c-94087f203130",
+   "version": 1,
+   "op": "DEP",
+   "target": "problemas ginecológicos e obstétricos"
+  },
+  {
+   "term": "varizes",
+   "conceptId": "3829ffc2-52dc-4f16-bd29-163e39ce771a",
+   "labelId": "10c3ec32-d121-4ad2-88f9-e6c139cf5ba7",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas circulatórios"
+  },
+  {
+   "term": "veias",
+   "conceptId": "ba6d7659-67c3-4d32-9867-89c2971cb9bf",
+   "labelId": "9e185451-81cb-4ffe-a96f-da5082662f7b",
+   "version": 1,
+   "op": "ALT",
+   "target": "problemas circulatórios"
+  },
+  {
+   "term": "velas",
+   "conceptId": "19c34e7b-110f-4fa3-9dc6-015b32db3676",
+   "labelId": "fa1ee75b-91e3-49bf-9798-b6ab0962ebfc",
+   "version": 1,
+   "op": "BT",
+   "target": "material e tecnológico"
+  },
+  {
+   "term": "veneno",
+   "conceptId": "b2ddcc28-08c0-42ba-8b97-eb1a370899d3",
+   "labelId": "b966794c-8936-475f-91a6-28b822349d6b",
+   "version": 1,
+   "op": "BT",
+   "target": "tóxico e defensivo"
+  },
+  {
+   "term": "verme",
+   "conceptId": "1477e171-f1e1-4904-a4bd-fa84a5712164",
+   "labelId": "b4c000b2-4807-4d20-85a5-e05c6d6018a0",
+   "version": 1,
+   "op": "BT",
+   "target": "doenças infecciosas e parasitárias"
+  },
+  {
+   "term": "vermes",
+   "conceptId": "4c03b45e-3fce-4595-a96b-ef96d9402e99",
+   "labelId": "f57ef3b3-5212-4199-9061-0e2094dd4cea",
+   "version": 1,
+   "op": "ALT",
+   "target": "verme"
+  },
+  {
+   "term": "vermes intestinais",
+   "conceptId": "26e67e93-3a06-4b05-9a8f-01aedc6a5370",
+   "labelId": "72db15d4-08a2-4699-9d09-d889a1cf8390",
+   "version": 1,
+   "op": "ALT",
+   "target": "verme"
+  },
+  {
+   "term": "vermicida",
+   "conceptId": "11f3e3c6-0b2c-42ba-8620-21a2388d16e1",
+   "labelId": "5be667d0-0170-4548-aeb8-96be349c9eb0",
+   "version": 1,
+   "op": "ALT",
+   "target": "vermífugo"
+  },
+  {
+   "term": "verminose",
+   "conceptId": "c3b6db14-3252-4e84-b2aa-50400d34c6f2",
+   "labelId": "d0bc42b3-4eaf-4c0c-be1b-87fa8e4d35cc",
+   "version": 1,
+   "op": "ALT",
+   "target": "verme"
+  },
+  {
+   "term": "vermífugo",
+   "conceptId": "3ff3c070-b649-4972-a849-d3d8b0f2995c",
+   "labelId": "a27b4e2e-fc41-4781-aacc-dda1ab09b549",
+   "version": 1,
+   "op": "BT",
+   "target": "ação farmacológica"
+  },
+  {
+   "term": "verrugas",
+   "conceptId": "4c2047fd-61d5-4bfb-8656-f09964abaccb",
+   "labelId": "94209aa7-adb3-46a8-b792-af1f2f918df3",
+   "version": 1,
+   "op": "BT",
+   "target": "doenças de pele"
+  },
+  {
+   "term": "vertigem",
+   "conceptId": "de9f8282-bccb-4919-a21b-1a0f405211f1",
+   "labelId": "663d5962-0b5e-40d3-b7d7-027cf2d3799b",
+   "version": 1,
+   "op": "ALT",
+   "target": "tontura"
+  },
+  {
+   "term": "vesícula",
+   "conceptId": "b06e2d4b-36ac-4aa2-afd1-f16e23cc96f4",
+   "labelId": "55cf923e-3fc6-4e78-9673-8b74a28d7c61",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas do fígado"
+  },
+  {
+   "term": "vias urinárias",
+   "conceptId": "604a1163-8424-4e68-9ae4-1cb75647ee08",
+   "labelId": "720dc87f-d36b-499c-8e35-4fb8bf2cf579",
+   "version": 1,
+   "op": "ALT",
+   "target": "problemas renais"
+  },
+  {
+   "term": "virose",
+   "conceptId": "0d5c17ec-cc72-48d7-92f9-12cdecadb930",
+   "labelId": "c113cbbc-a6c7-4ac1-8fd0-7a2b2907a4e5",
+   "version": 1,
+   "op": "BT",
+   "target": "doenças infecciosas e parasitárias"
+  },
+  {
+   "term": "vírus",
+   "conceptId": "2c2c695b-e71a-421d-82ad-6fd882dbdcef",
+   "labelId": "da506bce-6013-4e5e-b8d9-e977d9f594a4",
+   "version": 1,
+   "op": "ALT",
+   "target": "virose"
+  },
+  {
+   "term": "vômito",
+   "conceptId": "ce525411-e365-41e9-a5a1-5d6af7e85569",
+   "labelId": "611c504c-6b90-45df-9a88-6c1ce999d8d6",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas digestivos"
+  },
+  {
+   "term": "vômitos",
+   "conceptId": "5de8c1d4-fd12-414c-9b8c-b3ecbddf1eb8",
+   "labelId": "3439af46-c84c-4ae2-8bb2-31a322bdb605",
+   "version": 1,
+   "op": "ALT",
+   "target": "vômito"
+  },
+  {
+   "term": "xarope",
+   "conceptId": "2d4d3b0b-19d3-48af-afca-90abab126a3a",
+   "labelId": "6b1ecb06-791b-4256-8510-3870b50af808",
+   "version": 1,
+   "op": "BT",
+   "target": "forma de preparo e administração"
+  },
+  {
+   "term": "úlcera",
+   "conceptId": "52768938-b157-4993-829d-348721359a2a",
+   "labelId": "529b604c-31be-44a0-9840-9be7012d7cc2",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas digestivos"
+  },
+  {
+   "term": "úlceras",
+   "conceptId": "9b8b7b09-fe98-43ac-9438-e77129ab8f32",
+   "labelId": "825df36b-0d4c-4baa-be66-8faf4e6a31f2",
+   "version": 1,
+   "op": "ALT",
+   "target": "úlcera"
+  },
+  {
+   "term": "útero",
+   "conceptId": "e6f169f9-a832-40d3-bbb8-984860539699",
+   "labelId": "3f0732c4-f4ac-4d60-ae22-0335c349768c",
+   "version": 1,
+   "op": "BT",
+   "target": "problemas ginecológicos e obstétricos"
+  }
+ ]
+}
