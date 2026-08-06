@@ -6,7 +6,8 @@
 
 ### Campo "Tipos de Usos de Plantas" (`comunidades.plantas.tipoUso`, 713 termos)
 
-> **Estado em 2026-08-06: proposta pronta, execução não iniciada.**
+> **Estado em 2026-08-06: plano fechado, execução adiada por escolha do curador.**
+> A proposta é revisada antes de qualquer escrita — ver [§13, Como retomar](#13-como-retomar-na-próxima-sessão).
 > A proposta termo a termo está em [`curadoria-tipos-de-uso-proposta.md`](curadoria-tipos-de-uso-proposta.md);
 > o plano executável em [`curadoria/plano-tipouso.json`](curadoria/plano-tipouso.json).
 > Este documento registra **o que foi apurado, o que foi decidido e como executar** — inclusive como
@@ -28,6 +29,7 @@
 10. [Registro do que foi feito nesta sessão](#10-registro-do-que-foi-feito-nesta-sessão)
 11. [Registro de decisões](#11-registro-de-decisões)
 12. [Pendências e decisões em aberto](#12-pendências-e-decisões-em-aberto)
+13. [Como retomar na próxima sessão](#13-como-retomar-na-próxima-sessão)
 
 ---
 
@@ -642,8 +644,8 @@ Nada abaixo pode ser decidido sem o curador.
    justificativa individual na proposta.
 4. ~~**Termos compostos**~~ — **decidido** (D6/D7): os 12 que nomeiam dois conceitos viram rótulo
    oculto em ambos; os 6 com qualificador entre parênteses são depreciados apontando o núcleo.
-5. **Revisão em bloco ou por lote temático?** Recomendado: revisar a proposta inteira uma vez e
-   discutir só as divergências.
+5. ~~**Revisão em bloco ou por lote temático?**~~ — **decidido**: revisão da proposta inteira antes de
+   qualquer escrita, execução numa sessão seguinte (§13).
 6. **Custo do ciclo de aquisição** (44 s para 2601 termos) cresce linearmente com o vocabulário, porque
    cada termo faz uma varredura completa da tabela. Não incomoda hoje — roda uma vez por dia, fora do
    caminho da interface. Quando incomodar, a saída é uma tabela de lookup de rótulos, não ajuste da
@@ -654,6 +656,52 @@ Nada abaixo pode ser decidido sem o curador.
    adição de "Mais específico (NT)" que deixou de existir quando NT virou relação derivada. Suíte
    agora em 233/233.
 
+---
+
+## 13. Como retomar na próxima sessão
+
+A sessão de 2026-08-06 terminou com **o plano fechado e nada executado**, por escolha do curador: a
+proposta é revisada primeiro, a execução fica para depois.
+
+### O que revisar, nesta ordem
+
+1. **A lista curta dos 30 conceitos não-ativados**, no topo de
+   [`curadoria-tipos-de-uso-proposta.md`](curadoria-tipos-de-uso-proposta.md). Cada um traz a razão da
+   dúvida. Concordando com ela, o grosso da revisão está feito.
+2. **A árvore proposta**, na mesma página. É onde um erro estrutural aparece rápido.
+3. **As 713 linhas da tabela**, se sobrar fôlego. O que procurar são os casos em que errei **com
+   confiança** — esses, por definição, não estão na lista dos 30.
+
+Marque as divergências de qualquer forma que prefira (comentário, lista de termos, anotação no
+arquivo). O plano é regerado a partir delas antes de executar.
+
+### Estado da produção ao fim desta sessão
+
+| Item | Estado |
+|---|---|
+| Vocabulário (`etnotermos`) | **intocado** a título de curadoria: 2601 conceitos, 5 `active`, 2596 `candidate` |
+| Única alteração de dados | `language` dos rótulos: `pt` → `por` (convenção, não curadoria) |
+| Imagem em produção | `31f84b5`, container `healthy`, aquisição verificada com `criados=0` |
+| Backups | `backup-pre-curadoria-tipouso-2026-08-06T17-45-03Z.sqlite` · `backup-pre-deploy-2026-08-06T18-11-58Z.sqlite` — ambos `integrity_check: ok` |
+| Testes | 233/233 |
+
+> **O cron das 03:00 roda normalmente esta noite** e não faz mal: com a correção implantada, ele
+> reconhece os 2769 termos como existentes e cria zero conceitos. Verificado nesta sessão.
+
+### Ao começar a execução
+
+1. **Backup novo** (§7) — os desta sessão envelhecem a cada ciclo de aquisição.
+2. Conferir que o container está `healthy` e que não é a janela das 03:00.
+3. Ler `ADMIN_PASSWORD` do env do container; autenticar em `http://192.168.1.10:4001/`.
+4. Executar as Fases 1 a 5 do §6, conferindo cada fase antes da seguinte.
+5. Fechar com o teste que importa: disparar a aquisição manualmente e confirmar que a curadoria
+   sobreviveu — contagens estáveis, nenhum termo recolhido recriado.
+
+### Se algo der errado
+
+Restauração em três comandos (§7). Não há operação irreversível neste plano: conceitos não são
+apagados, só depreciados, e todas as escritas passam pela trilha de auditoria em
+`etnotermos_audit_log`, consultável por conceito.
 ---
 
 > **Referências:** [Manual de Curadoria](Manual.md) ·
