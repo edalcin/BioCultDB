@@ -23,7 +23,7 @@
 
 1. [O que este procedimento faz](#1-o-que-este-procedimento-faz)
 2. [Levantamento do estado de produção](#2-levantamento-do-estado-de-produção)
-3. [O risco que domina o desenho: ressurreição noturna](#3-o-risco-que-domina-o-desenho-ressurreição-noturna)
+3. [O risco que domina o desenho: a aquisição desfazer a curadoria](#3-o-risco-que-domina-o-desenho-a-aquisição-desfazer-a-curadoria)
 4. [Desenho da taxonomia](#4-desenho-da-taxonomia)
 5. [Regras de decisão aplicadas](#5-regras-de-decisão-aplicadas)
 6. [Procedimento de execução](#6-procedimento-de-execução)
@@ -134,14 +134,13 @@ com o usuário responsável. **Não existe** endpoint de exclusão de conceito n
 
 ---
 
-## 3. O risco que domina o desenho: ressurreição noturna
+## 3. O risco que domina o desenho: a aquisição desfazer a curadoria
 
 Este é o achado que muda o plano, e ele não é óbvio a partir da interface.
 
-`AcquisitionService.run()` roda **todo dia às 03:00** (cron `0 3 * * *`, fuso São Paulo) e semeia
-duas fontes: os valores minerados de `biocultdb_records` (259 dos 713 termos) e a lista estática
-`REFERENCE_TERMS` (os outros 454). Para cada termo, chama `upsertConcept`, que decide se o termo já
-existe com esta consulta:
+`AcquisitionService.run()` semeia duas fontes: os valores minerados de `biocultdb_records` (259 dos
+713 termos) e a lista estática `REFERENCE_TERMS` (os outros 454). Para cada termo, chama
+`upsertConcept`, que **decidia** se o termo já existe com esta consulta:
 
 ```sql
 SELECT doc FROM etnotermos e
@@ -151,23 +150,27 @@ WHERE EXISTS (
 )
 ```
 
-Ela olha **apenas os `prefLabels`**. Ignora `altLabels` e `hiddenLabels`.
+Ela olhava **apenas os `prefLabels`**. Ignorava `altLabels` e `hiddenLabels`.
 
-Consequência direta: **toda curadoria que tira um termo da posição de preferencial é desfeita na
-madrugada seguinte.**
+Consequência direta: **toda curadoria que tira um termo da posição de preferencial era desfeita na
+aquisição seguinte.**
 
-| Operação de curadoria | Sobrevive ao cron? | Por quê |
+| Operação de curadoria | Sobrevivia à aquisição? | Por quê |
 |---|:---:|---|
 | Recolher `gripes` como `alt` de `gripe` e apagar o conceito de origem | ❌ | `gripes` some dos `prefLabels` → recriado como conceito candidato novo |
 | Promover `diarreia` a preferencial, rebaixando `diarréia` a oculto | ❌ | `diarréia` sai dos `prefLabels` → recriado |
 | Depreciar `gripes` apontando `gripe` como substituto | ✅ | o conceito depreciado **mantém** seu `prefLabel`; o upsert o encontra e não recria |
 | Adicionar `broader`, definição, nota | ✅ | não mexe em `prefLabels` |
 
+O defeito tem **duas camadas**, e as duas foram fechadas.
+
+### 3.1 A causa — `upsertConcept` só casava em `prefLabels`
+
 Havia duas saídas. **A escolhida e já implantada foi (b): corrigir a raiz.**
 
 **(a) Conviver com a limitação.** Nunca remover um termo da posição de preferencial: cada fusão vira
 *adicionar o rótulo no conceito-alvo* **e** *depreciar o conceito de origem apontando o alvo*. O termo
-sobrevive como preferencial de uma lápide, o cron o reconhece, nada é recriado. Zero código, mas o
+sobrevive como preferencial de uma lápide, o upsert o reconhece, nada é recriado. Zero código, mas o
 vocabulário termina com ~416 conceitos depreciados ao lado de 328 vivos — para sempre.
 
 **(b) Corrigir a raiz — feito.** `upsertConcept` passa a verificar a existência do termo em
@@ -186,8 +189,20 @@ e o conceito de origem simplesmente deixa de existir, sem lápide.
 Junto foi corrigido o código de idioma (`pt` → `por`, pendência 2), no mesmo commit, com migração
 idempotente em `backend/scripts/migrate-language-pt-to-por.js`.
 
-Um terceiro cuidado, independente da escolha: **não executar a curadoria durante a janela do cron.**
-Uma execução concorrente vai colidir com o bloqueio otimista e devolver `409` no meio do lote.
+### 3.2 O amplificador — a aquisição rodava sozinha, de madrugada
+
+A causa era o `upsertConcept`. O que transformava um defeito em **risco** era rodar sem ninguém
+olhando: um agendador `node-cron` disparava `run()` todo dia às 03:00, então uma curadoria feita à
+tarde podia estar desfeita antes do café, sem clique, sem aviso e sem ninguém para relacionar as duas
+coisas.
+
+**Eliminado em 2026-08-07, por decisão do curador (D14).** O agendador não existe mais: nem o módulo,
+nem a dependência `node-cron`, nem a env var. A aquisição acontece **exclusivamente sob demanda**, no
+botão **"Executar Aquisição"** do dashboard admin (`POST /acquisition/run`).
+
+Com as duas camadas fechadas, o que sobra de cuidado é banal e visível: **não clicar em "Executar
+Aquisição" no meio de um lote de curadoria.** Uma execução concorrente colide com o bloqueio otimista
+e devolve `409` no meio do lote. Antes isso era um horário a evitar; agora é um botão a não apertar.
 
 ---
 
@@ -272,7 +287,7 @@ Cinco fases. Cada uma é verificável antes da seguinte.
 1. Backup consistente (§7).
 2. Confirmar que a correção de `upsertConcept` está em produção, **ou** assumir explicitamente o
    padrão (a) do §3.
-3. Confirmar que não se está na janela do cron (03:00, fuso São Paulo).
+3. Confirmar que ninguém vai clicar em "Executar Aquisição" durante o lote (§3.2).
 4. Ler `ADMIN_PASSWORD` do env do container; autenticar em `http://<HOST_UNRAID>:4001/`.
 
 ### Fase 1 — Criar a estrutura
@@ -336,7 +351,7 @@ Depois, `POST /concepts/:id/activate` nos conceitos inequívocos. Os listados em
 | Nenhum órfão | todo conceito ativo tem `broader` ou é faceta raiz |
 | Sem ciclo | `ancestors` de todo conceito não contém ele mesmo |
 | Trilha completa | `etnotermos_audit_log` tem entrada para cada operação |
-| **Sobrevive ao cron** | `POST /acquisition/run` manualmente e reconferir as contagens — este é o teste que importa |
+| **Sobrevive à aquisição** | `POST /acquisition/run` manualmente e reconferir as contagens — este é o teste que importa |
 | Consulta pública responde | buscar `problemas respiratórios` na porta 4000 e ver `asma`, `tosse`, `gripe` |
 
 O último teste da Fase 5 é o único que prova que a curadoria é permanente. Executá-lo.
@@ -393,8 +408,8 @@ comunidade os distingue como etnotáxons diferentes.
 **`nomeCientifico` não se funde com `nomeVernacular`.** Manual §7.3: são dois conceitos que
 co-referem, ligados por mapeamento, nunca fundidos — governanças diferentes (ICN × comunidade).
 
-**A ressurreição noturna vale para todos os campos.** `upsertConcept` é o mesmo código. O §3 se aplica
-integralmente.
+**O risco de a aquisição desfazer a curadoria vale para todos os campos.** `upsertConcept` é o mesmo
+código. O §3 se aplica integralmente.
 
 ---
 
@@ -526,7 +541,8 @@ inteiro no mesmo contexto — que é justamente o que uma sequência de 713 prom
 ### D2 — Corrigir a ressurreição noturna na raiz, antes de curar
 
 **Contexto.** `upsertConcept` verificava a existência de um termo só entre os `prefLabels` (§3).
-Qualquer termo recolhido como rótulo alternativo ou oculto seria recriado pelo cron das 03:00.
+Qualquer termo recolhido como rótulo alternativo ou oculto seria recriado pela aquisição seguinte —
+que na época rodava sozinha às 03:00 (ver D14, que eliminou o agendamento).
 
 **Recusado.** Conviver com a limitação, nunca tirando um termo da posição de preferencial. Funcionaria
 sem tocar em código, mas deixaria ~416 conceitos depreciados permanentes, manteria o defeito armado
@@ -576,7 +592,7 @@ irmãos, em vez de misturados — que é o erro mais frequente no corpus bruto.
 `enferrujado`, `catuaba`) não têm substituto legítimo.
 
 **Recusado.** Deixá-los `candidate` indefinidamente — que é o erro listado no Manual §10, e que os
-manteria sendo re-semeados toda noite sem nunca entrar na consulta pública.
+manteria sendo re-semeados a cada aquisição sem nunca entrar na consulta pública.
 
 **Decidido.** Uma faceta terminal explícita, com definição que diz o que ela é: registro de uso sem
 informação suficiente para classificação.
@@ -694,6 +710,34 @@ Escrever 265 glosas clínicas que o curador não revisou publicaria palpite como
 D11 recusa. **Decidido:** definição nos 37 nós, mais as notas de escopo das fronteiras sutis e as três
 notas do curador (D12). As folhas ficam com rótulos, hierarquia e status — sem definição.
 
+### D14 — Aquisição só sob demanda: o agendamento foi eliminado (2026-08-07)
+
+**Contexto.** O §3.2 descrevia o agendador como um dado da realidade a contornar: `node-cron`
+disparava `AcquisitionService.run()` todo dia às 03:00, e o procedimento inteiro ganhou uma restrição
+de horário por causa disso — "não curar na janela do cron", repetida na Fase 0 e no §13.
+
+**Recusado.** Manter o agendamento e conviver com a restrição, agora que a raiz (§3.1) está corrigida
+e um ciclo não recria mais nada. Funcionaria, mas mantém de pé uma operação que **sobrescreve o estado
+do vocabulário sem ninguém pedir**: o `upsertConcept` corrigido resolve a ressurreição de rótulo, não
+a categoria do problema. Qualquer defeito futuro na aquisição volta a agir de madrugada, sem clique
+para correlacionar, e o curador descobre pelo resultado.
+
+**Recusado também.** Deixar o agendamento desligado por env var — `ACQUISITION_CRON_SCHEDULE` vazia ou
+um cron que nunca casa. É desligar por configuração o que se quer desligar por desenho: o código
+continuaria lá, o default `0 3 * * *` continuaria armado, e um deploy que perdesse a env var religaria
+o agendamento em silêncio.
+
+**Decidido.** Corte limpo. Removidos o módulo `lib/scheduler/acquisitionCron.js`, a dependência
+`node-cron`, a chave `acquisitionCronSchedule` do `config`, a leitura de `ACQUISITION_CRON_SCHEDULE` e
+o campo `scheduledNext` da resposta de `GET /acquisition/status` — que só existia para anunciar a
+próxima execução agendada. O único gatilho é o botão **"Executar Aquisição"** do dashboard admin
+(`POST /acquisition/run`), que já existia e não mudou.
+
+**Consequência.** Quem decide quando o vocabulário é confrontado com o BioCultDB é o curador, não um
+relógio. O procedimento perde a restrição de horário: a Fase 0 e o §13 passam a pedir apenas que
+ninguém clique no botão durante um lote. E o custo de 44 s por ciclo passa a ser esperado na frente de
+quem clicou — ver §12, item 6.
+
 ---
 
 ## 12. Pendências e decisões em aberto
@@ -709,8 +753,10 @@ Nada abaixo pode ser decidido sem o curador.
 5. ~~**Revisão em bloco ou por lote temático?**~~ — **decidido**: revisão da proposta inteira antes de
    qualquer escrita, execução numa sessão seguinte (§13).
 6. **Custo do ciclo de aquisição** (44 s para 2601 termos) cresce linearmente com o vocabulário, porque
-   cada termo faz uma varredura completa da tabela. Não incomoda hoje — roda uma vez por dia, fora do
-   caminho da interface. Quando incomodar, a saída é uma tabela de lookup de rótulos, não ajuste da
+   cada termo faz uma varredura completa da tabela. Com a aquisição agora sob demanda (D14), esse custo
+   passou a ser esperado **na frente do curador**, e não de madrugada — a rota é fire-and-forget e
+   devolve `202` na hora, e o loop de upsert cede o event loop a cada 40 termos, então a interface
+   continua respondendo. Quando incomodar, a saída é uma tabela de lookup de rótulos, não ajuste da
    consulta.
 7. ~~**Duas falhas pré-existentes** em `tests/contract/admin-concepts-api.test.js`~~ — **investigadas e
    corrigidas** (`123131c`). Nenhuma das duas descrevia defeito de produto: uma omitia o cabeçalho
@@ -741,7 +787,7 @@ curta (`banho`, `quengo`, `anticorpos`) e uma estava fora dela, entre as absorç
 ### Ao começar a execução
 
 1. **Backup novo** (§7) — os anteriores envelhecem a cada ciclo de aquisição.
-2. Conferir que o container está `healthy` e que não é a janela das 03:00.
+2. Conferir que o container está `healthy` e que ninguém mais está com a curadoria aberta (§3.2).
 3. Ler `ADMIN_PASSWORD` do env do container; autenticar em `http://<HOST_UNRAID>:4001/`.
 4. Executar as Fases 1 a 5 do §6, conferindo cada fase antes da seguinte.
 5. Fechar com o teste que importa: disparar a aquisição manualmente e confirmar que a curadoria
@@ -766,7 +812,7 @@ Executada em **2026-08-07**, pela API Admin na porta 4001, com o container no ar
 |---|---|
 | Backup | `backup-pre-curadoria-tipouso-2026-08-07T08-31-59Z.sqlite`, `integrity_check: ok`, md5 `0c28c6be…`, 4,75 MB, sem downtime |
 | Correção do §3 em produção | `BUILD_INFO.biocultdb_commit=31f84b5…`; verificado no arquivo do container (casa em pref + alt + hidden, idioma `por`) |
-| Janela do cron | ciclo das 03:00 já havia rodado às `06:00:00Z` com `criados=0`; execução iniciada às `08:31Z`, ~21 h da janela seguinte |
+| Concorrência com a aquisição | nenhuma: a execução foi disparada às `08:31Z` e o último ciclo tinha sido às `06:00:00Z`, com `criados=0`. À época ainda havia o agendador das 03:00, eliminado no mesmo dia (D14) |
 | Estado do campo antes | 713 conceitos, 712 `candidate`, 1 `active`, **zero** rótulo alternativo, oculto, definição ou relação |
 | Plano conferido contra produção | 713/713 `conceptId` e `labelId` casam, 0 alvos irresolvidos, 0 colisão de rótulo, 0 dos 31 rótulos novos já existia no vocabulário |
 
@@ -813,7 +859,7 @@ gerador — a operação sempre foi `SKIP`, e `SKIP` não escreve nada. Daí 333
 | Reciprocidade BT/NT | ✅ 0 relações `broader` sem o `narrower` recíproco |
 | Nenhum pai depreciado com filho ativo | ✅ 0 |
 | Trilha completa | ✅ 1509 entradas: 720 `status` + 358 `altLabels` + 318 `broader` + 38 `definition` + 33 `hiddenLabels` + 31 `concept` + 8 `scopeNote` + 2 `historyNote` + 1 `related`, das quais 7 anteriores a esta sessão — reconcilia exatamente com as 1502 escritas acima |
-| **Sobrevive ao cron** | ✅ ciclo completo disparado à mão: `success`, **criados=0**, existentes=2769, 39,4 s. Contagens, total (2632) e os 378 conceitos que detêm um rótulo absorvido como preferencial: **idênticos antes e depois**. Zero termo absorvido reapareceu como conceito não-depreciado |
+| **Sobrevive à aquisição** | ✅ ciclo completo disparado à mão: `success`, **criados=0**, existentes=2769, 39,4 s. Contagens, total (2632) e os 378 conceitos que detêm um rótulo absorvido como preferencial: **idênticos antes e depois**. Zero termo absorvido reapareceu como conceito não-depreciado |
 | Consulta pública responde | ✅ `problemas respiratórios` traz 14 filhos, entre eles `asma`, `tosse` e `gripe`; 305 conceitos ativos no campo |
 
 A busca pública confirma cada regra de decisão do §5, ponta a ponta:

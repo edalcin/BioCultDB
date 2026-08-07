@@ -82,6 +82,13 @@ não têm auth alguma, controle é só por firewall/rede no Unraid.
 7. **Primeira execução do `AcquisitionService` é automática**, seja pelo cron padrão
    (`ACQUISITION_CRON_SCHEDULE=0 3 * * *`) seja disparada manualmente logo após o deploy via
    `POST /acquisition/run` (autenticado) para não esperar até 3h.
+
+   > **Revogado em 2026-08-07**: o agendamento automático (~~cron padrão,
+   > `ACQUISITION_CRON_SCHEDULE=0 3 * * *`~~) foi eliminado do código (`acquisitionCron.js` removido,
+   > dependência `node-cron` retirada, `ACQUISITION_CRON_SCHEDULE` deixou de ser lida). A partir dessa
+   > data, a única forma de disparar o `AcquisitionService` é sob demanda, via o botão "Executar
+   > Aquisição" do dashboard admin (`POST /acquisition/run`) — decisão do curador: quem decide quando o
+   > vocabulário é sobrescrito com o estado atual do BioCultDB é o curador, não um relógio.
 8. **Autenticação do próprio BioCultDB (3001/3002) fica fora de escopo.** Esta integração não adiciona
    auth às portas do BioCultDB — permanece como está hoje (controle por firewall/rede). Decisão futura
    separada, se necessária.

@@ -219,8 +219,9 @@ BioCultDB), extrai valores de **5 campos monitorados** — tipo de comunidade, n
 vernacular, tipo de uso e atividade econômica — e cria conceitos SKOS-XL com `status: candidate`;
 também semeia um vocabulário estático de referência de tipos de uso (`docs/tipoUso.txt`, ~450
 termos do domínio etnobotânico), cobrindo o vocabulário do domínio além do que já foi digitado em
-algum registro. Um curador promove cada candidato a `active` pela interface 4001. Disparado por
-cron (`ACQUISITION_CRON_SCHEDULE`, padrão `0 3 * * *`) ou sob demanda via `POST /acquisition/run`.
+algum registro. Um curador promove cada candidato a `active` pela interface 4001. A aquisição é
+executada exclusivamente sob demanda: o curador clica em **"Executar Aquisição"** no dashboard admin
+(porta 4001), que chama `POST /acquisition/run`.
 
 **Status em produção**: corte realizado e validado — as 5 portas respondem, `biocultdb_records` e
 `etnotermos*` coexistem no mesmo arquivo, e o vocabulário candidato já foi gerado a partir dos
