@@ -462,17 +462,33 @@ docker start BioCultDB
 
 ### Atualizar BioCultDB
 
-Para atualizar para nova versão:
+**Faça backup antes** (seção acima). Há dois caminhos; os dois preservam os dados,
+que vivem no volume, não no container.
 
-1. Remova o container `BioCultDB`:
-   - Em **Docker Containers**, clique em `BioCultDB` → **"Delete"**
+**Opção 1 — pela interface do Unraid.** Em **Docker Containers**, clique no ícone do
+`BioCultDB` → **"Force update"**. O Unraid puxa a imagem nova e recria o container a
+partir do template salvo, então portas, variáveis e volumes voltam como estavam.
 
-2. Puxe a nova imagem:
-   - Clique em **"Docker Hub"**
-   - Pesquise `ghcr.io/edalcin/biocultdb`
-   - Clique em **"Pull"**
+**Opção 2 — por SSH, com o script do repositório.** Útil quando a atualização é
+scriptada ou feita remotamente:
 
-3. Re-crie o container (repita Seção 2)
+```bash
+bash docker/deploy-container.sh          # ou: bash deploy-container.sh <nome-do-container>
+```
+
+Ele lê a configuração do container **em execução** — variáveis de ambiente, portas,
+volumes, labels, rede e política de restart — puxa a imagem nova, recria o container
+com a mesma configuração e espera o `healthy`, terminando por imprimir o
+`/app/BUILD_INFO` para você conferir qual commit subiu.
+
+Duas consequências de ler a configuração em vez de repeti-la: as credenciais de
+`ADMIN_USERNAME`/`ADMIN_PASSWORD` nunca precisam ser escritas em arquivo nem sair do
+host, e uma instalação que customizou portas ou caminhos (Seção 8) não é revertida ao
+padrão sem querer. Por isso o container precisa estar **no ar** quando o script roda —
+é dele que a configuração vem.
+
+O script imprime o digest da imagem antiga antes de trocar; guarde-o como ponto de
+rollback.
 
 ---
 
