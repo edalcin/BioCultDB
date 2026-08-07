@@ -57,19 +57,19 @@ e que §11 registra como foi de fato executado.
 
 ## 2. Estado de produção ANTES do corte (confirmado no início desta sessão)
 
-Container Unraid `BioCultDB` (renomeado de `etnoDB`), rodando ao vivo em `192.168.1.10`:
+Container Unraid `BioCultDB` (renomeado de `etnoDB`), rodando ao vivo em `<HOST_UNRAID>`:
 
 ```bash
 docker run -d --name='BioCultDB' --net='bridge' --pids-limit 2048 \
   -e TZ="America/Sao_Paulo" \
-  -e HOST_OS="Unraid" -e HOST_HOSTNAME="Asilo" -e HOST_CONTAINERNAME="BioCultDB" \
+  -e HOST_OS="Unraid" -e HOST_HOSTNAME="<HOST_HOSTNAME>" -e HOST_CONTAINERNAME="BioCultDB" \
   -e 'NODE_ENV'='production' \
   -e 'SQLITE_DB_PATH'='/data/biocultdb.sqlite' \
   -l net.unraid.docker.managed=dockerman \
-  -l net.unraid.docker.webui='http://192.168.1.10:3093' \
+  -l net.unraid.docker.webui='http://<HOST_UNRAID>:3093' \
   -l net.unraid.docker.icon='https://raw.githubusercontent.com/edalcin/etnoDB/main/docs/etnodbLogoTrans300.png' \
   -p '3091:3001/tcp' -p '3092:3002/tcp' -p '3093:3003/tcp' \
-  -v '/mnt/user/Storage/appsdata/biocultdb/data/':'/data':'rw' \
+  -v '<APPDATA>/biocultdb/data/':'/data':'rw' \
   'ghcr.io/edalcin/biocultdb:latest'
 ```
 
@@ -77,7 +77,7 @@ docker run -d --name='BioCultDB' --net='bridge' --pids-limit 2048 \
   a partir de `docker/Dockerfile` — single-app, sem submodule, sem BioCultTermos.
 - `SQLITE_DB_PATH=/data/biocultdb.sqlite` — arquivo real, populado com referências, comunidades, plantas.
 - Zero autenticação em qualquer porta (3091/3092/3093). Controle só por firewall/rede do Unraid.
-- Volume bind mount `/mnt/user/Storage/appsdata/biocultdb/data/` → `/data`.
+- Volume bind mount `<APPDATA>/biocultdb/data/` → `/data`.
 
 ### Estado atual (pós-corte)
 
@@ -127,7 +127,7 @@ Mudar para:
 Pré-requisito: a imagem `ghcr.io/edalcin/biocultdb:latest` já publicada pelo CI atualizado (§4.1).
 
 1. **Backup**: copiar `biocultdb.sqlite` (e `biocultdb.sqlite-wal`/`-shm` se existirem, modo WAL) de
-   `/mnt/user/Storage/appsdata/biocultdb/data/` para um local de backup, com o container ainda rodando
+   `<APPDATA>/biocultdb/data/` para um local de backup, com o container ainda rodando
    (WAL permite cópia a quente) ou parado (mais seguro, escolha do operador).
 2. **Registrar o digest da imagem atual** (ponto de rollback, já que `:latest` é uma tag flutuante):
    ```bash
@@ -140,20 +140,20 @@ Pré-requisito: a imagem `ghcr.io/edalcin/biocultdb:latest` já publicada pelo C
    - Mesma imagem: `ghcr.io/edalcin/biocultdb:latest` (agora dual-app)
    - Mesmo nome, rede, volume, `TZ`, `HOST_*` labels
    - Mesmas env vars existentes: `NODE_ENV=production`, `SQLITE_DB_PATH=/data/biocultdb.sqlite`
-   - **+2 env vars novas**: `ADMIN_USERNAME=etnotermos`, `ADMIN_PASSWORD=<senha real, nunca commitar>`
+   - **+2 env vars novas**: `ADMIN_USERNAME=<ADMIN_USERNAME>`, `ADMIN_PASSWORD=<senha real, nunca commitar>`
    - **+2 portas novas**: `4000:4000/tcp`, `4001:4001/tcp`
    - Atualizar o label `net.unraid.docker.icon`/`webui` se desejado (opcional, cosmético)
 5. **Subir** o container.
 6. **Verificar saúde**:
-   - `curl http://192.168.1.10:3093/health` → BioCultDB (Apresentação) — inalterado, já funcionava
-   - `curl http://192.168.1.10:4000/health` → BioCultTermos público
-   - `curl -u etnotermos:<senha> http://192.168.1.10:4001/health` → BioCultTermos admin (espera 200; sem
+   - `curl http://<HOST_UNRAID>:3093/health` → BioCultDB (Apresentação) — inalterado, já funcionava
+   - `curl http://<HOST_UNRAID>:4000/health` → BioCultTermos público
+   - `curl -u <ADMIN_USERNAME>:<ADMIN_PASSWORD> http://<HOST_UNRAID>:4001/health` → BioCultTermos admin (espera 200; sem
      credencial espera 401)
    - Checar logs do container por `[start-unit] Starting BioCultDB...` e `[start-unit] Starting
      BioCultTermos...` (ambos os processos subiram)
 7. **Disparar a primeira aquisição** manualmente (não esperar até 3h):
    ```bash
-   curl -u etnotermos:<senha> -X POST http://192.168.1.10:4001/acquisition/run
+   curl -u <ADMIN_USERNAME>:<ADMIN_PASSWORD> -X POST http://<HOST_UNRAID>:4001/acquisition/run
    ```
    Confirmar em `GET /acquisition/status` (ou na dashboard admin) que termos `candidate` foram criados a
    partir dos registros já existentes em `biocultdb_records`.
@@ -188,7 +188,7 @@ Pré-requisito: a imagem `ghcr.io/edalcin/biocultdb:latest` já publicada pelo C
 
 ## 6. Backup e recuperação operacional
 
-- Backup = copiar o arquivo `/mnt/user/Storage/appsdata/biocultdb/data/biocultdb.sqlite` (mais os
+- Backup = copiar o arquivo `<APPDATA>/biocultdb/data/biocultdb.sqlite` (mais os
   arquivos `-wal`/`-shm` se o container estiver rodando em modo WAL no momento da cópia). Um único
   arquivo cobre BioCultDB **e** BioCultTermos agora — não há mais dois backups separados a coordenar.
 - Recomendação: script de backup periódico (cron do host Unraid, fora do container) fazendo

@@ -138,9 +138,11 @@ Value: /data/biocultdb.sqlite
 3. Preencha:
    ```
    Container Path: /data
-   Host Path: /mnt/user/Storage/appsdata/biocultdb/data/
+   Host Path: <APPDATA>/biocultdb/data/
    Read Only: No
    ```
+
+   > **Nota**: `<APPDATA>` é o diretório de appdata do seu próprio Unraid (tipicamente em algo como `/mnt/user/appdata`, conforme sua configuração de shares). Substitua pelo caminho real do seu servidor.
 
 Veja também a [Seção 8: Armazenamento Persistente](#armazenamento-persistente) para o formato completo.
 
@@ -453,7 +455,8 @@ docker cp BioCultDB:/data/biocultdb-$(date +%Y%m%d).sqlite /mnt/user/backups/
 
 # Opção 2: copiar o arquivo diretamente com a aplicação parada
 docker stop BioCultDB
-cp /mnt/user/Storage/appsdata/biocultdb/data/biocultdb.sqlite /mnt/user/backups/biocultdb-$(date +%Y%m%d).sqlite
+APPDATA=<APPDATA>
+cp "$APPDATA/biocultdb/data/biocultdb.sqlite" /mnt/user/backups/biocultdb-$(date +%Y%m%d).sqlite
 docker start BioCultDB
 ```
 
@@ -556,7 +559,7 @@ Para persistir dados fora do container:
 3. Selecione tipo **"Path"**:
    ```
    Container Path: /data
-   Host Path: /mnt/user/Storage/appsdata/biocultdb/data
+   Host Path: <APPDATA>/biocultdb/data
    Read Only: No
    ```
 

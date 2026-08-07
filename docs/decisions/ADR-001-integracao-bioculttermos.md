@@ -23,7 +23,7 @@ container unico") já produziu o *scaffold* técnico para essa unidade:
 - Submodule `bioculttermos` com código real (SKOS-XL, dual-port, `AcquisitionService`)
 
 Esse scaffold, porém, **nunca foi conectado à produção real**. O container que roda hoje em
-`192.168.1.10` (nome Unraid `etnoDB`) usa a imagem `ghcr.io/edalcin/biocultdb:latest`, publicada por
+`<HOST_UNRAID>` (nome Unraid `etnoDB`) usa a imagem `ghcr.io/edalcin/biocultdb:latest`, publicada por
 `.github/workflows/docker-publish.yml` a partir de `docker/Dockerfile` (single-app, sem submodule,
 sem BioCultTermos) — ver `docker-publish.yml:50-51` (`context: .`, `file: ./docker/Dockerfile`). Além
 disso, os exemplos no scaffold (`SQLITE_DB_PATH=/data/unidade.sqlite`, `ADMIN_USERS` JSON com bcrypt)
@@ -39,13 +39,13 @@ Comando `docker run` fornecido pelo usuário, atualmente ativo:
 ```
 docker run -d --name='etnoDB' --net='bridge' --pids-limit 2048 \
   -e TZ="America/Sao_Paulo" \
-  -e HOST_OS="Unraid" -e HOST_HOSTNAME="Asilo" -e HOST_CONTAINERNAME="etnoDB" \
+  -e HOST_OS="Unraid" -e HOST_HOSTNAME="<HOST_HOSTNAME>" -e HOST_CONTAINERNAME="etnoDB" \
   -e 'NODE_ENV'='production' \
   -e 'SQLITE_DB_PATH'='/data/biocultdb.sqlite' \
   -l net.unraid.docker.managed=dockerman \
-  -l net.unraid.docker.webui='http://192.168.1.10:3093' \
+  -l net.unraid.docker.webui='http://<HOST_UNRAID>:3093' \
   -p '3091:3001/tcp' -p '3092:3002/tcp' -p '3093:3003/tcp' \
-  -v '/mnt/user/Storage/appsdata/biocultdb/data/':'/data':'rw' \
+  -v '<APPDATA>/biocultdb/data/':'/data':'rw' \
   'ghcr.io/edalcin/biocultdb:latest'
 ```
 

@@ -61,13 +61,19 @@ Apurado por acesso direto ao servidor, somente leitura, em 2026-08-06.
 
 | Item | Valor |
 |---|---|
-| Host | `192.168.1.10` (`Asilo`, Unraid 6.18.38) — **não** `192.168.1.1`, que é outra máquina |
-| Acesso | `ssh -i <chave> root@192.168.1.10` |
+| Host | `<HOST_UNRAID>` (`<HOST_HOSTNAME>`, Unraid 6.18.38) |
+| Acesso | `ssh -i <chave> root@<HOST_UNRAID>` |
 | Container | `BioCultDB`, imagem `ghcr.io/edalcin/biocultdb:latest`, `TZ=America/Sao_Paulo` |
-| Banco | `/mnt/user/Storage/appsdata/biocultdb/data/biocultdb.sqlite` (host) → `/data/biocultdb.sqlite` (container) |
+| Banco | `<APPDATA>/biocultdb/data/biocultdb.sqlite` (host) → `/data/biocultdb.sqlite` (container) |
 | Journal | **WAL ativo** — implica que o backup consistente **não exige parar o container** (ver §7) |
 | Portas | 3091→3001, 3092→3002, 3093→3003 (BioCultDB) · 4000 (BioCultTermos público) · 4001 (BioCultTermos admin) |
-| Auth admin | Basic Auth, `ADMIN_USERNAME=etnotermos`, senha no env do container |
+| Auth admin | Basic Auth, `ADMIN_USERNAME=<ADMIN_USERNAME>`, senha no env do container |
+
+> **Convenção deste documento:** identificadores da instalação de produção aparecem como
+> placeholders — `<HOST_UNRAID>` (endereço do servidor), `<HOST_HOSTNAME>` (nome do host),
+> `<APPDATA>` (diretório de appdata do Unraid), `<ADMIN_USERNAME>` e `<ADMIN_PASSWORD>`. Quem for
+> executar substitui pelos valores reais, que vivem no env do container e não em documento
+> versionado. Em blocos `bash`, exporte-os antes: `HOST=<HOST_UNRAID>`, `APPDATA=<APPDATA>`.
 
 ### 2.2 Modelo de dados
 
@@ -267,7 +273,7 @@ Cinco fases. Cada uma é verificável antes da seguinte.
 2. Confirmar que a correção de `upsertConcept` está em produção, **ou** assumir explicitamente o
    padrão (a) do §3.
 3. Confirmar que não se está na janela do cron (03:00, fuso São Paulo).
-4. Ler `ADMIN_PASSWORD` do env do container; autenticar em `http://192.168.1.10:4001/`.
+4. Ler `ADMIN_PASSWORD` do env do container; autenticar em `http://<HOST_UNRAID>:4001/`.
 
 ### Fase 1 — Criar a estrutura
 
@@ -342,7 +348,7 @@ O último teste da Fase 5 é o único que prova que a curadoria é permanente. E
 Com WAL ativo, `VACUUM INTO` produz um snapshot íntegro **com o container no ar**:
 
 ```bash
-D=/mnt/user/Storage/appsdata/biocultdb/data
+D=<APPDATA>/biocultdb/data
 B=$D/backup-pre-curadoria-tipouso-$(date +%Y-%m-%dT%H-%M-%SZ).sqlite
 sqlite3 "file:$D/biocultdb.sqlite?mode=ro" "VACUUM INTO '$B';"
 sqlite3 "$B" 'PRAGMA integrity_check;'   # deve responder: ok
@@ -471,7 +477,7 @@ redeploy do container e a migração de código de idioma. A execução da curad
 
 | # | Ação | Resultado |
 |---|---|---|
-| 1 | Corrigido o endereço do servidor | `192.168.1.1` recusou a chave e é outra máquina (Debian); o Unraid é `192.168.1.10` |
+| 1 | Corrigido o endereço do servidor | o endereço presumido era de outra máquina na mesma rede (Debian), que recusou a chave; o Unraid é outro |
 | 2 | Inventariado o modelo de dados | `etnotermos` documento-JSON; campo semântico = `sourceFields` |
 | 3 | Confirmado o recorte | 713 conceitos em `comunidades.plantas.tipoUso`, 712 `candidate`, sem definições nem relações |
 | 4 | **Refutada a premissa da chave Gemini** | não há chave no servidor; ADR-002 D5 decidiu que nunca haverá |
@@ -736,7 +742,7 @@ curta (`banho`, `quengo`, `anticorpos`) e uma estava fora dela, entre as absorç
 
 1. **Backup novo** (§7) — os anteriores envelhecem a cada ciclo de aquisição.
 2. Conferir que o container está `healthy` e que não é a janela das 03:00.
-3. Ler `ADMIN_PASSWORD` do env do container; autenticar em `http://192.168.1.10:4001/`.
+3. Ler `ADMIN_PASSWORD` do env do container; autenticar em `http://<HOST_UNRAID>:4001/`.
 4. Executar as Fases 1 a 5 do §6, conferindo cada fase antes da seguinte.
 5. Fechar com o teste que importa: disparar a aquisição manualmente e confirmar que a curadoria
    sobreviveu — contagens estáveis, nenhum termo recolhido recriado.

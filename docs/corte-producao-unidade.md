@@ -19,7 +19,7 @@ manualmente no Unraid.
 - Nome do container: `BioCultDB` (renomeado de `etnoDB` no corte executado em 2026-07-13)
 - Imagem: `ghcr.io/edalcin/biocultdb:latest` (agora dual-app — mesma tag, sem imagem paralela)
 - Rede: `bridge`
-- Volume bind mount: `/mnt/user/Storage/appsdata/biocultdb/data/` → `/data`
+- Volume bind mount: `<APPDATA>/biocultdb/data/` → `/data`
 - Envs existentes: `TZ`, `HOST_OS`/`HOST_HOSTNAME`/`HOST_CONTAINERNAME`,
   `NODE_ENV=production`, `SQLITE_DB_PATH=/data/biocultdb.sqlite`
 - Portas existentes: `3091:3001`, `3092:3002`, `3093:3003`
@@ -32,13 +32,13 @@ manualmente no Unraid.
 
 ## +2 variáveis de ambiente
 
-- `ADMIN_USERNAME=etnotermos`
+- `ADMIN_USERNAME=<ADMIN_USERNAME>`
 - `ADMIN_PASSWORD=<senha real — defina no Unraid, nunca commitar>`
 
 ## Procedimento de corte in-place
 
 1. **Backup**: copiar `biocultdb.sqlite` (+ `-wal`/`-shm` se existirem) de
-   `/mnt/user/Storage/appsdata/biocultdb/data/` para local de backup (a quente, WAL permite;
+   `<APPDATA>/biocultdb/data/` para local de backup (a quente, WAL permite;
    ou com o container parado, mais seguro).
 2. **Registrar o digest atual** (ponto de rollback — `:latest` é flutuante):
    ```bash
@@ -50,15 +50,15 @@ manualmente no Unraid.
    abaixo).
 5. **Subir** o container.
 6. **Verificar saúde**:
-   - `curl http://192.168.1.10:3093/` → 200 (BioCultDB, inalterado)
-   - `curl http://192.168.1.10:4000/health` → `{"status":"ok","sqlite":"connected"}`
-   - `curl -o /dev/null -w "%{http_code}" http://192.168.1.10:4001/` → `401` (sem credencial)
-   - `curl -u etnotermos:<senha> -o /dev/null -w "%{http_code}" http://192.168.1.10:4001/` → `200`
+   - `curl http://<HOST_UNRAID>:3093/` → 200 (BioCultDB, inalterado)
+   - `curl http://<HOST_UNRAID>:4000/health` → `{"status":"ok","sqlite":"connected"}`
+   - `curl -o /dev/null -w "%{http_code}" http://<HOST_UNRAID>:4001/` → `401` (sem credencial)
+   - `curl -u <ADMIN_USERNAME>:<ADMIN_PASSWORD> -o /dev/null -w "%{http_code}" http://<HOST_UNRAID>:4001/` → `200`
    - `docker logs BioCultDB` → `[start-unit] Starting BioCultDB...` e `[start-unit] Starting
      BioCultTermos...`, sem stack trace
 7. **Disparar a 1ª aquisição** (não esperar até 3h):
    ```bash
-   curl -u etnotermos:<senha> -X POST http://192.168.1.10:4001/acquisition/run
+   curl -u <ADMIN_USERNAME>:<ADMIN_PASSWORD> -X POST http://<HOST_UNRAID>:4001/acquisition/run
    ```
    Confirmar candidatos criados a partir dos registros já existentes em `biocultdb_records`
    (`GET /acquisition/status` ou dashboard admin).
@@ -71,17 +71,17 @@ manualmente no Unraid.
 ```bash
 docker run -d --name='BioCultDB' --net='bridge' --pids-limit 2048 \
   -e TZ="America/Sao_Paulo" \
-  -e HOST_OS="Unraid" -e HOST_HOSTNAME="Asilo" -e HOST_CONTAINERNAME="BioCultDB" \
+  -e HOST_OS="Unraid" -e HOST_HOSTNAME="<HOST_HOSTNAME>" -e HOST_CONTAINERNAME="BioCultDB" \
   -e 'NODE_ENV'='production' \
   -e 'SQLITE_DB_PATH'='/data/biocultdb.sqlite' \
-  -e 'ADMIN_USERNAME'='etnotermos' \
+  -e 'ADMIN_USERNAME'='<ADMIN_USERNAME>' \
   -e 'ADMIN_PASSWORD'='<SENHA_ADMIN>' \
   -l net.unraid.docker.managed=dockerman \
-  -l net.unraid.docker.webui='http://192.168.1.10:3093' \
+  -l net.unraid.docker.webui='http://<HOST_UNRAID>:3093' \
   -l net.unraid.docker.icon='https://raw.githubusercontent.com/edalcin/etnoDB/main/docs/etnodbLogoTrans300.png' \
   -p '3091:3001/tcp' -p '3092:3002/tcp' -p '3093:3003/tcp' \
   -p '4000:4000/tcp' -p '4001:4001/tcp' \
-  -v '/mnt/user/Storage/appsdata/biocultdb/data/':'/data':'rw' \
+  -v '<APPDATA>/biocultdb/data/':'/data':'rw' \
   'ghcr.io/edalcin/biocultdb:latest'
 ```
 
@@ -99,13 +99,13 @@ de schema (`duplicate column name`).
 O operador já havia recriado o container em produção com nome **`BioCultDB`** (não `etnoDB`) e
 as envs/portas corretas, mas usando uma imagem `:latest` cacheada localmente no host — anterior
 à publicação dual-app do CI (`Cmd=[npm start]`, single-app, sem BioCultTermos). Diagnóstico e
-correção executados via SSH (`192.168.1.10`):
+correção executados via SSH (`<HOST_UNRAID>`):
 
 1. Diagnóstico: `docker logs BioCultDB` mostrava só `node backend/src/server.js` (sem
    `[start-unit]`/BioCultTermos) apesar do healthcheck estar `healthy`; `docker inspect` confirmou
    imagem local desatualizada (digest `sha256:90edc9a5...`, `Cmd=[npm start]`).
 2. Backup a frio: `docker stop BioCultDB` (checkpoint limpo do WAL) + cópia de
-   `biocultdb.sqlite` para `/mnt/user/Storage/appsdata/biocultdb/backups/` antes de qualquer
+   `biocultdb.sqlite` para `<APPDATA>/biocultdb/backups/` antes de qualquer
    remoção.
 3. `docker rm BioCultDB` + `docker pull ghcr.io/edalcin/biocultdb:latest` → nova imagem
    dual-app, digest `sha256:5aad119cac49df80678c1df805076076325fd65144f89df4a968f90ce4b30fc8`.
