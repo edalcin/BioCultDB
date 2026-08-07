@@ -880,9 +880,23 @@ A busca pública confirma cada regra de decisão do §5, ponta a ponta:
 | Vocabulário (`etnotermos`) | 2632 conceitos: 309 `active`, 1912 `candidate`, 411 `deprecated` |
 | Campo curado | `comunidades.plantas.tipoUso` — 744 conceitos, 333 vivos |
 | Campos ainda crus | `nomeVernacular` (982), `nomeCientifico` (864), `atividadesEconomicas` (36), `tipo` (9) — ver §8 |
-| Imagem em produção | `31f84b5`, container `healthy`, sem redeploy nesta sessão |
-| Código | **nenhuma alteração** — a curadoria é dado, não código |
-| Backup para restaurar | `backup-pre-curadoria-tipouso-2026-08-07T08-31-59Z.sqlite` (§7) |
+| Imagem em produção | `946b133`, container `healthy` — redeploy feito ao fim da sessão para eliminar o agendador (D14) |
+| Código | curadoria em si é dado, não código; o único código alterado nesta sessão foi a remoção do agendador (D14) e a derivação do endereço da interface pública no `header.ejs` |
+| Backups para restaurar | `backup-pre-curadoria-tipouso-2026-08-07T08-31-59Z.sqlite` (antes da curadoria) · `backup-pre-deploy-sem-cron-2026-08-07T09-14-32Z.sqlite` (antes do redeploy) — §7 |
+
+### 14.5.1 Verificação após o redeploy sem agendador
+
+O corte do agendador exigiu imagem nova, e imagem nova exige reconferir que a curadoria continua de pé.
+
+| Verificação | Resultado |
+|---|---|
+| Container | ✅ `healthy`, `BUILD_INFO.biocultdb_commit=946b1336…` |
+| Agendador ausente do container | ✅ `src/lib/scheduler/` não existe, `node_modules/node-cron` ausente, 0 ocorrências de `node-cron`/`acquisitionCron`/`scheduledNext`/`ACQUISITION_CRON` em `src`, e o log de startup não traz mais a linha do cron |
+| `GET /acquisition/status` | ✅ responde sem o campo `scheduledNext` |
+| Nada roda sozinho | ✅ container recriado às `09:15Z`; o `lastRun` continuou sendo o ciclo manual das `08:42Z` até alguém clicar |
+| O botão continua funcionando | ✅ `POST /acquisition/run` → `202`, ciclo `success` às `09:16:44Z`, **criados=0**, existentes=2769, 40,1 s |
+| Curadoria intacta | ✅ `305 / 28 / 411` no campo, 2632 conceitos no total, 1509 entradas de auditoria — idênticos a antes do redeploy |
+| Consulta pública | ✅ porta 4000 responde `200` em `/health` |
 
 ### 14.6 O que ficou para depois
 
