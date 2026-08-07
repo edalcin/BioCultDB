@@ -200,9 +200,28 @@ coisas.
 nem a dependência `node-cron`, nem a env var. A aquisição acontece **exclusivamente sob demanda**, no
 botão **"Executar Aquisição"** do dashboard admin (`POST /acquisition/run`).
 
-Com as duas camadas fechadas, o que sobra de cuidado é banal e visível: **não clicar em "Executar
-Aquisição" no meio de um lote de curadoria.** Uma execução concorrente colide com o bloqueio otimista
-e devolve `409` no meio do lote. Antes isso era um horário a evitar; agora é um botão a não apertar.
+### 3.3 Curar enquanto uma aquisição roda é seguro — e a frase anterior estava errada
+
+Esta seção afirmava que uma aquisição concorrente "colide com o bloqueio otimista e devolve `409` no
+meio do lote". **Isso é falso**, e a afirmação foi refutada por teste (D15). O mecanismo, lido com
+cuidado:
+
+| Peça | O que faz | Consequência |
+|---|---|---|
+| `upsertConcept` (aquisição) | para um conceito já existente, faz `UPDATE` do documento tocando só `sourceFields`, `sourceCommunities` e `updatedAt` — **sem mexer em `version`** | não há como disparar o `409`, que só ocorre quando a `version` mudou |
+| `optimisticUpdate` (curadoria) | relê o documento **dentro** da transação, compara a `version`, aplica a mutação no documento fresco | não escreve a partir de cópia velha, então não perde a alteração da aquisição |
+| `better-sqlite3` | driver **síncrono**, e admin e aquisição vivem no **mesmo processo** Node | o par ler-escrever de cada termo é atômico; nada se intercala no meio dele |
+
+O único ponto de intercalação é o `await` que a aquisição faz a cada 40 termos para não travar a
+interface — e ali uma escrita de curadoria completa inteira, sem estado partido.
+
+Dois testes em `acquisition-service.test.js` guardam isso: um cura (adiciona rótulo, grava definição)
+com um ciclo no ar e exige que nada dê `409` nem se perca; o outro absorve um termo como rótulo
+alternativo, deprecia a origem, roda um ciclo e exige que nada seja recriado.
+
+O que sobrava de verdade era **desperdício e confusão**, não corrupção: dois ciclos simultâneos
+refazem a mesma varredura de ~40 s e gravam duas entradas de log, e o botão não dava sinal algum de
+que havia um ciclo no ar. Isso foi resolvido na interface — ver D15.
 
 ---
 
@@ -287,7 +306,8 @@ Cinco fases. Cada uma é verificável antes da seguinte.
 1. Backup consistente (§7).
 2. Confirmar que a correção de `upsertConcept` está em produção, **ou** assumir explicitamente o
    padrão (a) do §3.
-3. Confirmar que ninguém vai clicar em "Executar Aquisição" durante o lote (§3.2).
+3. Nada a coordenar quanto à aquisição: curar com um ciclo no ar é seguro (§3.3), e a interface
+   recusa um segundo ciclo simultâneo (D15).
 4. Ler `ADMIN_PASSWORD` do env do container; autenticar em `http://<HOST_UNRAID>:4001/`.
 
 ### Fase 1 — Criar a estrutura
@@ -734,9 +754,54 @@ próxima execução agendada. O único gatilho é o botão **"Executar Aquisiç�
 (`POST /acquisition/run`), que já existia e não mudou.
 
 **Consequência.** Quem decide quando o vocabulário é confrontado com o BioCultDB é o curador, não um
-relógio. O procedimento perde a restrição de horário: a Fase 0 e o §13 passam a pedir apenas que
-ninguém clique no botão durante um lote. E o custo de 44 s por ciclo passa a ser esperado na frente de
-quem clicou — ver §12, item 6.
+relógio. E o custo de 44 s por ciclo passa a ser esperado na frente de quem clicou — ver §12, item 6.
+A restrição de horário que este documento carregava foi retirada; o que sobrou dela estava errado, e
+D15 corrige.
+
+### D15 — A advertência de concorrência estava errada; o que faltava era estado na interface (2026-08-07)
+
+**Contexto.** Ao eliminar o agendamento (D14), este documento passou a dizer que o cuidado remanescente
+era "não clicar em Executar Aquisição no meio de um lote de curadoria", porque uma execução concorrente
+"colide com o bloqueio otimista e devolve `409`". O curador pediu a explicação — e a explicação não
+existia, porque a afirmação era falsa.
+
+**Refutado por leitura e por teste.** `upsertConcept` atualiza um conceito existente sem tocar em
+`version`, e o `409` só nasce de `version` divergente; `optimisticUpdate` relê o documento dentro da
+transação, então não escreve de cópia velha; e o driver é síncrono no mesmo processo, então o par
+ler-escrever de cada termo é atômico. Dois testes novos em `acquisition-service.test.js` provam o
+comportamento em vez de argumentar sobre ele: curar com um ciclo no ar não dá `409` nem perde escrita,
+e um termo absorvido como rótulo não é recriado. Detalhe em §3.3.
+
+**Recusado.** Manter a advertência "por segurança". Uma regra operacional que ninguém consegue
+justificar é pior que nenhuma: ensina o curador a evitar algo inofensivo e mina a credibilidade das
+advertências que importam.
+
+**Recusado também.** Serializar aquisição e curadoria com um lock. Seria resolver um problema que não
+existe, ao custo de bloquear a interface durante 40 s.
+
+**O que era real.** Não corrupção — desperdício e cegueira. Dois ciclos simultâneos refaziam a mesma
+varredura de ~40 s e gravavam duas entradas de log, e o botão não dava sinal de que havia ciclo no ar.
+Pior: a página de logs já tinha um bloco de "aquisição em andamento" com polling, mas alimentado por
+`acquisitionRunning: false` **fixo no código** — nunca aparecia.
+
+**Decidido — alteração na interface.**
+
+| Peça | Mudança |
+|---|---|
+| `AcquisitionService` | `isRunning()` / `runningSinceIso()` e guarda de execução única: um segundo ciclo concorrente é recusado com `409` em vez de rodar em paralelo |
+| `POST /acquisition/run` | recusa com `409` (ou devolve o cartão em estado "executando", se HTMX) quando já há ciclo no ar |
+| `GET /acquisition/status` | passa a informar `running` e `runningSince` |
+| `partials/acquisition-card.ejs` | cartão do dashboard em dois estados: em repouso, botão ativo; em execução, botão **desabilitado** com `aria-busy`, hora de início, e auto-consulta a cada 3 s que o devolve ao repouso sozinho |
+| `partials/acquisition-badge.ejs` | o selo da página de logs deixa de ser código morto; ao terminar, vira um link para atualizar a lista |
+| `GET /acquisition/card` · `/badge` | os dois fragmentos que o polling consulta |
+
+O cartão diz, na própria tela, o que este documento errou: *"Pode continuar curando: as duas coisas não
+se atropelam."*
+
+**Consequência.** O curador não consegue mais disparar dois ciclos por acidente, vê que há um em
+andamento e desde quando, e não é mais instruído a evitar uma concorrência inofensiva. A guarda é uma
+variável de módulo — suficiente porque o admin é um processo único; um deploy com réplicas precisaria
+de um registro de lock no SQLite, e isso está anotado no código.
 
 ---
 
@@ -787,7 +852,7 @@ curta (`banho`, `quengo`, `anticorpos`) e uma estava fora dela, entre as absorç
 ### Ao começar a execução
 
 1. **Backup novo** (§7) — os anteriores envelhecem a cada ciclo de aquisição.
-2. Conferir que o container está `healthy` e que ninguém mais está com a curadoria aberta (§3.2).
+2. Conferir que o container está `healthy`. Quanto à aquisição, não há o que coordenar (§3.3).
 3. Ler `ADMIN_PASSWORD` do env do container; autenticar em `http://<HOST_UNRAID>:4001/`.
 4. Executar as Fases 1 a 5 do §6, conferindo cada fase antes da seguinte.
 5. Fechar com o teste que importa: disparar a aquisição manualmente e confirmar que a curadoria
