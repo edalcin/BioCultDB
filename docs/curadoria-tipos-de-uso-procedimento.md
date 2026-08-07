@@ -945,9 +945,9 @@ A busca pública confirma cada regra de decisão do §5, ponta a ponta:
 | Vocabulário (`etnotermos`) | 2632 conceitos: 309 `active`, 1912 `candidate`, 411 `deprecated` |
 | Campo curado | `comunidades.plantas.tipoUso` — 744 conceitos, 333 vivos |
 | Campos ainda crus | `nomeVernacular` (982), `nomeCientifico` (864), `atividadesEconomicas` (36), `tipo` (9) — ver §8 |
-| Imagem em produção | `946b133`, container `healthy` — redeploy feito ao fim da sessão para eliminar o agendador (D14) |
-| Código | curadoria em si é dado, não código; o único código alterado nesta sessão foi a remoção do agendador (D14) e a derivação do endereço da interface pública no `header.ejs` |
-| Backups para restaurar | `backup-pre-curadoria-tipouso-2026-08-07T08-31-59Z.sqlite` (antes da curadoria) · `backup-pre-deploy-sem-cron-2026-08-07T09-14-32Z.sqlite` (antes do redeploy) — §7 |
+| Imagem em produção | `9550783`, container `healthy` — dois redeploys nesta sessão: o primeiro para eliminar o agendador (D14), o segundo para o estado de execução na interface (D15) |
+| Código | curadoria em si é dado, não código. O código alterado nesta sessão: remoção do agendador (D14), estado de execução e guarda de ciclo único na interface (D15), e a derivação do endereço da interface pública no `header.ejs` |
+| Backups para restaurar | `backup-pre-curadoria-tipouso-2026-08-07T08-31-59Z.sqlite` (antes da curadoria) · `backup-pre-deploy-sem-cron-2026-08-07T09-14-32Z.sqlite` · `backup-pre-deploy-ui-aquisicao-2026-08-07T09-35-56Z.sqlite` — §7 |
 
 ### 14.5.1 Verificação após o redeploy sem agendador
 
@@ -961,6 +961,20 @@ O corte do agendador exigiu imagem nova, e imagem nova exige reconferir que a cu
 | Nada roda sozinho | ✅ container recriado às `09:15Z`; o `lastRun` continuou sendo o ciclo manual das `08:42Z` até alguém clicar |
 | O botão continua funcionando | ✅ `POST /acquisition/run` → `202`, ciclo `success` às `09:16:44Z`, **criados=0**, existentes=2769, 40,1 s |
 | Curadoria intacta | ✅ `305 / 28 / 411` no campo, 2632 conceitos no total, 1509 entradas de auditoria — idênticos a antes do redeploy |
+| Consulta pública | ✅ porta 4000 responde `200` em `/health` |
+
+### 14.5.2 Verificação da interface de aquisição em produção (D15)
+
+Imagem `9550783`, container `healthy`, `BUILD_INFO.biocultdb_commit=9550783d…`.
+
+| Verificação | Resultado |
+|---|---|
+| Estado em repouso | ✅ `GET /acquisition/status` → `running: false`, `runningSince: null`; cartão com botão ativo e **sem** polling |
+| Clique | ✅ `POST /acquisition/run` → `202`; `running: true` desde `09:36:55Z`; cartão volta `disabled`, com "Executando…" e `hx-trigger: every 3s` |
+| Segundo clique concorrente | ✅ `409 {"error":"Aquisição já em execução."}` — o ciclo em andamento não é duplicado |
+| Fim do ciclo | ✅ `success`, **criados=0**, existentes=2769, 43,9 s; `running` volta a `false` e o cartão volta sozinho a "Executar Aquisição" |
+| Curadoria intacta | ✅ `305 / 28 / 411` no campo; 2632 conceitos, 309 `active` / 1912 `candidate` / 411 `deprecated` no total; 1509 entradas de auditoria |
+| Um log por ciclo | ✅ 4 execuções registradas em 2026-08-07 — nenhuma sobreposta |
 | Consulta pública | ✅ porta 4000 responde `200` em `/health` |
 
 ### 14.6 O que ficou para depois
