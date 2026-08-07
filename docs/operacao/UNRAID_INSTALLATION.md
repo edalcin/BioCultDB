@@ -621,7 +621,7 @@ Depois da instalação:
 
 Para questões sobre instalação ou uso:
 
-- **Issues**: [GitHub Repository Issues](../../issues)
+- **Issues**: [GitHub Repository Issues](https://github.com/edalcin/BioCultDB/issues)
 - **Desenvolvedor**: Eduardo Dalcin <edalcin@jbrj.gov.br>
 - **Documentação**: Veja [README.md](../README.md)
 

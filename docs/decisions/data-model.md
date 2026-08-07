@@ -464,7 +464,7 @@ function validateReference(data) {
 
 ## Data Migration
 
-**Status**: No migration needed - database already exists with structure matching /docs/dataStructure.json
+**Status**: No migration needed - database already exists with structure matching /docs/referencia/dataStructure.json
 
 **Index Creation**: Execute index/generated-column creation commands once on deployment:
 ```sql
@@ -534,7 +534,7 @@ JSON document per row
 
 ## Summary
 
-The data model directly reflects the SQLite JSON1 document store defined in /docs/dataStructure.json with added:
+The data model directly reflects the SQLite JSON1 document store defined in /docs/referencia/dataStructure.json with added:
 - Status field for curation workflow
 - Fonte field identifying the originating acquisition source
 - Timestamps for tracking

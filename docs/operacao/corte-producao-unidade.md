@@ -128,7 +128,7 @@ padrão: `docker pull` explícito + `docker rm`/`docker run` — repetido ~6 vez
 Cada um corrigiu um bug de produção real encontrado depois do corte inicial (autenticação,
 cobertura de vocabulário, paginação do admin, bloqueio do processo de aquisição, botão de
 ativação, busca de relações) — histórico completo e resultado agregado (28 registros → 2536
-conceitos candidatos) em [`integracao.md`](../integracao.md) §11 "Consolidação pós-corte".
+conceitos candidatos) em [`integracao.md`](../../integracao.md) §11 "Consolidação pós-corte".
 
 ## Referências
 

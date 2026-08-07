@@ -67,7 +67,7 @@ inalterada.
 falhava antes desta mudança por usar ESM sem transform) — 27/27 passando, incluindo os 5 testes novos
 do parser de PDF.
 
-**Verificação manual, servidor local, artigo real** (`docs/Hanazakietal2000.pdf`, etnobotânica,
+**Verificação manual, servidor local, artigo real** (`docs/referencia/Hanazakietal2000.pdf`, etnobotânica,
 Hanazaki et al. 2000): upload via browser real (headless Chromium) →
 `texto` populado com 48576 caracteres, `arquivoNome` = nome do arquivo, `phase` volta a `''` (sem
 erro). **Nenhuma requisição de rede** foi disparada durante a leitura (log de `page.on('request')`

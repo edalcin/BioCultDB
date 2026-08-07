@@ -79,7 +79,7 @@ Curators need to review, edit, and approve references submitted through the acqu
 - **FR-001**: System MUST provide a web-based interface accessible via standard browsers
 - **FR-002**: System MUST persist data in the shared SQLite file (SQLITE_DB_PATH) in the biocultdb_records table (JSON1 document store)
 - **FR-003**: System MUST implement three distinct interface contexts running on separate ports: acquisition (data entry), curation (data editing and approval), and presentation (public search and display)
-- **FR-004**: System MUST enforce the hierarchical data structure: reference → communities → plants as defined in /docs/dataStructure.json
+- **FR-004**: System MUST enforce the hierarchical data structure: reference → communities → plants as defined in /docs/referencia/dataStructure.json
 - **FR-005**: System MUST accept and store reference metadata including title, authors (array), year, abstract, and DOI
 - **FR-006**: System MUST accept and store community data including name, municipality, state, location description, economic activities (array), and observations
 - **FR-007**: System MUST accept and store plant data including scientific names (array), vernacular names (array), and use types (array)
@@ -122,7 +122,7 @@ Curators need to review, edit, and approve references submitted through the acqu
 
 - The SQLite file at SQLITE_DB_PATH (biocultdb_records table) is already operational and accessible from the application container
 - SQLite is embedded (no network host/port or credentials); the file path is provided via the SQLITE_DB_PATH environment variable
-- The data structure in /docs/dataStructure.json represents the canonical schema and will not change during initial development
+- The data structure in /docs/referencia/dataStructure.json represents the canonical schema and will not change during initial development
 - The application accesses the SQLite file directly on local disk, avoiding network latency entirely
 - Continuous deployment to ghcr.io/edalcin/ will be configured via GitHub Actions or similar CI/CD pipeline
 - All commits will be made directly to the main branch as specified (no feature branches for code changes)
@@ -138,7 +138,7 @@ Curators need to review, edit, and approve references submitted through the acqu
 - Existing SQLite file at SQLITE_DB_PATH
 - Container runtime environment on Unraid server
 - GitHub Container Registry (ghcr.io) access for image hosting
-- Data structure specification in /docs/dataStructure.json
+- Data structure specification in /docs/referencia/dataStructure.json
 
 ## Out of Scope
 

@@ -390,7 +390,7 @@ test('search responds within 2s for 1000 records', async () => {
 ## References
 
 - **Especificação do projeto**: [`docs/decisions/spec.md`](./spec.md)
-- **Plano de implementação**: superado, removido na limpeza de 2026-07-11 (ver `docs/LIMPEZA_2026-07-11.md`)
+- **Plano de implementação**: superado, removido na limpeza de 2026-07-11 (ver `docs/operacao/LIMPEZA_2026-07-11.md`)
 - Os documentos de pesquisa originais (`technology-stack-recommendation.md`, `implementation-examples.md`, `docker-size-comparison.md`) foram removidos na limpeza de 2026-07-11 por serem redundantes com este resumo executivo
 
 ---

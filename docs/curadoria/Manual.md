@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="BioCultDBLogo.png" alt="BioCultDB" width="160">
+  <img src="../assets/BioCultDBLogo.png" alt="BioCultDB" width="160">
 </div>
 
 # Manual de Curadoria — Organizando Termos e Conceitos no BioCultTermos
@@ -11,7 +11,7 @@
 > organizado do jeito que é e **como** tomar as decisões certas na tela de edição de conceitos.
 >
 > Todos os exemplos usam termos reais de uso etnobotânico do arquivo
-> [`tipoUso.txt`](tipoUso.txt) — a lista de "tipos de uso" que o BioCultDB coleta da
+> [`tipoUso.txt`](../referencia/tipoUso.txt) — a lista de "tipos de uso" que o BioCultDB coleta da
 > literatura científica e entrega ao BioCultTermos para curadoria.
 
 ---

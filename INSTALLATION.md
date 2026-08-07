@@ -71,7 +71,7 @@ para o histórico da integração.
 ### Deploy no Unraid
 
 Para instruções detalhadas de instalação via interface web do Unraid, consulte:
-📖 **[Guia Completo de Instalação no Unraid](./docs/UNRAID_INSTALLATION.md)**
+📖 **[Guia Completo de Instalação no Unraid](./docs/operacao/UNRAID_INSTALLATION.md)**
 
 **Resumo rápido (via interface web Unraid):**
 

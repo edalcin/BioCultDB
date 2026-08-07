@@ -126,4 +126,5 @@ Issues live as markdown files under `.scratch/<feature-slug>/`. See `docs/agents
 
 ### Domain docs
 
-Single-context layout (`CONTEXT.md` + `docs/adr/` at the repo root). See `docs/agents/domain.md`.
+Single-context layout (`CONTEXT.md` na raiz + ADRs em `docs/decisions/`). See `docs/agents/domain.md`.
+Índice de toda a documentação: `docs/README.md` — mantenha-o atualizado ao criar ou mover um documento.

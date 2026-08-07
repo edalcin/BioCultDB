@@ -1,12 +1,12 @@
 # Proposta de curadoria — Campo Semântico "Tipos de Usos de Plantas"
 
 > **Estado: EXECUTADA em 2026-08-07**, com as quatro divergências abaixo aplicadas. O que a execução
-> devolveu está no [§14 do procedimento](curadoria-tipos-de-uso-procedimento.md#14-registro-da-execução).
+> devolveu está no [§14 do procedimento](procedimento.md#14-registro-da-execução).
 > Gerada em 2026-08-06 a partir dos 713 conceitos cujo `sourceFields` contém
 > `comunidades.plantas.tipoUso`, em `/data/biocultdb.sqlite` (produção, Unraid `<HOST_HOSTNAME>`).
 > Backup da execução: `backup-pre-curadoria-tipouso-2026-08-07T08-31-59Z.sqlite`, `integrity_check: ok`.
-> Critérios: `docs/Manual.md`. Decisões (D1–D13), riscos e procedimento:
-> [`curadoria-tipos-de-uso-procedimento.md`](curadoria-tipos-de-uso-procedimento.md).
+> Critérios: `docs/curadoria/Manual.md`. Decisões (D1–D13), riscos e procedimento:
+> [`procedimento.md`](procedimento.md).
 
 ## Divergências da revisão do curador
 

@@ -26,7 +26,7 @@ resultado — detalhes em §11:
   `:4001`.
 - **Cobertura de campos ampliada além do plano original**: `AcquisitionService` passou a monitorar
   também `comunidades.plantas.nomeCientifico` (ausente no scaffold original) e a semear um
-  vocabulário estático de referência (`docs/tipoUso.txt`, ~450 termos), garantindo que o
+  vocabulário estático de referência (`docs/referencia/tipoUso.txt`, ~450 termos), garantindo que o
   vocabulário candidato cubra o domínio completo, não só o que já foi digitado em registros
   existentes.
 - **6 bugs de produção encontrados e corrigidos durante a estabilização pós-corte** (fora do
@@ -84,7 +84,7 @@ docker run -d --name='BioCultDB' --net='bridge' --pids-limit 2048 \
 Mesmo container/nome (`BioCultDB`), imagem trocada para dual-app, +2 portas (4000/4001) +2 env vars
 (`ADMIN_USERNAME`/`ADMIN_PASSWORD`). Bloco `docker run` completo, procedimento de corte executado e
 registro da execução real (digests, backup, resultados) em
-[`docs/corte-producao-unidade.md`](./docs/corte-producao-unidade.md).
+[`docs/operacao/corte-producao-unidade.md`](./docs/operacao/corte-producao-unidade.md).
 
 ## 3. Decisões tomadas (grilling 2026-07-12)
 
@@ -261,7 +261,7 @@ originalmente.
 | **`biocultdb_records`** | Tabela do BioCultDB (referências científicas, comunidades, plantas). Propriedade exclusiva do BioCultDB — o BioCultTermos só lê, nunca escreve. |
 | **`etnotermos` / `etnotermos_fts` / `etnotermos_acquisition_log` / `etnotermos_audit_log`** | Tabelas do BioCultTermos no mesmo arquivo. Propriedade exclusiva do BioCultTermos. |
 | **SKOS-XL** | *Simple Knowledge Organization System eXtension for Labels* (padrão W3C) — modelo de conceito/rótulo usado pelo BioCultTermos para vocabulário controlado multilíngue (`prefLabel`, `altLabel`, `broader`/`narrower`/`related`). |
-| **`AcquisitionService`** | Serviço do BioCultTermos (`bioculttermos/backend/src/services/AcquisitionService.js`) que lê `biocultdb_records`, extrai valores de 5 campos monitorados (tipo de comunidade, nome vernacular, nome científico, tipo de uso, atividade econômica) e cria conceitos `candidate` no `etnotermos`; também semeia o vocabulário estático de referência (`docs/tipoUso.txt`, via `bioculttermos/backend/src/data/referenceTerms.js`) mesmo sem ocorrência ainda em `biocultdb_records`. Disparado sob demanda pelo botão **"Executar Aquisição"** do dashboard admin (`POST /acquisition/run`). |
+| **`AcquisitionService`** | Serviço do BioCultTermos (`bioculttermos/backend/src/services/AcquisitionService.js`) que lê `biocultdb_records`, extrai valores de 5 campos monitorados (tipo de comunidade, nome vernacular, nome científico, tipo de uso, atividade econômica) e cria conceitos `candidate` no `etnotermos`; também semeia o vocabulário estático de referência (`docs/referencia/tipoUso.txt`, via `bioculttermos/backend/src/data/referenceTerms.js`) mesmo sem ocorrência ainda em `biocultdb_records`. Disparado sob demanda pelo botão **"Executar Aquisição"** do dashboard admin (`POST /acquisition/run`). |
 | **`candidate` / `active` / `deprecated`** | Ciclo de vida de um conceito SKOS-XL no BioCultTermos: criado como `candidate` pelo `AcquisitionService` a cada execução sob demanda, promovido a `active` por um curador/terminólogo (porta 4001), ou marcado `deprecated` (com `replacedBy` opcional). |
 | **HTTP Basic Auth + bcrypt** | Mecanismo de autenticação da porta 4001 (admin). Middleware `requireAuth` (`bioculttermos/backend/src/lib/auth/basicAuth.js`) decodifica o header `Authorization: Basic ...` e compara com hash bcrypt. |
 | **`ADMIN_USERNAME` / `ADMIN_PASSWORD`** | Par de env vars (Opção B de `config/index.js:22-28`) para um único usuário admin, senha em texto plano hasheada no boot. Opção escolhida nesta integração (vs. `ADMIN_USERS` JSON multi-usuário). |
@@ -285,7 +285,7 @@ host usou a imagem `:latest` **já em cache local** em vez de puxar a nova image
 `docker run` não força pull se a tag já existe localmente. Resultado: container com envs/portas
 dual-app corretas, mas rodando o binário single-app antigo (sem BioCultTermos).
 **Correção**: `docker pull` explícito antes de recriar — desde então, todo redeploy desta sessão
-seguiu esse padrão. Lição registrada em `docs/corte-producao-unidade.md`.
+seguiu esse padrão. Lição registrada em `docs/operacao/corte-producao-unidade.md`.
 
 ### 11.2 Autenticação HTTP Basic sem re-prompt (403 em vez de 401)
 
@@ -312,9 +312,9 @@ arquivos EJS corrigidos, sufixo `/edit` inexistente removido dos links. `BioCult
 
 `AcquisitionService.MONITORED_FIELDS` nunca incluiu `comunidades.plantas.nomeCientifico`, apesar de
 ser um campo de primeira classe no BioCultDB (formulários, validação, estatísticas, FTS). Além
-disso, `docs/tipoUso.txt` (lista de referência de ~450 termos de uso de plantas, compilada da
+disso, `docs/referencia/tipoUso.txt` (lista de referência de ~450 termos de uso de plantas, compilada da
 literatura etnobotânica) nunca era usado por nenhum código — só documentação de domínio.
-**Correção**: campo `nomeCientifico` adicionado à extração; `docs/tipoUso.txt` copiado para
+**Correção**: campo `nomeCientifico` adicionado à extração; `docs/referencia/tipoUso.txt` copiado para
 `bioculttermos/backend/src/data/referenceTerms.js` e semeado como conceitos `candidate` a cada
 ciclo de aquisição (idempotente), independente do que já existe em `biocultdb_records` — curador
 ainda revisa cada um antes de promover a `active`. `BioCultTermos@9c40c96` → `BioCultDB@36eed01`.

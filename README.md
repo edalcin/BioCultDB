@@ -2,7 +2,7 @@
 ## Versão 1.0
 
 <div align="center">
-  <img src="docs\BioCultDBLogo.png" alt="BioCultDB Logo" width="200">
+  <img src="docs/assets/BioCultDBLogo.png" alt="BioCultDB Logo" width="200">
 
 
   [![GitHub release](https://img.shields.io/github/v/release/edalcin/BioCultDB)](https://github.com/edalcin/BioCultDB/releases)
@@ -109,7 +109,7 @@ Interface de conversação com IA para interagir com o banco de dados em linguag
 
 ## Estrutura de Dados
 
-O banco de dados utiliza uma estrutura hierárquica em JSON, conforme definido em [`/docs/dataStructure.json`](./docs/dataStructure.json):
+O banco de dados utiliza uma estrutura hierárquica em JSON, conforme definido em [`/docs/referencia/dataStructure.json`](./docs/referencia/dataStructure.json):
 
 ```
 Referência (Publicação Científica)
@@ -217,7 +217,7 @@ porta **4001** expõe a curadoria de termos, protegida por HTTP Basic Auth
 conceitos entre si. O `AcquisitionService` lê os registros gravados em `biocultdb_records` (via
 BioCultDB), extrai valores de **5 campos monitorados** — tipo de comunidade, nome científico, nome
 vernacular, tipo de uso e atividade econômica — e cria conceitos SKOS-XL com `status: candidate`;
-também semeia um vocabulário estático de referência de tipos de uso (`docs/tipoUso.txt`, ~450
+também semeia um vocabulário estático de referência de tipos de uso (`docs/referencia/tipoUso.txt`, ~450
 termos do domínio etnobotânico), cobrindo o vocabulário do domínio além do que já foi digitado em
 algum registro. Um curador promove cada candidato a `active` pela interface 4001. A aquisição é
 executada exclusivamente sob demanda: o curador clica em **"Executar Aquisição"** no dashboard admin
@@ -250,12 +250,16 @@ O projeto implementa os princípios C.A.R.E. para dados de povos indígenas e co
 
 ## Documentação Técnica
 
-A documentação técnica completa está disponível em:
+**Índice completo da documentação: [`docs/README.md`](./docs/README.md)** — todos os documentos de
+`docs/`, organizados por propósito, com uma descrição de cada um.
+
+Atalhos para os mais consultados:
 
 - **Instalação e Desenvolvimento**: [`INSTALLATION.md`](./INSTALLATION.md)
+- **Manual de Curadoria (SKOS-XL)**: [`docs/curadoria/Manual.md`](./docs/curadoria/Manual.md)
 - **Especificação de Requisitos**: [`docs/decisions/spec.md`](./docs/decisions/spec.md)
 - **Modelo de Dados**: [`docs/decisions/data-model.md`](./docs/decisions/data-model.md)
-- **Integração com BioCultTermos**: [`docs/decisions/ADR-001-integracao-bioculttermos.md`](./docs/decisions/ADR-001-integracao-bioculttermos.md) (decisão) · [`integracao.md`](./integracao.md) (checklist executado e resultado) · [`docs/corte-producao-unidade.md`](./docs/corte-producao-unidade.md) (runbook de corte em produção) · [ADR-007 da Arquitetura BioCultural](https://github.com/edalcin/Arquitetura-BioCultural/blob/main/docs/architecture-decisions/ADR-007-shared-bioculttermos-module.md) (decisão arquitetural do módulo compartilhado entre as 4 unidades)
+- **Integração com BioCultTermos**: [`docs/decisions/ADR-001-integracao-bioculttermos.md`](./docs/decisions/ADR-001-integracao-bioculttermos.md) (decisão) · [`integracao.md`](./integracao.md) (checklist executado e resultado) · [`docs/operacao/corte-producao-unidade.md`](./docs/operacao/corte-producao-unidade.md) (runbook de corte em produção) · [ADR-007 da Arquitetura BioCultural](https://github.com/edalcin/Arquitetura-BioCultural/blob/main/docs/architecture-decisions/ADR-007-shared-bioculttermos-module.md) (decisão arquitetural do módulo compartilhado entre as 4 unidades)
 - **Contratos de API**: [`docs/decisions/contracts/`](./docs/decisions/contracts/)
 - **Decisão de Stack Tecnológica**: [`docs/decisions/technology-decision.md`](./docs/decisions/technology-decision.md)
 - **Arquitetura do etnoChat**: [`docs/decisions/etnochat-plan.md`](./docs/decisions/etnochat-plan.md)

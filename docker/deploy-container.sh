@@ -6,10 +6,10 @@
 # são LIDOS do container em execução e repassados. Isso importa por dois motivos —
 # credenciais (ADMIN_USERNAME/ADMIN_PASSWORD) nunca precisam ser escritas em
 # arquivo nem sair do host, e uma instalação que customizou portas ou caminhos
-# (docs/UNRAID_INSTALLATION.md, Seção 8) não é silenciosamente revertida ao padrão.
+# (docs/operacao/UNRAID_INSTALLATION.md, Seção 8) não é silenciosamente revertida ao padrão.
 #
 # Requer que o container esteja NO AR — é dele que a configuração é lida.
-# Faça backup antes (docs/UNRAID_INSTALLATION.md, Seção 6).
+# Faça backup antes (docs/operacao/UNRAID_INSTALLATION.md, Seção 6).
 #
 # Uso: bash deploy-container.sh [nome-do-container]
 set -euo pipefail

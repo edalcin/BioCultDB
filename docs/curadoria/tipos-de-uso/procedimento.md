@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="BioCultDBLogo.png" alt="BioCultDB" width="160">
+  <img src="../../assets/BioCultDBLogo.png" alt="BioCultDB" width="160">
 </div>
 
 # Curadoria assistida de Campo Semântico — procedimento, riscos e relatório
@@ -11,9 +11,9 @@
 > Resultado: **713 → 332 conceitos** no campo (305 `active`, 27 `candidate` mais `fumo`, 411 `deprecated`),
 > 1509 entradas de auditoria, e a curadoria **verificada sobrevivente** a um ciclo completo de aquisição
 > (`criados=0`, contagens idênticas). O registro da execução está no [§14](#14-registro-da-execução).
-> A proposta termo a termo está em [`curadoria-tipos-de-uso-proposta.md`](curadoria-tipos-de-uso-proposta.md);
+> A proposta termo a termo está em [`proposta.md`](proposta.md);
 > o plano, agora com as divergências do curador aplicadas e os ids dos conceitos criados, em
-> [`curadoria/plano-tipouso.json`](curadoria/plano-tipouso.json).
+> [`plano-tipouso.json`](plano-tipouso.json).
 > Este documento registra **o que foi apurado, o que foi decidido, como se executa e o que a execução
 > devolveu** — inclusive como repetir o processo em outro campo semântico e como embuti-lo na interface.
 
@@ -41,7 +41,7 @@
 ## 1. O que este procedimento faz
 
 Transforma uma lista bruta de termos de um campo semântico — como a aquisição a deposita, cada grafia
-virando um conceito candidato isolado — numa rede SKOS-XL curada, conforme o [Manual de Curadoria](Manual.md):
+virando um conceito candidato isolado — numa rede SKOS-XL curada, conforme o [Manual de Curadoria](../Manual.md):
 plurais e variantes recolhidos como rótulos, grafias incorretas escondidas mas buscáveis, e uma
 hierarquia navegável de conceitos.
 
@@ -319,7 +319,7 @@ Cada um recebe definição e, quando há risco de confusão com um vizinho, nota
 > **A API Admin não tem rota de criação de conceito.** Ela cobre `GET`, `PUT`, `activate`, `deprecate`,
 > rótulos e relações — e nada mais (§2.4). A criação usa a **mesma fábrica de domínio que a aquisição**
 > usa (`createConcept` + `insertConcept`, de `models/Concept.js`), executada de dentro do container por
-> [`curadoria/fase1-criar-pais.mjs`](curadoria/fase1-criar-pais.mjs), com uma entrada de auditoria por
+> [`fase1-criar-pais.mjs`](fase1-criar-pais.mjs), com uma entrada de auditoria por
 > conceito criado. Um conceito recém-criado não tem relação alguma: os invariantes que importam — ciclo,
 > reciprocidade, cascata de `ancestors`, `version`, auditoria — só passam a valer nas operações
 > seguintes, e essas vão todas pela API. O script é idempotente: usa o mesmo teste de existência do
@@ -442,7 +442,7 @@ operação manual.
 
 **Não existe chave Gemini registrada no servidor** — verificado: `app_config` tem uma única linha
 (`extraction_prompt`) e não há chave no env do container. Isto é intencional:
-[ADR-002](decisions/ADR-002-extracao-por-ia.md) decidiu (D5) que a chave vive no `localStorage` do
+[ADR-002](../../decisions/ADR-002-extracao-por-ia.md) decidiu (D5) que a chave vive no `localStorage` do
 browser, transita no corpo do POST e nunca é persistida.
 
 A funcionalidade deve **seguir o mesmo padrão**, reusando o que já existe:
@@ -521,7 +521,7 @@ redeploy do container e a migração de código de idioma. A execução da curad
 | 7 | Desenhada a taxonomia | 10 facetas, 37 conceitos-pai, profundidade 5, sem ciclos |
 | 8 | Classificados os 713 termos | 297 mantidos · 362 → rótulo alt · 9 → rótulo oculto · 12 compostos preservados em dois conceitos · 32 depreciados · 1 intocado |
 | 9 | Validada a consistência | 0 termos sem decisão, 0 alvos inexistentes, 0 cadeias de fusão, 0 auto-referências, 0 ciclos |
-| 10 | Gerados os artefatos | `curadoria-tipos-de-uso-proposta.md`, `curadoria/plano-tipouso.json`, este documento |
+| 10 | Gerados os artefatos | `proposta.md`, `plano-tipouso.json`, este documento |
 | 11 | **Corrigida a ressurreição noturna** | `upsertConcept` passa a casar em pref + alt + hidden; 3 testes novos, verificados falhando no código anterior |
 | 12 | Idioma padronizado em ISO 639-3 | `pt` → `por` no código e nos 2601 conceitos já gravados; migração idempotente (2ª execução: "Nothing to migrate") |
 | 13 | Publicada e implantada a imagem | build `31f84b5` (CI success) → container recriado, `healthy`, `BUILD_INFO` confere |
@@ -545,7 +545,7 @@ próximo curador não precise redescobrir o raciocínio — nem repetir a discus
 
 **Contexto.** O pedido pressupunha uma chave Gemini registrada no BioCultDB. Não há: `app_config` tem
 uma única linha (`extraction_prompt`) e não existe chave no ambiente do container. O
-[ADR-002](decisions/ADR-002-extracao-por-ia.md) D5 decidiu que a chave vive no `localStorage` do
+[ADR-002](../../decisions/ADR-002-extracao-por-ia.md) D5 decidiu que a chave vive no `localStorage` do
 browser e nunca é persistida.
 
 **Recusado.** Colar a chave na conversa (fica registrada no transcript) ou gravá-la em arquivo no
@@ -839,7 +839,7 @@ Nada abaixo pode ser decidido sem o curador.
 ### O que revisar, nesta ordem
 
 1. **A lista curta dos conceitos não-ativados**, no topo de
-   [`curadoria-tipos-de-uso-proposta.md`](curadoria-tipos-de-uso-proposta.md). Cada um traz a razão da
+   [`proposta.md`](proposta.md). Cada um traz a razão da
    dúvida. Concordando com ela, o grosso da revisão está feito.
 2. **A árvore proposta**, na mesma página. É onde um erro estrutural aparece rápido.
 3. **As linhas da tabela**, se sobrar fôlego. O que procurar são os casos classificados **com
@@ -989,8 +989,8 @@ Imagem `9550783`, container `healthy`, `BUILD_INFO.biocultdb_commit=9550783d…`
 
 ---
 
-> **Referências:** [Manual de Curadoria](Manual.md) ·
-> [ADR-001 — integração BioCultTermos](decisions/ADR-001-integracao-bioculttermos.md) ·
-> [ADR-002 — extração por IA](decisions/ADR-002-extracao-por-ia.md) ·
+> **Referências:** [Manual de Curadoria](../Manual.md) ·
+> [ADR-001 — integração BioCultTermos](../../decisions/ADR-001-integracao-bioculttermos.md) ·
+> [ADR-002 — extração por IA](../../decisions/ADR-002-extracao-por-ia.md) ·
 > [W3C SKOS-XL](https://www.w3.org/TR/skos-reference/skos-xl.html) ·
 > [Princípios CARE](https://www.gida-global.org/care)
