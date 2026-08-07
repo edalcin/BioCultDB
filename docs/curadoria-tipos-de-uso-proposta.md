@@ -1,12 +1,24 @@
 # Proposta de curadoria — Campo Semântico "Tipos de Usos de Plantas"
 
-> **Estado: PROPOSTA. Nada foi escrito na tabela `etnotermos` a título de curadoria.**
+> **Estado: EXECUTADA em 2026-08-07**, com as quatro divergências abaixo aplicadas. O que a execução
+> devolveu está no [§14 do procedimento](curadoria-tipos-de-uso-procedimento.md#14-registro-da-execução).
 > Gerada em 2026-08-06 a partir dos 713 conceitos cujo `sourceFields` contém
 > `comunidades.plantas.tipoUso`, em `/data/biocultdb.sqlite` (produção, Unraid `Asilo`, 192.168.1.10).
-> Backups verificados: `backup-pre-curadoria-tipouso-2026-08-06T17-45-03Z.sqlite` e
-> `backup-pre-deploy-2026-08-06T18-11-58Z.sqlite`.
-> Critérios: `docs/Manual.md`. Decisões (D1–D11), riscos e procedimento:
+> Backup da execução: `backup-pre-curadoria-tipouso-2026-08-07T08-31-59Z.sqlite`, `integrity_check: ok`.
+> Critérios: `docs/Manual.md`. Decisões (D1–D13), riscos e procedimento:
 > [`curadoria-tipos-de-uso-procedimento.md`](curadoria-tipos-de-uso-procedimento.md).
+
+## Divergências da revisão do curador
+
+Quatro linhas da tabela abaixo **não** foram executadas como propostas. Onde o texto desta página
+divergir do quadro seguinte, vale o quadro.
+
+| Termo | Proposto aqui | Executado | Por quê |
+|---|---|---|---|
+| `banho` | manter sem ativar, sob `ritual e espiritual` | manter sob **`forma de preparo e administração`**, `active` | não é uso ritual, é via de administração medicinal |
+| `quengo` | manter sem ativar, sob `material e tecnológico` | mesma posição, **`active`**, com a definição *"cuia feita da casca do coco"* | a dúvida era de significado, não de posição |
+| `anticorpos` | manter sem ativar, sob `alergias e problemas imunológicos` | **depreciar → `indeterminado`** | não nomeia um uso |
+| `sedação` | → rótulo alt de `sedativo` | **conceito próprio**, sob `ação farmacológica`, `active` | `sedação` é o estado obtido, `sedativo` é a propriedade da planta |
 
 ## Resumo
 
@@ -22,14 +34,17 @@
 | Termos apenas depreciados (qualificadores e sem conteúdo) | 32 |
 | Termos intocados (pertencem a outro campo semântico) | 1 |
 | **Conceitos sobreviventes** | **332** |
-| → a **ativar** | 302 |
-| → a deixar **`candidate`** para sua revisão | 30 |
+| → **ativados** (302 propostos + `banho`, `quengo` e `sedação`) | 305 |
+| → deixados **`candidate`** para sua revisão (30 propostos − `banho`, `quengo`, `anticorpos`) | 27 |
 | Redução do vocabulário | **53%** |
 
-## Os 30 conceitos que NÃO serão ativados
+## Os 30 conceitos que NÃO seriam ativados
 
 Ficam `candidate`, invisíveis na consulta pública, esperando seu julgamento. Esta é a lista
 curta prometida: se você concordar com ela, não precisa ler as 713 linhas abaixo.
+
+> Na revisão, três saíram desta lista: `banho`, `quengo` e `anticorpos` — ver as divergências acima.
+> Restaram **27** conceitos `candidate`.
 
 | Conceito | Por que não tenho segurança |
 |---|---|

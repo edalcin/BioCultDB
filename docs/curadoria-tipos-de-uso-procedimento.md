@@ -6,12 +6,16 @@
 
 ### Campo "Tipos de Usos de Plantas" (`comunidades.plantas.tipoUso`, 713 termos)
 
-> **Estado em 2026-08-06: plano fechado, execução adiada por escolha do curador.**
-> A proposta é revisada antes de qualquer escrita — ver [§13, Como retomar](#13-como-retomar-na-próxima-sessão).
+> **Estado em 2026-08-07: EXECUTADA em produção.** As cinco fases do §6 foram aplicadas pela API Admin
+> na porta 4001, com o container no ar, sobre o backup `backup-pre-curadoria-tipouso-2026-08-07T08-31-59Z.sqlite`.
+> Resultado: **713 → 332 conceitos** no campo (305 `active`, 27 `candidate` mais `fumo`, 411 `deprecated`),
+> 1509 entradas de auditoria, e a curadoria **verificada sobrevivente** a um ciclo completo de aquisição
+> (`criados=0`, contagens idênticas). O registro da execução está no [§14](#14-registro-da-execução).
 > A proposta termo a termo está em [`curadoria-tipos-de-uso-proposta.md`](curadoria-tipos-de-uso-proposta.md);
-> o plano executável em [`curadoria/plano-tipouso.json`](curadoria/plano-tipouso.json).
-> Este documento registra **o que foi apurado, o que foi decidido e como executar** — inclusive como
-> repetir o processo em outro campo semântico e como embuti-lo na interface do BioCultTermos.
+> o plano, agora com as divergências do curador aplicadas e os ids dos conceitos criados, em
+> [`curadoria/plano-tipouso.json`](curadoria/plano-tipouso.json).
+> Este documento registra **o que foi apurado, o que foi decidido, como se executa e o que a execução
+> devolveu** — inclusive como repetir o processo em outro campo semântico e como embuti-lo na interface.
 
 ---
 
@@ -26,10 +30,11 @@
 7. [Backup e recuperação](#7-backup-e-recuperação)
 8. [Repetindo em outro Campo Semântico](#8-repetindo-em-outro-campo-semântico)
 9. [Implementação futura na interface, com Gemini](#9-implementação-futura-na-interface-com-gemini)
-10. [Registro do que foi feito nesta sessão](#10-registro-do-que-foi-feito-nesta-sessão)
+10. [Registro da sessão de planejamento](#10-registro-da-sessão-de-planejamento-2026-08-06)
 11. [Registro de decisões](#11-registro-de-decisões)
 12. [Pendências e decisões em aberto](#12-pendências-e-decisões-em-aberto)
 13. [Como retomar na próxima sessão](#13-como-retomar-na-próxima-sessão)
+14. [Registro da execução](#14-registro-da-execução)
 
 ---
 
@@ -182,7 +187,7 @@ Uma execução concorrente vai colidir com o bloqueio otimista e devolver `409` 
 
 ## 4. Desenho da taxonomia
 
-Uma árvore só, com dez facetas de 1º nível, profundidade máxima 4, poli-hierarquia permitida onde
+Uma árvore só, com dez facetas de 1º nível, profundidade máxima 5, poli-hierarquia permitida onde
 o significado exige. Verificada sem ciclos.
 
 ```mermaid
@@ -270,6 +275,15 @@ Criar os 31 conceitos-pai novos e definir os 6 que já existem como pai
 (`alimentar`, `dor`, `febre`, `inflamação`, `problemas digestivos`, `problemas respiratórios`).
 Cada um recebe definição e, quando há risco de confusão com um vizinho, nota de escopo.
 
+> **A API Admin não tem rota de criação de conceito.** Ela cobre `GET`, `PUT`, `activate`, `deprecate`,
+> rótulos e relações — e nada mais (§2.4). A criação usa a **mesma fábrica de domínio que a aquisição**
+> usa (`createConcept` + `insertConcept`, de `models/Concept.js`), executada de dentro do container por
+> [`curadoria/fase1-criar-pais.mjs`](curadoria/fase1-criar-pais.mjs), com uma entrada de auditoria por
+> conceito criado. Um conceito recém-criado não tem relação alguma: os invariantes que importam — ciclo,
+> reciprocidade, cascata de `ancestors`, `version`, auditoria — só passam a valer nas operações
+> seguintes, e essas vão todas pela API. O script é idempotente: usa o mesmo teste de existência do
+> `upsertConcept` (pref + alt + hidden).
+
 Ligar as facetas de 2º e 3º nível aos seus pais. Ao final desta fase a árvore existe, vazia.
 
 ### Fase 2 — Absorver rótulos
@@ -295,12 +309,18 @@ de `ancestors` são automáticas. O bloqueio de ciclo é do sistema; a proposta 
 
 ### Fase 4 — Definições e ativação
 
-`PUT /concepts/:id` com definição para todo conceito sobrevivente. Nota de escopo obrigatória onde
-a fronteira é sutil — `calmante` × `sedativo` × `tranquilizante`, `dor` × `inflamação`,
-`indicação terapêutica` × `ação farmacológica`.
+`PUT /concepts/:id` com definição para os **37 nós da taxonomia** (os 31 novos e os 6 promovidos), que
+são os únicos cuja definição está na proposta revisada. Nota de escopo obrigatória onde a fronteira é
+sutil — `calmante` × `sedativo` × `sedação`, `dor` × `inflamação`,
+`indicação terapêutica` × `ação farmacológica`, e `forma de preparo e administração` por causa de `banho`.
 
-Depois, `POST /concepts/:id/activate` nos **302** conceitos inequívocos. Os **30** listados em D11
-permanecem `candidate` — e os 4 sem pai não recebem `broader` na Fase 3.
+> **Os conceitos-folha não recebem definição.** Nem a proposta nem o plano trazem definição para os
+> ~265 termos sobreviventes, e escrever 265 glosas clínicas não revisadas seria publicar palpite como
+> curadoria — exatamente o que D11 recusa. Gerá-las é trabalho de uma próxima passada, como proposta a
+> revisar, não como efeito colateral desta execução.
+
+Depois, `POST /concepts/:id/activate` nos conceitos inequívocos. Os listados em D11 permanecem
+`candidate` — e os 4 sem pai não recebem `broader` na Fase 3.
 
 ### Fase 5 — Conferir
 
@@ -444,10 +464,10 @@ rejeitar um agrupamento, os termos dependentes dele voltam à fila.
 
 ---
 
-## 10. Registro do que foi feito nesta sessão
+## 10. Registro da sessão de planejamento (2026-08-06)
 
 Somente leitura no vocabulário de produção. As escritas feitas foram: dois arquivos de backup, o
-redeploy do container e a migração de código de idioma.
+redeploy do container e a migração de código de idioma. A execução da curadoria está no §14.
 
 | # | Ação | Resultado |
 |---|---|---|
@@ -457,7 +477,7 @@ redeploy do container e a migração de código de idioma.
 | 4 | **Refutada a premissa da chave Gemini** | não há chave no servidor; ADR-002 D5 decidiu que nunca haverá |
 | 5 | **Identificado o risco de ressurreição noturna** | `upsertConcept` casa só em `prefLabels`; documentado no §3 |
 | 6 | Backup de produção | `backup-pre-curadoria-tipouso-2026-08-06T17-45-03Z.sqlite`, `integrity_check: ok`, md5 `722f4aee…`, sem downtime |
-| 7 | Desenhada a taxonomia | 10 facetas, 37 conceitos-pai, profundidade 4, sem ciclos |
+| 7 | Desenhada a taxonomia | 10 facetas, 37 conceitos-pai, profundidade 5, sem ciclos |
 | 8 | Classificados os 713 termos | 297 mantidos · 362 → rótulo alt · 9 → rótulo oculto · 12 compostos preservados em dois conceitos · 32 depreciados · 1 intocado |
 | 9 | Validada a consistência | 0 termos sem decisão, 0 alvos inexistentes, 0 cadeias de fusão, 0 auto-referências, 0 ciclos |
 | 10 | Gerados os artefatos | `curadoria-tipos-de-uso-proposta.md`, `curadoria/plano-tipouso.json`, este documento |
@@ -471,7 +491,7 @@ redeploy do container e a migração de código de idioma.
 foi o código de idioma dos rótulos (`pt` → `por`), que é correção de convenção, não decisão curatorial:
 não toca `literalForm`, `type`, `accessLevel` nem `version`.
 
-Resultado projetado da curadoria, ainda **não executada**: **713 → 328 conceitos**, redução de 54%.
+Resultado projetado da curadoria, executada no dia seguinte (§14): **713 → 332 conceitos**, redução de 53%.
 
 ---
 
@@ -527,7 +547,7 @@ justamente no caso que ele precisa atender.
 **Consequência.** Uma convenção só. Rótulos em inglês, que hoje estão marcados como português, passam
 a poder ser gravados corretamente como `eng`.
 
-### D4 — Uma árvore só, com doze facetas, e não campos semânticos separados
+### D4 — Uma árvore só, com dez facetas, e não campos semânticos separados
 
 **Contexto.** O campo mistura finalidade de uso, enfermidade tratada, ação farmacológica, parte do
 corpo e objeto produzido.
@@ -632,6 +652,42 @@ material.
 **Consequência.** Nenhum palpite meu entra na consulta pública, e nenhuma absorção é feita sobre
 termo ambíguo. Sobreviventes sobem de 328 para 332.
 
+### D12 — As quatro divergências do curador, na revisão da proposta (2026-08-07)
+
+**Contexto.** A proposta foi revisada antes da execução, como §13 previa. Quatro classificações minhas
+estavam erradas, e três delas estavam justamente na lista dos 30 duvidosos — o que confirma que a lista
+cumpriu a função.
+
+| Termo | Eu propus | O curador decidiu | Por quê |
+|---|---|---|---|
+| `banho` | `ritual e espiritual`, `candidate` | `forma de preparo e administração`, `active` | não é uso ritual, é via de administração medicinal — e `banho de assento` e `bath seat` já se dobravam nele |
+| `quengo` | `material e tecnológico`, `candidate` | mesma posição, `active`, com definição | significa cuia de coco: a dúvida era só de significado, e a posição estava certa |
+| `anticorpos` | `alergias e problemas imunológicos`, `candidate` | depreciar → `indeterminado` | não nomeia um uso; é o destino que D5 criou a faceta para receber |
+| `sedação` | rótulo alternativo de `sedativo` | conceito próprio sob `ação farmacológica`, `active` | `sedação` é o estado obtido, `sedativo` é a propriedade atribuída à planta — absorver apagaria a distinção |
+
+**Consequência.** Os duvidosos caem de 30 para 27; ativos vão de 302 para 305. As três decisões que
+carregam informação nova do curador ficaram gravadas no próprio conceito — definição em `quengo`, nota
+de escopo em `sedação` e `sedativo`, nota histórica em `banho` e em `anticorpos` — e não só neste
+documento, para que apareçam a quem abrir o termo.
+
+### D13 — Criação de conceito fora da API, definição de folha fora do escopo
+
+**Contexto.** Dois furos entre o plano e a superfície disponível apareceram na execução.
+
+**A API Admin não cria conceito.** O §2.4 listou as rotas de escrita e nenhuma cria: a criação só
+existe dentro do `upsertConcept` da aquisição. Os 31 pais novos foram criados pela **mesma fábrica de
+domínio** (`createConcept` + `insertConcept`), de dentro do container, com auditoria por conceito.
+**Recusado** escrever SQL à mão (contornaria o `createConcept`, que é onde os invariantes do documento
+moram) e **recusado** abrir uma rota nova só para isto, que exigiria code review, build e deploy antes
+de curar. Um conceito recém-criado não tem relação nenhuma: tudo que os invariantes protegem acontece
+nas operações seguintes, e essas foram todas pela API.
+
+**Definição de folha não foi inventada.** A Fase 4 pedia definição para todo sobrevivente, mas nem a
+proposta nem o plano trazem definição para os ~265 termos-folha — só para os 37 nós da taxonomia.
+Escrever 265 glosas clínicas que o curador não revisou publicaria palpite como curadoria, que é o que
+D11 recusa. **Decidido:** definição nos 37 nós, mais as notas de escopo das fronteiras sutis e as três
+notas do curador (D12). As folhas ficam com rótulos, hierarquia e status — sem definição.
+
 ---
 
 ## 12. Pendências e decisões em aberto
@@ -660,37 +716,25 @@ Nada abaixo pode ser decidido sem o curador.
 
 ## 13. Como retomar na próxima sessão
 
-A sessão de 2026-08-06 terminou com **o plano fechado e nada executado**, por escolha do curador: a
-proposta é revisada primeiro, a execução fica para depois.
+> **Cumprido.** A revisão aconteceu em 2026-08-07, produziu quatro divergências (D12) e a execução
+> seguiu na mesma sessão. Esta seção fica como receita para o próximo campo semântico — ver também §8.
 
 ### O que revisar, nesta ordem
 
-1. **A lista curta dos 30 conceitos não-ativados**, no topo de
+1. **A lista curta dos conceitos não-ativados**, no topo de
    [`curadoria-tipos-de-uso-proposta.md`](curadoria-tipos-de-uso-proposta.md). Cada um traz a razão da
    dúvida. Concordando com ela, o grosso da revisão está feito.
 2. **A árvore proposta**, na mesma página. É onde um erro estrutural aparece rápido.
-3. **As 713 linhas da tabela**, se sobrar fôlego. O que procurar são os casos em que errei **com
-   confiança** — esses, por definição, não estão na lista dos 30.
+3. **As linhas da tabela**, se sobrar fôlego. O que procurar são os casos classificados **com
+   confiança** — esses, por definição, não estão na lista curta.
 
-Marque as divergências de qualquer forma que prefira (comentário, lista de termos, anotação no
-arquivo). O plano é regerado a partir delas antes de executar.
-
-### Estado da produção ao fim desta sessão
-
-| Item | Estado |
-|---|---|
-| Vocabulário (`etnotermos`) | **intocado** a título de curadoria: 2601 conceitos, 5 `active`, 2596 `candidate` |
-| Única alteração de dados | `language` dos rótulos: `pt` → `por` (convenção, não curadoria) |
-| Imagem em produção | `31f84b5`, container `healthy`, aquisição verificada com `criados=0` |
-| Backups | `backup-pre-curadoria-tipouso-2026-08-06T17-45-03Z.sqlite` · `backup-pre-deploy-2026-08-06T18-11-58Z.sqlite` — ambos `integrity_check: ok` |
-| Testes | 233/233 |
-
-> **O cron das 03:00 roda normalmente esta noite** e não faz mal: com a correção implantada, ele
-> reconhece os 2769 termos como existentes e cria zero conceitos. Verificado nesta sessão.
+Que a revisão renda resultado é medível: das quatro divergências de 2026-08-07, três estavam na lista
+curta (`banho`, `quengo`, `anticorpos`) e uma estava fora dela, entre as absorções tidas por óbvias
+(`sedação` → `sedativo`) — que é exatamente o caso que o item 3 procura.
 
 ### Ao começar a execução
 
-1. **Backup novo** (§7) — os desta sessão envelhecem a cada ciclo de aquisição.
+1. **Backup novo** (§7) — os anteriores envelhecem a cada ciclo de aquisição.
 2. Conferir que o container está `healthy` e que não é a janela das 03:00.
 3. Ler `ADMIN_PASSWORD` do env do container; autenticar em `http://192.168.1.10:4001/`.
 4. Executar as Fases 1 a 5 do §6, conferindo cada fase antes da seguinte.
@@ -702,6 +746,102 @@ arquivo). O plano é regerado a partir delas antes de executar.
 Restauração em três comandos (§7). Não há operação irreversível neste plano: conceitos não são
 apagados, só depreciados, e todas as escritas passam pela trilha de auditoria em
 `etnotermos_audit_log`, consultável por conceito.
+
+---
+
+## 14. Registro da execução
+
+Executada em **2026-08-07**, pela API Admin na porta 4001, com o container no ar. Nenhuma fase falhou:
+**zero erros, zero `409`**, nenhuma retentativa necessária.
+
+### 14.1 Fase 0 — preparar
+
+| Item | Valor |
+|---|---|
+| Backup | `backup-pre-curadoria-tipouso-2026-08-07T08-31-59Z.sqlite`, `integrity_check: ok`, md5 `0c28c6be…`, 4,75 MB, sem downtime |
+| Correção do §3 em produção | `BUILD_INFO.biocultdb_commit=31f84b5…`; verificado no arquivo do container (casa em pref + alt + hidden, idioma `por`) |
+| Janela do cron | ciclo das 03:00 já havia rodado às `06:00:00Z` com `criados=0`; execução iniciada às `08:31Z`, ~21 h da janela seguinte |
+| Estado do campo antes | 713 conceitos, 712 `candidate`, 1 `active`, **zero** rótulo alternativo, oculto, definição ou relação |
+| Plano conferido contra produção | 713/713 `conceptId` e `labelId` casam, 0 alvos irresolvidos, 0 colisão de rótulo, 0 dos 31 rótulos novos já existia no vocabulário |
+
+### 14.2 O que cada fase escreveu
+
+| Fase | Operação | Volume | Tempo |
+|---|---|---:|---:|
+| 1 | conceitos-pai criados (D13) | 31 | 1 s |
+| 1 | `POST /broader` do esqueleto | 28 | 3 s |
+| 2 | `POST /labels` — 357 `alt` + 33 `hidden` | 390 | 30 s |
+| 2 | `POST /deprecate` — 357 `ALT` + 9 `HID` + 12 `HID2` + 33 `DEP` | 411 | 87 s |
+| 3 | `POST /broader` dos sobreviventes | 290 | 59 s |
+| 4 | `PUT /concepts/:id` — 38 definições, 8 notas de escopo, 2 notas históricas | 48 | 6 s |
+| 4 | `POST /activate` | 304 | 62 s |
+
+Os 45 rótulos em inglês (44 termos, um deles composto e gravado em dois conceitos) foram para `eng`;
+os outros 345, para `por`.
+
+### 14.3 Resultado
+
+| | Antes | Depois |
+|---|---:|---:|
+| Conceitos no campo | 713 | 744 |
+| `active` | 1 | **305** |
+| `candidate` | 712 | **28** |
+| `deprecated` | 0 | **411** |
+| Conceitos vivos (não depreciados) | 713 | **333** |
+| Rótulos alternativos | 0 | 357 |
+| Rótulos ocultos | 0 | 33 |
+| Relações `broader` | 0 | 318 |
+| Definições | 0 | 38 |
+
+Os 28 `candidate` são os 27 duvidosos que sobraram depois de D12 mais `fumo`, que pertence de fato a
+`nomeVernacular` e não se toca aqui (§5). O plano marcava `fumo` como `deprecated` por descuido do
+gerador — a operação sempre foi `SKIP`, e `SKIP` não escreve nada. Daí 333 conceitos vivos, e não 332.
+
+### 14.4 Conferências da Fase 5
+
+| Verificação | Resultado |
+|---|---|
+| Contagens batem com o plano | ✅ `305 / 28 / 411`, total 744 = 713 + 31 |
+| Nenhum órfão | ✅ os únicos ativos sem `broader` são as 10 facetas raiz |
+| Sem ciclo | ✅ 0 conceitos com o próprio id em `ancestors` |
+| Reciprocidade BT/NT | ✅ 0 relações `broader` sem o `narrower` recíproco |
+| Nenhum pai depreciado com filho ativo | ✅ 0 |
+| Trilha completa | ✅ 1509 entradas: 720 `status` + 358 `altLabels` + 318 `broader` + 38 `definition` + 33 `hiddenLabels` + 31 `concept` + 8 `scopeNote` + 2 `historyNote` + 1 `related`, das quais 7 anteriores a esta sessão — reconcilia exatamente com as 1502 escritas acima |
+| **Sobrevive ao cron** | ✅ ciclo completo disparado à mão: `success`, **criados=0**, existentes=2769, 39,4 s. Contagens, total (2632) e os 378 conceitos que detêm um rótulo absorvido como preferencial: **idênticos antes e depois**. Zero termo absorvido reapareceu como conceito não-depreciado |
+| Consulta pública responde | ✅ `problemas respiratórios` traz 14 filhos, entre eles `asma`, `tosse` e `gripe`; 305 conceitos ativos no campo |
+
+A busca pública confirma cada regra de decisão do §5, ponta a ponta:
+
+| Busca na porta 4000 | Devolve | Regra |
+|---|---|---|
+| `headache` | `dor de cabeça` | termo em inglês → `alt` em `eng` |
+| `diarréia` | `diarreia` | grafia incorreta → `hidden`, invisível mas buscável |
+| `stomache` | `dor no estômago` | variante de regência + inglês |
+| `gripes` | `gripe` | plural → `alt` |
+| `tranquilizante` | `sedativo`, `calmante` | absorção + nota de escopo da fronteira |
+| `GET /concepts/{id de gripes}` | `410`, `replacedBy` = `gripe` | conceito absorvido responde com a lápide certa |
+
+### 14.5 Estado da produção ao fim desta sessão
+
+| Item | Estado |
+|---|---|
+| Vocabulário (`etnotermos`) | 2632 conceitos: 309 `active`, 1912 `candidate`, 411 `deprecated` |
+| Campo curado | `comunidades.plantas.tipoUso` — 744 conceitos, 333 vivos |
+| Campos ainda crus | `nomeVernacular` (982), `nomeCientifico` (864), `atividadesEconomicas` (36), `tipo` (9) — ver §8 |
+| Imagem em produção | `31f84b5`, container `healthy`, sem redeploy nesta sessão |
+| Código | **nenhuma alteração** — a curadoria é dado, não código |
+| Backup para restaurar | `backup-pre-curadoria-tipouso-2026-08-07T08-31-59Z.sqlite` (§7) |
+
+### 14.6 O que ficou para depois
+
+1. **Definição dos ~265 conceitos-folha** (D13). Sai como proposta a revisar, no mesmo formato desta.
+2. **Os 27 `candidate` duvidosos.** Cada um tem a razão da dúvida na proposta; quatro (`panos`,
+   `batidas`, `apertar os dentes`, `sustento`) seguem sem pai de propósito.
+3. **Relações associativas (RT).** Nenhuma foi criada: o plano não as previa. `gripe` ↔ `resfriado` é o
+   caso óbvio a considerar numa próxima passada.
+4. **Corrigir `fumo` no gerador do plano** se ele for reusado: `SKIP` deve implicar `finalStatus`
+   inalterado, não `deprecated`.
+
 ---
 
 > **Referências:** [Manual de Curadoria](Manual.md) ·

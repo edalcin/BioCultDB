@@ -499,10 +499,10 @@
    "conceptId": "6865f797-fc3e-43a6-bf14-7b140b5037e5",
    "labelId": "49db3868-03ff-4e57-b94d-396f8b2538f5",
    "version": 1,
-   "op": "BT",
-   "target": "alergias e problemas imunológicos",
-   "finalStatus": "candidate",
-   "doubt": "não é enfermidade nem ação clássica; sob alergias e imunológicos por falta de lugar melhor"
+   "op": "DEP",
+   "target": "indeterminado",
+   "finalStatus": "deprecated",
+   "doubt": null
   },
   {
    "term": "anticâncer",
@@ -863,9 +863,9 @@
    "labelId": "6cab6d61-8e57-4d93-a42f-712647d1b0e8",
    "version": 1,
    "op": "BT",
-   "target": "ritual e espiritual",
-   "finalStatus": "candidate",
-   "doubt": "sob ritual e espiritual, mas banho também é via de administração medicinal e higiene"
+   "target": "forma de preparo e administração",
+   "finalStatus": "active",
+   "doubt": null
   },
   {
    "term": "banho de assento",
@@ -6238,8 +6238,8 @@
    "version": 1,
    "op": "BT",
    "target": "material e tecnológico",
-   "finalStatus": "candidate",
-   "doubt": "significado regional indeterminado (crânio? cuia de coco?); posição em material e tecnológico é chute"
+   "finalStatus": "active",
+   "doubt": null
   },
   {
    "term": "químico",
@@ -6656,9 +6656,9 @@
    "conceptId": "762b1748-338e-4b78-ab55-a126a8db79f1",
    "labelId": "a1143004-eb1d-485c-9421-be958f270292",
    "version": 1,
-   "op": "ALT",
-   "target": "sedativo",
-   "finalStatus": "deprecated",
+   "op": "BT",
+   "target": "ação farmacológica",
+   "finalStatus": "active",
    "doubt": null
   },
   {
@@ -7396,5 +7396,108 @@
   "Q2": "upsertConcept corrigido e implantado (pref+alt+hidden); idioma ISO 639-3",
   "Q3": "compostos de dois conceitos viram rotulo oculto nos dois; qualificadores entre parenteses sao apenas depreciados",
   "Q4": "ativar os 302 inequivocos; 30 ficam candidate para revisao humana"
+ },
+ "executedAt": "2026-08-07",
+ "executedBackup": "backup-pre-curadoria-tipouso-2026-08-07T08-31-59Z.sqlite",
+ "divergences": [
+  {
+   "term": "banho",
+   "from": {
+    "op": "BT",
+    "target": "ritual e espiritual",
+    "finalStatus": "candidate"
+   },
+   "to": {
+    "op": "BT",
+    "target": "forma de preparo e administração",
+    "finalStatus": "active"
+   },
+   "reason": "não é uso ritual, é forma de preparo e administração medicinal"
+  },
+  {
+   "term": "quengo",
+   "from": {
+    "op": "BT",
+    "target": "material e tecnológico",
+    "finalStatus": "candidate"
+   },
+   "to": {
+    "op": "BT",
+    "target": "material e tecnológico",
+    "finalStatus": "active"
+   },
+   "reason": "significa cuia de coco; dúvida resolvida, posição confirmada e conceito ativado"
+  },
+  {
+   "term": "anticorpos",
+   "from": {
+    "op": "BT",
+    "target": "alergias e problemas imunológicos",
+    "finalStatus": "candidate"
+   },
+   "to": {
+    "op": "DEP",
+    "target": "indeterminado",
+    "finalStatus": "deprecated"
+   },
+   "reason": "não nomeia um uso"
+  },
+  {
+   "term": "sedação",
+   "from": {
+    "op": "ALT",
+    "target": "sedativo",
+    "finalStatus": "deprecated"
+   },
+   "to": {
+    "op": "BT",
+    "target": "ação farmacológica",
+    "finalStatus": "active"
+   },
+   "reason": "sedação e sedativo são coisas diferentes; não absorver"
+  }
+ ],
+ "newConceptIds": {
+  "material e tecnológico": "dcd91932-8d69-4e1c-a771-d3b577bd4c39",
+  "ritual e espiritual": "acbb3586-481c-45ef-8893-5a7f1167967b",
+  "ambiental e ecológico": "9243eab2-f446-42d3-acfb-1aea4f86707b",
+  "comercial": "46c15550-a669-4471-9b24-7c3f5ef5ed03",
+  "veterinário e forrageiro": "89585258-0148-49ea-aa83-cca679c0c699",
+  "cosmético e higiene": "1c0b563f-09a0-4bdf-98a4-b053c4624f35",
+  "tóxico e defensivo": "00804a77-fa6d-46cb-acc0-cf8e3f417b95",
+  "indeterminado": "c3480024-e256-4657-b00a-d8120bc3ee97",
+  "indicação terapêutica": "7386860a-fbcd-4969-bca5-7b50cd8ab23b",
+  "ação farmacológica": "c44e64e3-e1ae-4692-9a81-78c257317365",
+  "forma de preparo e administração": "3ac7a741-0440-490e-86b1-e979276ac352",
+  "problemas hepáticos e biliares": "a608973d-40ed-4067-8176-59fe94174374",
+  "problemas renais e urinários": "fec9093a-ba99-4aa1-b123-7a9a2ec7b05f",
+  "problemas cardiovasculares": "8a7111b4-a475-4bf6-b717-1db0575f8653",
+  "problemas dermatológicos": "d0ad3e59-e3ff-4962-b88b-d684064310a7",
+  "problemas ginecológicos e obstétricos": "dcc09c91-60bb-4b2f-8704-74b3e75c3db4",
+  "problemas do aparelho reprodutor masculino": "e6d83951-b84d-44f0-9e67-9729c5450a3d",
+  "problemas neurológicos e psíquicos": "216ed9e4-0d19-4573-8ac3-99e0d7010d43",
+  "problemas osteomusculares": "505bcf9b-27a4-4e10-96d9-f37b740d7940",
+  "problemas oftálmicos": "4db79cbc-88d8-49cc-afed-97d85e61965c",
+  "problemas otorrinolaringológicos": "df4e3928-a71b-410b-a45e-c64e05347b9d",
+  "problemas odontológicos": "a3a00a1a-e341-453d-9a56-4d43ff5b65ce",
+  "problemas metabólicos e endócrinos": "09ea4ab1-2526-4fd1-8850-dcb0e84d5ff4",
+  "doenças infecciosas e parasitárias": "5a6dcfd6-c625-44ca-b383-c1b4525bae00",
+  "problemas hematológicos": "4104873d-6d6f-43bc-8faf-7cd935676b35",
+  "alergias e problemas imunológicos": "69e8a5df-d671-4751-bd8e-fe02c9a3edd9",
+  "neoplasias": "1d10060b-39d1-4081-84cd-eca22bcfd23e",
+  "traumatismos e ferimentos": "faabc6bd-114e-447b-ab21-7590b2121e1c",
+  "envenenamentos e picadas": "d168ee80-e37c-430d-8f5c-a7c6a197f486",
+  "condições gerais e inespecíficas": "51f9428f-9b41-4ca4-9625-bb39e1f52493",
+  "manejo": "73313d85-61b2-4ded-a74b-1c9676efadc7"
+ },
+ "result": {
+  "active": 305,
+  "candidate": 28,
+  "deprecated": 411,
+  "total": 744,
+  "auditEntries": 1509,
+  "labelsAlt": 357,
+  "labelsHidden": 33,
+  "broaderRelations": 318
  }
 }
