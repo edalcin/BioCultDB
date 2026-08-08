@@ -1,6 +1,6 @@
 # Avaliação: unificar "Nomes Científicos de Plantas" e "Nomes Vernaculares de Plantas"?
 
-> **Questão.** Considerando o [Manual de Curadoria](Manual.md) e o padrão SKOS-XL, seria
+> **Questão.** Considerando o [Manual de Curadoria](https://edalcin.github.io/BioCultTermos/) e o padrão SKOS-XL, seria
 > razoável unificar os campos semânticos **"Nomes Científicos de Plantas"** e **"Nomes
 > Vernaculares de Plantas"** num só conceito, visto que ambos seriam representações do mesmo
 > conceito de "espécie"? Análise sob a ótica da **etnotaxonomia** e das **regras de nomenclatura

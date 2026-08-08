@@ -56,7 +56,7 @@ de cada campanha de curadoria já executada.
 
 | Arquivo | O que é |
 |---|---|
-| [`Manual.md`](curadoria/Manual.md) | **Manual de Curadoria** — guia didático de SKOS-XL para curadores, sem pressupor conhecimento de ontologias: termo × conceito, rótulos `pref`/`alt`/`hidden`, notas de escopo, hierarquia, idiomas (ISO 639-3), CARE. É o critério normativo de qualquer curadoria. |
+| [`Manual.md`](curadoria/Manual.md) | **Manual de Curadoria** — publicado como site em [edalcin.github.io/BioCultTermos](https://edalcin.github.io/BioCultTermos/), capítulo por capítulo: termo × conceito, rótulos `pref`/`alt`/`hidden`, notas de escopo, hierarquia, idiomas (ISO 639-3), CARE. É o critério normativo de qualquer curadoria; o arquivo local é só um ponteiro. |
 | [`avaliacao-campos-semanticos.md`](curadoria/avaliacao-campos-semanticos.md) | Análise: unificar "Nomes Científicos de Plantas" e "Nomes Vernaculares de Plantas" num só conceito? **Veredito: não** — etnotaxonomia e nomenclatura científica não são o mesmo conceito. |
 
 ### `curadoria/tipos-de-uso/` — campanha do campo `comunidades.plantas.tipoUso`

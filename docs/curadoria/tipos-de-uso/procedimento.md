@@ -41,7 +41,7 @@
 ## 1. O que este procedimento faz
 
 Transforma uma lista bruta de termos de um campo semântico — como a aquisição a deposita, cada grafia
-virando um conceito candidato isolado — numa rede SKOS-XL curada, conforme o [Manual de Curadoria](../Manual.md):
+virando um conceito candidato isolado — numa rede SKOS-XL curada, conforme o [Manual de Curadoria](https://edalcin.github.io/BioCultTermos/):
 plurais e variantes recolhidos como rótulos, grafias incorretas escondidas mas buscáveis, e uma
 hierarquia navegável de conceitos.
 
@@ -264,7 +264,7 @@ que mais aparece no corpus bruto.
 **Criar a faceta `indeterminado`.** Não é elegância, é necessidade: `POST /concepts/:id/deprecate`
 **exige** `replacedById`, e não existe substituto legítimo para `outros`, `dúvida` ou
 `não especificado`. Sem um destino terminal explícito, esses 11 termos ficariam `candidate` para
-sempre — que é justamente o erro que o Manual §10 lista.
+sempre — que é justamente o erro que o [Manual §11](https://edalcin.github.io/BioCultTermos/11-erros-comuns.html) lista.
 
 ---
 
@@ -611,7 +611,7 @@ irmãos, em vez de misturados — que é o erro mais frequente no corpus bruto.
 `dúvida`, `não especificado`, `sem uso reportado`, `corpo`, `peito`, `pernas`, `doenças`,
 `enferrujado`, `catuaba`) não têm substituto legítimo.
 
-**Recusado.** Deixá-los `candidate` indefinidamente — que é o erro listado no Manual §10, e que os
+**Recusado.** Deixá-los `candidate` indefinidamente — que é o erro listado no [Manual §11](https://edalcin.github.io/BioCultTermos/11-erros-comuns.html), e que os
 manteria sendo re-semeados a cada aquisição sem nunca entrar na consulta pública.
 
 **Decidido.** Uma faceta terminal explícita, com definição que diz o que ela é: registro de uso sem
@@ -989,7 +989,7 @@ Imagem `9550783`, container `healthy`, `BUILD_INFO.biocultdb_commit=9550783d…`
 
 ---
 
-> **Referências:** [Manual de Curadoria](../Manual.md) ·
+> **Referências:** [Manual de Curadoria](https://edalcin.github.io/BioCultTermos/) ·
 > [ADR-001 — integração BioCultTermos](../../decisions/ADR-001-integracao-bioculttermos.md) ·
 > [ADR-002 — extração por IA](../../decisions/ADR-002-extracao-por-ia.md) ·
 > [W3C SKOS-XL](https://www.w3.org/TR/skos-reference/skos-xl.html) ·

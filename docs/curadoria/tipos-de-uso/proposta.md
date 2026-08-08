@@ -5,7 +5,7 @@
 > Gerada em 2026-08-06 a partir dos 713 conceitos cujo `sourceFields` contém
 > `comunidades.plantas.tipoUso`, em `/data/biocultdb.sqlite` (produção, Unraid `<HOST_HOSTNAME>`).
 > Backup da execução: `backup-pre-curadoria-tipouso-2026-08-07T08-31-59Z.sqlite`, `integrity_check: ok`.
-> Critérios: `docs/curadoria/Manual.md`. Decisões (D1–D13), riscos e procedimento:
+> Critérios: [Manual de Curadoria do BioCultTermos](https://edalcin.github.io/BioCultTermos/). Decisões (D1–D13), riscos e procedimento:
 > [`procedimento.md`](procedimento.md).
 
 ## Divergências da revisão do curador

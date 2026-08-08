@@ -256,7 +256,7 @@ O projeto implementa os princípios C.A.R.E. para dados de povos indígenas e co
 Atalhos para os mais consultados:
 
 - **Instalação e Desenvolvimento**: [`INSTALLATION.md`](./INSTALLATION.md)
-- **Manual de Curadoria (SKOS-XL)**: [`docs/curadoria/Manual.md`](./docs/curadoria/Manual.md)
+- **Manual de Curadoria (SKOS-XL)**: [edalcin.github.io/BioCultTermos](https://edalcin.github.io/BioCultTermos/) (site publicado; ponteiro local em [`docs/curadoria/Manual.md`](./docs/curadoria/Manual.md))
 - **Especificação de Requisitos**: [`docs/decisions/spec.md`](./docs/decisions/spec.md)
 - **Modelo de Dados**: [`docs/decisions/data-model.md`](./docs/decisions/data-model.md)
 - **Integração com BioCultTermos**: [`docs/decisions/ADR-001-integracao-bioculttermos.md`](./docs/decisions/ADR-001-integracao-bioculttermos.md) (decisão) · [`integracao.md`](./integracao.md) (checklist executado e resultado) · [`docs/operacao/corte-producao-unidade.md`](./docs/operacao/corte-producao-unidade.md) (runbook de corte em produção) · [ADR-007 da Arquitetura BioCultural](https://github.com/edalcin/Arquitetura-BioCultural/blob/main/docs/architecture-decisions/ADR-007-shared-bioculttermos-module.md) (decisão arquitetural do módulo compartilhado entre as 4 unidades)
