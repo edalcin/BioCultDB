@@ -6,7 +6,7 @@
 > no momento em que foi escrito. Desde então, todos os passos abaixo foram executados e
 > verificados em produção (ver "Status" logo a seguir).
 >
-> Decisão arquitetural de origem: `Arquitetura-BioCultural/docs/architecture-decisions/ADR-004` e `ADR-005`.
+> Decisão arquitetural de origem: `Arquitetura-BioCultural/docs/tecnico/architecture-decisions/ADR-004` e `ADR-005`.
 > Decisão operacional desta integração: `BioCultDB/docs/decisions/ADR-001-integracao-bioculttermos.md`
 > (leia primeiro — este documento é o checklist executável dela).
 

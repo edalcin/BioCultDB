@@ -261,7 +261,7 @@ Atalhos para os mais consultados:
 - **Manual de Curadoria (SKOS-XL)**: [edalcin.github.io/BioCultTermos](https://edalcin.github.io/BioCultTermos/) (site publicado; ponteiro local em [`docs/curadoria/Manual.md`](./docs/curadoria/Manual.md))
 - **Especificação de Requisitos**: [`docs/decisions/spec.md`](./docs/decisions/spec.md)
 - **Modelo de Dados**: [`docs/decisions/data-model.md`](./docs/decisions/data-model.md)
-- **Integração com BioCultTermos**: [`docs/decisions/ADR-001-integracao-bioculttermos.md`](./docs/decisions/ADR-001-integracao-bioculttermos.md) (decisão) · [`integracao.md`](./integracao.md) (checklist executado e resultado) · [`docs/operacao/corte-producao-unidade.md`](./docs/operacao/corte-producao-unidade.md) (runbook de corte em produção) · [ADR-007 da Arquitetura BioCultural](https://github.com/edalcin/Arquitetura-BioCultural/blob/main/docs/architecture-decisions/ADR-007-shared-bioculttermos-module.md) (decisão arquitetural do módulo compartilhado entre as 4 unidades)
+- **Integração com BioCultTermos**: [`docs/decisions/ADR-001-integracao-bioculttermos.md`](./docs/decisions/ADR-001-integracao-bioculttermos.md) (decisão) · [`integracao.md`](./integracao.md) (checklist executado e resultado) · [`docs/operacao/corte-producao-unidade.md`](./docs/operacao/corte-producao-unidade.md) (runbook de corte em produção) · [ADR-007 da Arquitetura BioCultural](https://github.com/edalcin/Arquitetura-BioCultural/blob/main/docs/tecnico/architecture-decisions/ADR-007-shared-bioculttermos-module.md) (decisão arquitetural do módulo compartilhado entre as 4 unidades)
 - **Contratos de API**: [`docs/decisions/contracts/`](./docs/decisions/contracts/)
 - **Decisão de Stack Tecnológica**: [`docs/decisions/technology-decision.md`](./docs/decisions/technology-decision.md)
 - **Arquitetura do etnoChat**: [`docs/decisions/etnochat-plan.md`](./docs/decisions/etnochat-plan.md)
@@ -405,7 +405,7 @@ O SQLite do BioCultDB **pertence à Iniciativa #1** — não é mais um recurso 
 | **[BioCultPapers](https://github.com/edalcin/BioCultPapers)** | Alimenta o BioCultDB com dados extraídos de PDFs via IA |
 | **[BioCultTermos](https://github.com/edalcin/BioCultTermos)** | Fornece vocabulários SKOS-XL para aquisição, curadoria e apresentação |
 | **[Pluriverso](https://github.com/edalcin/pluriverso)** | Coleta registros públicos do BioCultDB via harvest REST; harmoniza com dados de outros membros |
-| **[Arquitetura BioCultural](https://github.com/edalcin/Arquitetura-BioCultural)** | Documentação completa da arquitetura e decisões de design ([ADR-004](https://github.com/edalcin/Arquitetura-BioCultural/blob/main/docs/architecture-decisions/ADR-004-federated-architecture.md)) |
+| **[Arquitetura BioCultural](https://github.com/edalcin/Arquitetura-BioCultural)** | Documentação completa da arquitetura e decisões de design ([ADR-004](https://github.com/edalcin/Arquitetura-BioCultural/blob/main/docs/tecnico/architecture-decisions/ADR-004-federated-architecture.md)) |
 
 ---
 

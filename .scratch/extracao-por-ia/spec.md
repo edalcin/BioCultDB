@@ -5,7 +5,7 @@ Status: done — todos os 11 tickets fechados (ver `.scratch/extracao-por-ia/iss
 > Produzido por `/to-spec` em 2026-08-02, a partir da sessão de `grill-with-docs` da mesma data.
 > Decisões e alternativas descartadas: `docs/decisions/ADR-002-extracao-por-ia.md`.
 > Vocabulário: `CONTEXT.md`. Decisão de ecossistema a criar em paralelo:
-> `Arquitetura-BioCultural/docs/architecture-decisions/ADR-011`.
+> `Arquitetura-BioCultural/docs/tecnico/architecture-decisions/ADR-011`.
 
 ## Problem Statement
 

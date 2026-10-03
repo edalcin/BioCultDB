@@ -7,7 +7,7 @@ How the engineering skills should consume this repo's domain documentation when 
 - **`CONTEXT.md`** at the repo root, or
 - **`CONTEXT-MAP.md`** at the repo root if it exists — it points at one `CONTEXT.md` per context. Read each one relevant to the topic.
 - **`docs/decisions/`** — read ADRs that touch the area you're about to work in. This repo names them `ADR-NNN-slug.md` (e.g. `ADR-001-integracao-bioculttermos.md`), not `NNNN-slug.md`.
-- **`Arquitetura-BioCultural/docs/architecture-decisions/`** — the sibling repo holding ecosystem-wide ADRs that govern this one. Decisions here must not contradict those without superseding them explicitly.
+- **`Arquitetura-BioCultural/docs/tecnico/architecture-decisions/`** — the sibling repo holding ecosystem-wide ADRs that govern this one. Decisions here must not contradict those without superseding them explicitly.
 
 If any of these files don't exist, **proceed silently**. Don't flag their absence; don't suggest creating them upfront. The `/domain-modeling` skill (reached via `/grill-with-docs` and `/improve-codebase-architecture`) creates them lazily when terms or decisions actually get resolved.
 

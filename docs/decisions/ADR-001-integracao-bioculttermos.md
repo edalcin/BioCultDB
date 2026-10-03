@@ -8,7 +8,7 @@
 
 ## Contexto
 
-A Arquitetura BioCultural v3.1 (ver `Arquitetura-BioCultural/docs/architecture-decisions/ADR-004-federated-architecture.md`
+A Arquitetura BioCultural v3.1 (ver `Arquitetura-BioCultural/docs/tecnico/architecture-decisions/ADR-004-federated-architecture.md`
 e `ADR-005-sqlite-json-persistence.md`) já define, no nível arquitetural, que a "Unidade de Fontes
 Secundárias" é **um único container** rodando BioCultDB (portas 3001–3003) e BioCultTermos (portas
 4000–4001) sobre **um único arquivo SQLite compartilhado**, com BioCultTermos integrado como git submodule
@@ -122,8 +122,8 @@ não têm auth alguma, controle é só por firewall/rede no Unraid.
 
 ## Referências
 
-- `Arquitetura-BioCultural/docs/architecture-decisions/ADR-004-federated-architecture.md`
-- `Arquitetura-BioCultural/docs/architecture-decisions/ADR-005-sqlite-json-persistence.md`
+- `Arquitetura-BioCultural/docs/tecnico/architecture-decisions/ADR-004-federated-architecture.md`
+- `Arquitetura-BioCultural/docs/tecnico/architecture-decisions/ADR-005-sqlite-json-persistence.md`
 - `BioCultDB/integracao.md` (checklist operacional detalhado desta decisão)
 - `BioCultDB/docker/Dockerfile.unidade`, `docker/docker-compose.unidade.yml`, `docker/start-unit.sh`
 - `BioCultDB/bioculttermos/backend/src/config/index.js`, `shared/database.js`

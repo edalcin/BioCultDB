@@ -91,7 +91,7 @@ O `bioculttermos/` deste repositório é a **Cópia de Trabalho** do Módulo Com
 nesta Unidade Hospedeira — não é um sub-repositório nem um clone descartável. É aqui que se edita o
 código do BioCultTermos quando a mudança é motivada pelo BioCultDB.
 
-Regras vigentes — ADR-012 em `Arquitetura-BioCultural/docs/architecture-decisions/`, que **supersede
+Regras vigentes — ADR-012 em `Arquitetura-BioCultural/docs/tecnico/architecture-decisions/`, que **supersede
 parcialmente ADR-007 F3 e ADR-010** no ponto em que declaravam o bump entre unidades opcional:
 
 - **Nunca** clone o BioCultTermos fora de uma Unidade Hospedeira (G2). Um clone standalone não pode ser
@@ -112,8 +112,8 @@ cedo se o submodule local não bater com o commit pinado, e carimba `/app/BUILD_
 BioCultDB e do bioculttermos, verificável em runtime via `docker exec <container> cat /app/BUILD_INFO`
 (ADR-010 G3). Ver `docker/Dockerfile.unidade` e `verify-container-setup.sh`.
 
-Estratégia completa: `Arquitetura-BioCultural/docs/gestaoBioCultTermos/` · Decisão:
-`Arquitetura-BioCultural/docs/architecture-decisions/ADR-012-manutencao-codigo-bioculttermos.md`
+Estratégia completa: `Arquitetura-BioCultural/docs/tecnico/gestaoBioCultTermos/` · Decisão:
+`Arquitetura-BioCultural/docs/tecnico/architecture-decisions/ADR-012-manutencao-codigo-bioculttermos.md`
 <!-- MANUAL ADDITIONS END -->
 
 ## graphify
@@ -128,7 +128,7 @@ Rules:
 
 ## Arquitetura v3.1 — Persistência
 Persistência = SQLite com JSON (JSON1), **um arquivo por unidade federada** compartilhado pelas ferramentas (tabelas distintas), WAL, `SQLITE_DB_PATH`. Um container por unidade. Sem MongoDB.
-Ref.: Arquitetura-BioCultural/docs/architecture-decisions/ADR-005.
+Ref.: Arquitetura-BioCultural/docs/tecnico/architecture-decisions/ADR-005.
 
 ## Agent skills
 

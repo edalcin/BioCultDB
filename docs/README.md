@@ -35,7 +35,7 @@ docs/
 
 Registro das decisões que governam o código. ADRs locais complementam — nunca contradizem — as ADRs
 do ecossistema em
-[`Arquitetura-BioCultural/docs/architecture-decisions/`](https://github.com/edalcin/Arquitetura-BioCultural/tree/main/docs/architecture-decisions).
+[`Arquitetura-BioCultural/docs/tecnico/architecture-decisions/`](https://github.com/edalcin/Arquitetura-BioCultural/tree/main/docs/tecnico/architecture-decisions).
 
 | Arquivo | O que é |
 |---|---|

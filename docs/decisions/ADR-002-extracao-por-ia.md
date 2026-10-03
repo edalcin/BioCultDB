@@ -6,7 +6,7 @@
 produzir este documento: é decisão, não implementação.
 
 Decisão arquitetural de origem a ser registrada em paralelo:
-`Arquitetura-BioCultural/docs/architecture-decisions/ADR-011` (absorção do BioCultPapers), que
+`Arquitetura-BioCultural/docs/tecnico/architecture-decisions/ADR-011` (absorção do BioCultPapers), que
 supersede o **D7** do ADR-004 e o **DA6** do ADR-005. Esta ADR é a contraparte operacional local —
 complementa, não substitui, aquela.
 
