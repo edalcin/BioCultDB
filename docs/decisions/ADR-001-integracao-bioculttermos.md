@@ -132,5 +132,5 @@ não têm auth alguma, controle é só por firewall/rede no Unraid.
 ## Data de Revisão
 
 Corte de produção concluído com sucesso em 2026-07-13 (revisão original desta cláusula). Próxima
-revisão: se/quando BioCultRelatos precisar de um padrão análogo de unidade (comunidade tradicional
- + BioCultTermos).
+revisão: se alguma unidade proposta (ex.: BioCultRelatos) vier a ser implementada e precisar de um
+padrão análogo (ver ADR-021 da arquitetura).

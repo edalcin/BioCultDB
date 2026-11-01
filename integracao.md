@@ -244,10 +244,9 @@ originalmente.
 - Autenticação nas portas 3001/3002 (3091/3092 externas) do BioCultDB.
 - Migração/importação de dados de uma instância standalone do BioCultTermos (não existe nenhuma em
   produção hoje).
-- Integração com BioCultRelatos (padrão análogo, mas BioCultRelatos ainda está em fase inicial de
-  desenvolvimento — ver `Arquitetura-BioCultural/README.md:251-272`). Quando o código do BioCultRelatos
-  existir, este documento serve de modelo, mas a unidade "Comunidade Tradicional" é um container
-  diferente, com seu próprio arquivo SQLite — não o mesmo `biocultdb.sqlite`.
+- Integração do BioCultTermos em BioCultRelatos, BioCultAcervos ou BioCultNaturalistas: são propostas,
+  sem implementação ([ADR-021](https://github.com/edalcin/Arquitetura-BioCultural/blob/main/docs/tecnico/architecture-decisions/ADR-021-escopo-de-implementacao.md)). Este documento é o único registro de integração real; qualquer unidade
+  futura seria um container diferente, com seu próprio arquivo SQLite — não o mesmo `biocultdb.sqlite`.
 - Script de backup automatizado (mencionado em §6 como sugestão, não como requisito desta integração).
 - Multi-usuário admin no BioCultTermos (`ADMIN_USERS`) — hoje um único usuário (`ADMIN_USERNAME`/`ADMIN_PASSWORD`)
   é suficiente; migrar para `ADMIN_USERS` é reversível e trivial no futuro se necessário.

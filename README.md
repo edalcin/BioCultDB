@@ -11,6 +11,8 @@
 
 Sistema web para gerenciamento de **dados secundários** etnobotânicos sobre a relação entre comunidades tradicionais e plantas, extraídos de artigos científicos publicados.
 
+**Status:** BioCultDB — *Em produção (caso implementado)*; BioCultTermos — *Em produção, integrado ao BioCultDB*. É o único caso implementado da Arquitetura BioCultural ([ADR-021](https://github.com/edalcin/Arquitetura-BioCultural/blob/main/docs/tecnico/architecture-decisions/ADR-021-escopo-de-implementacao.md)), ligado ao projeto GEF/MCTI "Entre-Ciências" (entregas do USEFLORA e do Jardim Botânico do Rio de Janeiro, JBRJ). Relatos, Acervos, Naturalistas e Pluriverso: *Proposta, sem implementação*.
+
 > "Se os dados não estão fisicamente sob o controle de quem os gerou, a soberania é apenas uma promessa bonita em um termo de consentimento."
 >
 > — Eduardo Dalcin, em [*Sementes Livres, Solos Próprios: Por que o Conhecimento Tradicional exige uma Arquitetura Federada*](https://eduardo.dalc.in/por-que-o-conhecimento-tradicional-exige-uma-arquitetura-federada/), post que resume e ilustra didaticamente a arquitetura federada da qual o BioCultDB é o membro de referência para fontes secundárias.
@@ -231,15 +233,11 @@ dados publicados: **28 registros bibliográficos → 2536 conceitos candidatos**
 científicos, 981 nomes vernaculares, 668 tipos de uso, 34 atividades econômicas, 9 tipos de
 comunidade), aguardando curadoria.
 
-### Unidade Comunidade Tradicional (mesmo padrão, ainda não materializado)
+### Escopo de implementação (ADR-021)
 
-A segunda unidade da federação (`BioCultRelatos` + `BioCultTermos`, hoje `BioCultRelatos` é
-greenfield/só documentação) seguirá o MESMO padrão quando `BioCultRelatos` existir: repo anfitrião
-= `BioCultRelatos`, `BioCultTermos` como submodule, `Dockerfile.unidade` + `start-unit.sh` +
-`docker-compose.unidade.yml` análogos (trocando as portas 3001-3003 do BioCultDB pela porta do
-BioCultRelatos), um único container, um único arquivo SQLite compartilhado.
+BioCultDB + BioCultTermos é o **único caso implementado** da Arquitetura BioCultural, em produção e ligado ao projeto GEF/MCTI "Entre-Ciências" (entregas do USEFLORA e do Jardim Botânico do Rio de Janeiro, JBRJ). Detalhes e justificativa em [ADR-021](https://github.com/edalcin/Arquitetura-BioCultural/blob/main/docs/tecnico/architecture-decisions/ADR-021-escopo-de-implementacao.md).
 
-O mesmo padrão de empacotamento (container único + BioCultTermos embutido no mesmo arquivo SQLite) vale para os quatro tipos de membro da federação v3.2 — Fontes Secundárias (BioCultDB), Comunidade Tradicional (BioCultRelatos), Acervos Históricos/Museológicos (BioCultAcervos) e Obras de Naturalistas (BioCultNaturalistas). Em todos, a camada semântica é local e soberana; o Pluriverso a unifica via mapeamentos SKOS-XL entre os `ConceptScheme` de cada membro.
+As demais unidades (BioCultRelatos, BioCultAcervos, BioCultNaturalistas) e o Pluriverso são **propostas, sem implementação**: mostram como a arquitetura poderia ser implementada no futuro por quem assumir a responsabilidade, sem stack definida. O padrão de empacotamento aqui descrito (container único + BioCultTermos embutido no mesmo arquivo SQLite, camada semântica local e soberana) é a referência para elas.
 
 ## Princípios C.A.R.E.
 
@@ -396,7 +394,7 @@ O SQLite do BioCultDB **pertence à Iniciativa #1** — não é mais um recurso 
 | **Endpoint de harvest** | Implementar `GET /api/federation/records` paginado, retornando apenas registros `status: approved` e `visibility: public`, com suporte a filtro `updated_since` para coletas incrementais |
 | **Campo `member_id`** | Cada registro deve carregar identificador único do membro (`member_id`) para rastreabilidade no índice federado do Pluriverso |
 | **Campo `visibility`** | Adicionar campo de visibilidade por registro (`public`, `restricted`, `private`) para controle granular do que é publicado na federação |
-| **Remoção de pressuposto de SQLite compartilhado com outras unidades além do BioCultTermos** | Remover qualquer configuração ou código que pressuponha coexistência com BioCultRelatos no mesmo banco |
+| **Remoção de pressuposto de SQLite compartilhado com outras unidades além do BioCultTermos** | Remover qualquer configuração ou código que pressuponha coexistência com outra unidade no mesmo banco |
 
 ### Componentes Relacionados
 
@@ -404,7 +402,7 @@ O SQLite do BioCultDB **pertence à Iniciativa #1** — não é mais um recurso 
 |------------|---------|
 | **[BioCultPapers](https://github.com/edalcin/BioCultPapers)** | Alimenta o BioCultDB com dados extraídos de PDFs via IA |
 | **[BioCultTermos](https://github.com/edalcin/BioCultTermos)** | Fornece vocabulários SKOS-XL para aquisição, curadoria e apresentação |
-| **[Pluriverso](https://github.com/edalcin/pluriverso)** | Coleta registros públicos do BioCultDB via harvest REST; harmoniza com dados de outros membros |
+| **[Pluriverso](https://github.com/edalcin/pluriverso)** | Proposta, sem implementação: coletaria registros públicos do BioCultDB via harvest REST e os harmonizaria com dados de outros membros |
 | **[Arquitetura BioCultural](https://github.com/edalcin/Arquitetura-BioCultural)** | Documentação completa da arquitetura e decisões de design ([ADR-004](https://github.com/edalcin/Arquitetura-BioCultural/blob/main/docs/tecnico/architecture-decisions/ADR-004-federated-architecture.md)) |
 
 ---

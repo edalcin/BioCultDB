@@ -16,7 +16,7 @@
 
 Implementados: extração de metadados de PDF por IA (ADR-002, absorveu o BioCultPapers), agregação por conceito SKOS-XL no painel analítico (ADR-003), etnoChat, e a integração do BioCultTermos como submodule.
 
-É a **unidade de referência** da arquitetura: o que funciona aqui é o que as demais unidades copiam.
+É o **único caso implementado** da arquitetura (BioCultDB + BioCultTermos, [ADR-021](https://github.com/edalcin/Arquitetura-BioCultural/blob/main/docs/tecnico/architecture-decisions/ADR-021-escopo-de-implementacao.md)), ligado ao projeto GEF/MCTI "Entre-Ciências" (entregas do USEFLORA e do Jardim Botânico do Rio de Janeiro, JBRJ). Status: BioCultDB *Em produção (caso implementado)*; BioCultTermos *Em produção, integrado ao BioCultDB*. Relatos, Acervos, Naturalistas e Pluriverso são *propostas, sem implementação*.
 
 ## 2. Pendências
 
@@ -24,9 +24,9 @@ Implementados: extração de metadados de PDF por IA (ADR-002, absorveu o BioCul
 |---|---|---|
 | 1 | **Campos de acesso do ADR-003 da arquitetura** (`visibility`, `restrictions`, `permissions`) nunca foram materializados no banco de produção | Arquitetura §6; sem eles não há como cumprir o contrato de harvest |
 | 2 | **29 registros existentes sem valor de `regime`** — preenchimento é trivial (`evidencia` para todos, correto por construção da unidade), mas ainda não foi feito | ADR-015 da arquitetura (K1), estado *Proposto* |
-| 3 | **Endpoint de harvest** (`GET /api/federation/records`, paginado, com redação na fronteira) não implementado | ADR-016 da arquitetura; consumidor é o Pluriverso, que também não existe ainda |
+| 3 | **Endpoint de harvest** (`GET /api/federation/records`, paginado, com redação na fronteira) não implementado | ADR-016 da arquitetura; consumidor previsto é o Pluriverso, que é só proposta |
 | 4 | **Qualidade da extração por IA não medida** com PDFs reais — risco registrado na própria ADR-002 e nunca quantificado | ADR-002 (Aceito, implementado) |
-| 5 | **Generalizar o `AcquisitionService`** do BioCultTermos para aceitar lista de pares `{tabela, campos[]}` — hoje é específico do BioCultDB e bloqueia Relatos, Acervos e Naturalistas | `integracao.md`; é pendência **desta** unidade porque o código vive aqui |
+| 5 | ~~Generalizar o `AcquisitionService`~~ — **obsoleta**: só existia para destravar Relatos, Acervos e Naturalistas, hoje propostas sem implementação ([ADR-021](https://github.com/edalcin/Arquitetura-BioCultural/blob/main/docs/tecnico/architecture-decisions/ADR-021-escopo-de-implementacao.md)). Se uma delas for implementada, retomar | — |
 | 6 | **Auditar prompts de extração por IA contra vazamento de dado sensível** — verificar se algum prompt do fluxo de aquisição/curadoria envia a provedor externo conteúdo de registro cujo nível efetivo de acesso seja diferente de `public`, checar se há log do que foi enviado, e declarar o resultado. Distinta da pendência 4: aquela é sobre acurácia da extração, esta é sobre vazamento. Não hipotética — o BioCultDB está em produção com extração por IA (ADR-011 da arquitetura) | Levantada em reunião com o Comitê Gestor do USEFLORA em 18/08/2026 (`Arquitetura-BioCultural/docs/Governanca/Arquitetura/Reunioes/2026-08-18-reuniao-useflora.md`), prazo sugerido de 3 semanas para as notas técnicas; regra a cumprir em `Arquitetura-BioCultural/governanca/propostaGovernanca.md` §5.12 |
 
 ## 3. Onde está cada coisa
